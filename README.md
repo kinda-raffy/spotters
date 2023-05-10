@@ -16,7 +16,8 @@
 6. Populate base submodules `git submodule init; git submodule update`
 7. Populate spot_ros submodules `cd workspace/src/spot_ros; git submodule init; git submodule update`
 8. Install spot_ros dependencies `rosdep install --from-paths spot_driver spot_msgs spot_viz spot_description spot_cam --ignore-src -y`
-9. Build workspace packages `cd ../..; catkin build`
+9. Install the spot wrapper `pip install -e spot_wrapper/`
+10. Build workspace packages `cd ../..; catkin build`
 
 ## Guidelines
 
