@@ -1,0 +1,2 @@
+/home/kindaraffy/spotters/workspace/devel/./cmake.lock 6
+/home/kindaraffy/spotters/workspace/devel/bin/cmake.lock 1
