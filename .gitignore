@@ -3,8 +3,10 @@
 **/build*/
 **/devel*/
 **/logs*/
+**/catkin_tools/
 
 **/.idea/
 **/.vscode/
 
 .pyc
+.o
