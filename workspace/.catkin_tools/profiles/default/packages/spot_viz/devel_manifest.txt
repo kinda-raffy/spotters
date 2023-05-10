@@ -1,6 +1,0 @@
-spot_ros/spot_viz
-/home/kindaraffy/spotters/workspace/devel/.private/spot_viz/cmake.lock /home/kindaraffy/spotters/workspace/devel/./cmake.lock
-/home/kindaraffy/spotters/workspace/devel/.private/spot_viz/share/spot_viz/cmake/spot_vizConfig-version.cmake /home/kindaraffy/spotters/workspace/devel/share/spot_viz/cmake/spot_vizConfig-version.cmake
-/home/kindaraffy/spotters/workspace/devel/.private/spot_viz/share/spot_viz/cmake/spot_vizConfig.cmake /home/kindaraffy/spotters/workspace/devel/share/spot_viz/cmake/spot_vizConfig.cmake
-/home/kindaraffy/spotters/workspace/devel/.private/spot_viz/lib/libspot_viz.so /home/kindaraffy/spotters/workspace/devel/lib/libspot_viz.so
-/home/kindaraffy/spotters/workspace/devel/.private/spot_viz/lib/pkgconfig/spot_viz.pc /home/kindaraffy/spotters/workspace/devel/lib/pkgconfig/spot_viz.pc

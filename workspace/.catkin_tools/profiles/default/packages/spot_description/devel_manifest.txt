@@ -1,5 +1,0 @@
-spot_ros/spot_description
-/home/kindaraffy/spotters/workspace/devel/.private/spot_description/cmake.lock /home/kindaraffy/spotters/workspace/devel/./cmake.lock
-/home/kindaraffy/spotters/workspace/devel/.private/spot_description/share/spot_description/cmake/spot_descriptionConfig.cmake /home/kindaraffy/spotters/workspace/devel/share/spot_description/cmake/spot_descriptionConfig.cmake
-/home/kindaraffy/spotters/workspace/devel/.private/spot_description/share/spot_description/cmake/spot_descriptionConfig-version.cmake /home/kindaraffy/spotters/workspace/devel/share/spot_description/cmake/spot_descriptionConfig-version.cmake
-/home/kindaraffy/spotters/workspace/devel/.private/spot_description/lib/pkgconfig/spot_description.pc /home/kindaraffy/spotters/workspace/devel/lib/pkgconfig/spot_description.pc
