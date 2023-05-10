@@ -19,6 +19,8 @@
 9. Install the spot wrapper `pip install -e spot_wrapper/`
 10. Build workspace packages `cd ../..; catkin build`
 
+> :warning: Some required python packages are not supported by pip or are defective (PyKDL, sip). In most cases, apt's own version works perfectly. `apt install python3-<python package>` and `cp /usr/lib/python3/dist-packages/<python package>* /<venv location>/lib/python<version>/site-packages/` to copy the package into your virtual environment.
+
 ## Guidelines
 
 - Do not push to main.
