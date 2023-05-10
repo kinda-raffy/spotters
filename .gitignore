@@ -1,0 +1,9 @@
+**/*venv/
+
+**/build*/
+**/devel*/
+
+**/.idea/
+**/.vscode/
+
+.pyc
