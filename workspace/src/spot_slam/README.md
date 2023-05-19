@@ -18,7 +18,7 @@ sudo make install
 pip install -r ~/spotters/requirements.txt
 # Verify correct OpenCV version.
 python3 -c "import cv2; print(cv2.__version__)"
-# Download a path tracker and octomap.
+# Download octomap and a path tracker.
 sudo apt install ros-noetic-hector-trajectory-server ros-noetic-octomap-server
 # Dowload camera streaming utilities.
 sudo apt install v4l-utils v4l2loopback-dkms gstreamer1.0-tools
