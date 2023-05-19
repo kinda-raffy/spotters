@@ -1,0 +1,38 @@
+<launch>
+    <param name="use_sim_time" value="false" />
+
+    <!-- Main node -->
+    <node name="orb_slam3" pkg="orb_slam3_ros" type="ros_mono" output="screen">
+        <remap from="/camera/image_raw"    to="/left/image_raw"/>
+
+        <!-- ORB-SLAM3 -->
+        <param name="voc_file"      type="string" value="$(find orb_slam3_ros)/orb_slam3/Vocabulary/ORBvoc.txt.bin"/>
+        <param name="settings_file" type="string" value="$(find orb_slam3_ros)/config/Monocular/NTU_VIRAL.yaml"/>
+
+        <!-- ROS -->
+        <param name="world_frame_id"    type="string"   value="world" />
+        <param name="cam_frame_id"      type="string"   value="camera" />
+        <param name="enable_pangolin"   type="bool"     value="false" />
+    </node>
+    
+    <!-- Visualization -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find orb_slam3_ros)/config/mono_rosbot.rviz" output="screen" />
+    
+    <!-- Trajectory path -->
+    <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="trajectory_server_orb_slam3" output="screen" ns="orb_slam3_ros" >
+        <param name="/target_frame_name"        value="/world" />
+        <param name="/source_frame_name"        value="/camera" />
+        <param name="/trajectory_update_rate"   value="20.0" />
+        <param name="/trajectory_publish_rate"  value="20.0" />
+    </node>
+
+    <!-- Octomap Server -->
+    <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+    	<param name="resolution" value="0.005" />
+    	<param name="frame_id" type="string" value="world" />
+    	<param name="sensor_model/max_range" value="3.0" />
+    	<param name="latch" value="false" />
+	<param name="ground_filter" value="true" />
+    	<remap from="cloud_in" to="/orb_slam3/all_points" />
+    </node>
+</launch>
