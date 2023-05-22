@@ -1,0 +1,644 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B21E31942A19062200537932 /* spot_sensor_relayApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21E31932A19062200537932 /* spot_sensor_relayApp.swift */; };
+		B21E31962A19062200537932 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21E31952A19062200537932 /* ContentView.swift */; };
+		B21E31982A19062300537932 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B21E31972A19062300537932 /* Assets.xcassets */; };
+		B21E319B2A19062300537932 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B21E319A2A19062300537932 /* Preview Assets.xcassets */; };
+		B21E31A52A19062300537932 /* spot_sensor_relayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21E31A42A19062300537932 /* spot_sensor_relayTests.swift */; };
+		B21E31AF2A19062300537932 /* spot_sensor_relayUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21E31AE2A19062300537932 /* spot_sensor_relayUITests.swift */; };
+		B21E31B12A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21E31B02A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift */; };
+		B25C17EE2A1A71ED00FDF2AE /* JPEG in Frameworks */ = {isa = PBXBuildFile; productRef = B25C17ED2A1A71ED00FDF2AE /* JPEG */; };
+		B25C17F22A1A75E500FDF2AE /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = B25C17F12A1A75E500FDF2AE /* Swifter */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B21E31A12A19062300537932 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B21E31882A19062100537932 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B21E318F2A19062200537932;
+			remoteInfo = spot_sensor_relay;
+		};
+		B21E31AB2A19062300537932 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B21E31882A19062100537932 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B21E318F2A19062200537932;
+			remoteInfo = spot_sensor_relay;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B21E31902A19062200537932 /* spot_sensor_relay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = spot_sensor_relay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B21E31932A19062200537932 /* spot_sensor_relayApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = spot_sensor_relayApp.swift; sourceTree = "<group>"; };
+		B21E31952A19062200537932 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B21E31972A19062300537932 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B21E319A2A19062300537932 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B21E31A02A19062300537932 /* spot_sensor_relayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = spot_sensor_relayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B21E31A42A19062300537932 /* spot_sensor_relayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = spot_sensor_relayTests.swift; sourceTree = "<group>"; };
+		B21E31AA2A19062300537932 /* spot_sensor_relayUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = spot_sensor_relayUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B21E31AE2A19062300537932 /* spot_sensor_relayUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = spot_sensor_relayUITests.swift; sourceTree = "<group>"; };
+		B21E31B02A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = spot_sensor_relayUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		B21E31BD2A190F7C00537932 /* spot_sensor_relay.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = spot_sensor_relay.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B21E318D2A19062200537932 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B25C17EE2A1A71ED00FDF2AE /* JPEG in Frameworks */,
+				B25C17F22A1A75E500FDF2AE /* Swifter in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B21E319D2A19062300537932 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B21E31A72A19062300537932 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B21E31872A19062100537932 = {
+			isa = PBXGroup;
+			children = (
+				B21E31922A19062200537932 /* spot_sensor_relay */,
+				B21E31A32A19062300537932 /* spot_sensor_relayTests */,
+				B21E31AD2A19062300537932 /* spot_sensor_relayUITests */,
+				B21E31912A19062200537932 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B21E31912A19062200537932 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B21E31902A19062200537932 /* spot_sensor_relay.app */,
+				B21E31A02A19062300537932 /* spot_sensor_relayTests.xctest */,
+				B21E31AA2A19062300537932 /* spot_sensor_relayUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B21E31922A19062200537932 /* spot_sensor_relay */ = {
+			isa = PBXGroup;
+			children = (
+				B21E31BD2A190F7C00537932 /* spot_sensor_relay.entitlements */,
+				B21E31932A19062200537932 /* spot_sensor_relayApp.swift */,
+				B21E31952A19062200537932 /* ContentView.swift */,
+				B21E31972A19062300537932 /* Assets.xcassets */,
+				B21E31992A19062300537932 /* Preview Content */,
+			);
+			path = spot_sensor_relay;
+			sourceTree = "<group>";
+		};
+		B21E31992A19062300537932 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				B21E319A2A19062300537932 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		B21E31A32A19062300537932 /* spot_sensor_relayTests */ = {
+			isa = PBXGroup;
+			children = (
+				B21E31A42A19062300537932 /* spot_sensor_relayTests.swift */,
+			);
+			path = spot_sensor_relayTests;
+			sourceTree = "<group>";
+		};
+		B21E31AD2A19062300537932 /* spot_sensor_relayUITests */ = {
+			isa = PBXGroup;
+			children = (
+				B21E31AE2A19062300537932 /* spot_sensor_relayUITests.swift */,
+				B21E31B02A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift */,
+			);
+			path = spot_sensor_relayUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B21E318F2A19062200537932 /* spot_sensor_relay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B21E31B42A19062300537932 /* Build configuration list for PBXNativeTarget "spot_sensor_relay" */;
+			buildPhases = (
+				B21E318C2A19062200537932 /* Sources */,
+				B21E318D2A19062200537932 /* Frameworks */,
+				B21E318E2A19062200537932 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = spot_sensor_relay;
+			packageProductDependencies = (
+				B25C17ED2A1A71ED00FDF2AE /* JPEG */,
+				B25C17F12A1A75E500FDF2AE /* Swifter */,
+			);
+			productName = spot_sensor_relay;
+			productReference = B21E31902A19062200537932 /* spot_sensor_relay.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B21E319F2A19062300537932 /* spot_sensor_relayTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B21E31B72A19062300537932 /* Build configuration list for PBXNativeTarget "spot_sensor_relayTests" */;
+			buildPhases = (
+				B21E319C2A19062300537932 /* Sources */,
+				B21E319D2A19062300537932 /* Frameworks */,
+				B21E319E2A19062300537932 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B21E31A22A19062300537932 /* PBXTargetDependency */,
+			);
+			name = spot_sensor_relayTests;
+			productName = spot_sensor_relayTests;
+			productReference = B21E31A02A19062300537932 /* spot_sensor_relayTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B21E31A92A19062300537932 /* spot_sensor_relayUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B21E31BA2A19062300537932 /* Build configuration list for PBXNativeTarget "spot_sensor_relayUITests" */;
+			buildPhases = (
+				B21E31A62A19062300537932 /* Sources */,
+				B21E31A72A19062300537932 /* Frameworks */,
+				B21E31A82A19062300537932 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B21E31AC2A19062300537932 /* PBXTargetDependency */,
+			);
+			name = spot_sensor_relayUITests;
+			productName = spot_sensor_relayUITests;
+			productReference = B21E31AA2A19062300537932 /* spot_sensor_relayUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B21E31882A19062100537932 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1430;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					B21E318F2A19062200537932 = {
+						CreatedOnToolsVersion = 14.3;
+					};
+					B21E319F2A19062300537932 = {
+						CreatedOnToolsVersion = 14.3;
+						TestTargetID = B21E318F2A19062200537932;
+					};
+					B21E31A92A19062300537932 = {
+						CreatedOnToolsVersion = 14.3;
+						TestTargetID = B21E318F2A19062200537932;
+					};
+				};
+			};
+			buildConfigurationList = B21E318B2A19062100537932 /* Build configuration list for PBXProject "spot_sensor_relay" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B21E31872A19062100537932;
+			packageReferences = (
+				B25C17EC2A1A71ED00FDF2AE /* XCRemoteSwiftPackageReference "jpeg" */,
+				B25C17F02A1A75E500FDF2AE /* XCRemoteSwiftPackageReference "swifter" */,
+			);
+			productRefGroup = B21E31912A19062200537932 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B21E318F2A19062200537932 /* spot_sensor_relay */,
+				B21E319F2A19062300537932 /* spot_sensor_relayTests */,
+				B21E31A92A19062300537932 /* spot_sensor_relayUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B21E318E2A19062200537932 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B21E319B2A19062300537932 /* Preview Assets.xcassets in Resources */,
+				B21E31982A19062300537932 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B21E319E2A19062300537932 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B21E31A82A19062300537932 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B21E318C2A19062200537932 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B21E31962A19062200537932 /* ContentView.swift in Sources */,
+				B21E31942A19062200537932 /* spot_sensor_relayApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B21E319C2A19062300537932 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B21E31A52A19062300537932 /* spot_sensor_relayTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B21E31A62A19062300537932 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B21E31B12A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift in Sources */,
+				B21E31AF2A19062300537932 /* spot_sensor_relayUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B21E31A22A19062300537932 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B21E318F2A19062200537932 /* spot_sensor_relay */;
+			targetProxy = B21E31A12A19062300537932 /* PBXContainerItemProxy */;
+		};
+		B21E31AC2A19062300537932 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B21E318F2A19062200537932 /* spot_sensor_relay */;
+			targetProxy = B21E31AB2A19062300537932 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		B21E31B22A19062300537932 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B21E31B32A19062300537932 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B21E31B52A19062300537932 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = spot_sensor_relay/spot_sensor_relay.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"spot_sensor_relay/Preview Content\"";
+				DEVELOPMENT_TEAM = DHCA3F892L;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Spot SensorRelay";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSCameraUsageDescription = "SensorRelay requires camera access to broadcast video.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SensorRelay requires microphone access to broadcast audio.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.kindaraffy.spot-sensor-relay";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B21E31B62A19062300537932 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = spot_sensor_relay/spot_sensor_relay.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"spot_sensor_relay/Preview Content\"";
+				DEVELOPMENT_TEAM = DHCA3F892L;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Spot SensorRelay";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSCameraUsageDescription = "SensorRelay requires camera access to broadcast video.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SensorRelay requires microphone access to broadcast audio.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.kindaraffy.spot-sensor-relay";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B21E31B82A19062300537932 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DHCA3F892L;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.kindaraffy.spot-sensor-relayTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/spot_sensor_relay.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/spot_sensor_relay";
+			};
+			name = Debug;
+		};
+		B21E31B92A19062300537932 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DHCA3F892L;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.kindaraffy.spot-sensor-relayTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/spot_sensor_relay.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/spot_sensor_relay";
+			};
+			name = Release;
+		};
+		B21E31BB2A19062300537932 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DHCA3F892L;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.kindaraffy.spot-sensor-relayUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = spot_sensor_relay;
+			};
+			name = Debug;
+		};
+		B21E31BC2A19062300537932 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DHCA3F892L;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "xyz.kindaraffy.spot-sensor-relayUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = spot_sensor_relay;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B21E318B2A19062100537932 /* Build configuration list for PBXProject "spot_sensor_relay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B21E31B22A19062300537932 /* Debug */,
+				B21E31B32A19062300537932 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B21E31B42A19062300537932 /* Build configuration list for PBXNativeTarget "spot_sensor_relay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B21E31B52A19062300537932 /* Debug */,
+				B21E31B62A19062300537932 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B21E31B72A19062300537932 /* Build configuration list for PBXNativeTarget "spot_sensor_relayTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B21E31B82A19062300537932 /* Debug */,
+				B21E31B92A19062300537932 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B21E31BA2A19062300537932 /* Build configuration list for PBXNativeTarget "spot_sensor_relayUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B21E31BB2A19062300537932 /* Debug */,
+				B21E31BC2A19062300537932 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B25C17EC2A1A71ED00FDF2AE /* XCRemoteSwiftPackageReference "jpeg" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kelvin13/jpeg";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		B25C17F02A1A75E500FDF2AE /* XCRemoteSwiftPackageReference "swifter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/httpswift/swifter";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B25C17ED2A1A71ED00FDF2AE /* JPEG */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B25C17EC2A1A71ED00FDF2AE /* XCRemoteSwiftPackageReference "jpeg" */;
+			productName = JPEG;
+		};
+		B25C17F12A1A75E500FDF2AE /* Swifter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B25C17F02A1A75E500FDF2AE /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Swifter;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = B21E31882A19062100537932 /* Project object */;
+}
