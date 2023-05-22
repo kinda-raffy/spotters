@@ -1,19 +1,22 @@
 import AVFoundation
 import SwiftUI
 import Swifter
-import ImageIO
-import MobileCoreServices
-import UniformTypeIdentifiers
+import VideoToolbox
+
 
 class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private let captureSession = AVCaptureSession()
-    private let encodeQueue = DispatchQueue(label: "EncodeQueue")
+    private var compressionSession: VTCompressionSession?
+    // Note: self.image data is being read and written to by different threads.
+    private let imageDataQueue = DispatchQueue(label: "ImageDataQueue")
+
     private var webServer: HttpServer?
     @Published var imageData: Data? = nil
     
     override init() {
         super.init()
         setupCamera()
+        setupCompressionSession()
         startWebServer()
     }
     
@@ -57,7 +60,7 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             captureSession.addOutput(videoOutput)
         }
         
-        // Set the resolution
+        // Resolution.
         captureSession.sessionPreset = .vga640x480  // .hd1280x720
     }
     
@@ -69,51 +72,91 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let cvPixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-        let ciImage = CIImage(cvPixelBuffer: cvPixelBuffer)
-        guard let cgImage = convertCIImageToCGImage(inputImage: ciImage) else { return }
-        
-        encodeQueue.async {
-            // Convert CGImage to JPEG.
-            let imageData = self.convertCGImageToJPEG(cgImage: cgImage)
-            // Update imageData.
-            DispatchQueue.main.async {
-                self.imageData = imageData
+
+        if let compressionSession = compressionSession {
+            var flagsOut: VTEncodeInfoFlags = VTEncodeInfoFlags()
+            let status = VTCompressionSessionEncodeFrame(compressionSession, imageBuffer: cvPixelBuffer, presentationTimeStamp: CMTime.invalid, duration: CMTime.invalid, frameProperties: nil, sourceFrameRefcon: nil, infoFlagsOut: &flagsOut)
+
+            if status != noErr {
+                print("Failed to encode frame: \(status)")
             }
+        } else {
+            print("Compression session is not set up")
         }
     }
     
-    private func convertCIImageToCGImage(inputImage: CIImage) -> CGImage? {
-        let context = CIContext(options: nil)
-        return context.createCGImage(inputImage, from: inputImage.extent)
+    private func setupCompressionSession() {
+        let width = 640
+        let height = 480
+
+        let status = VTCompressionSessionCreate(allocator: kCFAllocatorDefault,
+                                                width: Int32(width),
+                                                height: Int32(height),
+                                                codecType: kCMVideoCodecType_JPEG,
+                                                encoderSpecification: nil,
+                                                imageBufferAttributes: nil,
+                                                compressedDataAllocator: nil,
+                                                outputCallback: { outputCallbackRefCon, sourceFrameRefcon, status, infoFlags, sampleBuffer in
+                                                    guard status == noErr else {
+                                                        print("Error in outputCallback: \(status)")
+                                                        return
+                                                    }
+                                                    guard let sampleBuffer = sampleBuffer else {
+                                                        print("sampleBuffer was null in outputCallback")
+                                                        return
+                                                    }
+                                                    guard let outputCallbackRefCon = outputCallbackRefCon else {
+                                                        print("outputCallbackRefCon was null in outputCallback")
+                                                        return
+                                                    }
+                                                    let cameraManager: CameraManager = Unmanaged.fromOpaque(outputCallbackRefCon).takeUnretainedValue()
+                                                    cameraManager.handleOutput(sampleBuffer: sampleBuffer)
+                                                },
+                                                refcon: UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque()),
+                                                compressionSessionOut: &compressionSession)
+
+        guard status == noErr else {
+            print("Failed to create compression session: \(status)")
+            return
+        }
+
+        VTSessionSetProperty(compressionSession!, key: kVTCompressionPropertyKey_RealTime, value: kCFBooleanTrue)
     }
     
-    private func convertCGImageToJPEG(cgImage: CGImage) -> Data? {
-        let mutableData = CFDataCreateMutable(nil, 0)
-        guard let dataOut = CGDataConsumer(data: mutableData!) else { return nil }
-        guard let imageDestination = CGImageDestinationCreateWithDataConsumer(dataOut, kUTTypeJPEG, 1, nil) else { return nil }
+    private func handleOutput(sampleBuffer: CMSampleBuffer) {
+        guard let dataBuffer = CMSampleBufferGetDataBuffer(sampleBuffer) else { return }
         
-        let imageProperties = [
-            kCGImageDestinationLossyCompressionQuality: 0.75
-        ] as CFDictionary
+        var length: Int = 0
+        var dataPointer: UnsafeMutablePointer<Int8>?
+        let status = CMBlockBufferGetDataPointer(dataBuffer, atOffset: 0, lengthAtOffsetOut: nil, totalLengthOut: &length, dataPointerOut: &dataPointer)
         
-        CGImageDestinationAddImage(imageDestination, cgImage, imageProperties)
-        CGImageDestinationFinalize(imageDestination)
+        guard status == kCMBlockBufferNoErr else {
+            print("Failed to get data pointer from sample buffer: \(status)")
+            return
+        }
         
-        return mutableData as Data?
+        let data = Data(bytes: dataPointer!, count: length)
+        imageDataQueue.async(flags: .barrier) {
+            self.imageData = data
+        }
     }
     
     private func startWebServer() {
         let server = HttpServer()
-        
+        // This looks ugly.
         server["/rgb"] = { [weak self] request in
             return .raw(200, "OK", ["Content-Type": "multipart/x-mixed-replace; boundary=--boundary"], { writer in
-                while let data = self?.imageData {
-                    let jpegHeader = "--boundary\r\n" +
-                        "Content-Type: image/jpeg\r\n" +
-                        "Content-Length: \(data.count)\r\n\r\n"
-                    try? writer.write(jpegHeader.data(using: .utf8)!)
-                    try? writer.write(data)
-                    try? writer.write("\r\n".data(using: .utf8)!)
+                while true {  // Everything in the imageData queue.
+                    self?.imageDataQueue.sync {  // Obtain lock.
+                        if let data = self?.imageData {  // Publish image.
+                            let jpegHeader = "--boundary\r\n" +
+                                "Content-Type: image/jpeg\r\n" +
+                                "Content-Length: \(data.count)\r\n\r\n"
+                            try? writer.write(jpegHeader.data(using: .utf8)!)
+                            try? writer.write(data)
+                            try? writer.write("\r\n".data(using: .utf8)!)
+                        }
+                    }
                 }
             })
         }
@@ -128,9 +171,10 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 }
 
+
 struct ContentView: View {
     private var cameraManager = CameraManager()
-    
+
     var body: some View {
         VStack {
            Image(systemName: "antenna.radiowaves.left.and.right.circle")
@@ -147,14 +191,14 @@ struct ContentView: View {
        }
        .padding()
     }
-    
+
     func getWiFiAddress() -> String? {
         var address : String?
-        
+
         var ifaddr: UnsafeMutablePointer<ifaddrs>?
         guard getifaddrs(&ifaddr) == 0 else { return nil }
         guard let firstAddr = ifaddr else { return nil }
-        
+
         for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
             let flags = Int32(ptr.pointee.ifa_flags)
             let addr = ptr.pointee.ifa_addr.pointee
@@ -171,7 +215,7 @@ struct ContentView: View {
                 }
             }
         }
-        
+
         freeifaddrs(ifaddr)
         return address
     }
