@@ -5,4 +5,4 @@ from movement.main import main
 
 
 if __name__ == "__main__":
-    print("Move called:", main())
+    main()
