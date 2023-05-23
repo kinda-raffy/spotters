@@ -17,4 +17,3 @@ catkin_install_python(PROGRAMS
   scripts/move
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-
