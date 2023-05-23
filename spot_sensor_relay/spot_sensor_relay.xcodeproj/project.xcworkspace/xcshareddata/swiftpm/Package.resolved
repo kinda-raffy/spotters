@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "jpeg",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kelvin13/jpeg",
+      "state" : {
+        "branch" : "master",
+        "revision" : "fc21d193b85ad8593b0a894b1dec9bef56254058"
+      }
+    },
+    {
+      "identity" : "swifter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/httpswift/swifter",
+      "state" : {
+        "revision" : "9483a5d459b45c3ffd059f7b55f9638e268632fd",
+        "version" : "1.5.0"
+      }
+    }
+  ],
+  "version" : 2
+}
