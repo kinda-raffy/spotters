@@ -1,0 +1,57 @@
+<launch>
+    <param name="use_sim_time" value="false" />
+
+    <!-- Detect Video Device -->
+    <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="/dev/video0" />
+        <param name="full_ffmpeg_log" value="true" />
+        <param name="image_width" value="640" />
+        <param name="framerate" value="30" />
+        <param name="image_height" value="480" />
+        <param name="pixel_format" value="yu12" />
+        <param name="color_format" value="yuv422p" />
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+    </node>
+
+    <!-- Preview Image.
+    <node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
+        <remap from="image" to="/usb_cam/image_raw"/>
+        <param name="autosize" value="true" />
+    </node>
+    -->
+
+    <!-- ORB SLAM3 -->
+    <node name="orb_slam3" pkg="spot_slam" type="ros_mono" output="screen">
+        <remap from="/camera/image_raw"    to="/usb_cam/image_raw"/>
+
+        <!-- Parameters for original ORB-SLAM3 -->
+        <param name="voc_file"      type="string" value="$(find spot_slam)/orb_slam3/Vocabulary/ORBvoc.txt.bin"/>
+        <param name="settings_file" type="string" value="$(find spot_slam)/config/Monocular/iPhone13_mini.yaml"/>
+
+        <!-- Parameters for ROS -->
+        <param name="world_frame_id"    type="string"   value="world" />
+        <param name="cam_frame_id"      type="string"   value="camera" />
+        <param name="enable_pangolin"   type="bool"     value="false" />
+    </node>
+
+    <!-- Visualization -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find spot_slam)/config/camera.rviz" output="screen" />
+
+    <!-- Trajectory path -->
+    <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="spot_slam_trajectory_server" output="screen" ns="spot_slam" >
+        <param name="/target_frame_name"        value="/world" />
+        <param name="/source_frame_name"        value="/camera" />
+        <param name="/trajectory_update_rate"   value="20.0" />
+        <param name="/trajectory_publish_rate"  value="20.0" />
+    </node>
+
+    <!-- Octomap Server -->
+    <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+    	<param name="resolution" value="0.005" />
+    	<param name="frame_id" type="string" value="world" />
+    	<param name="sensor_model/max_range" value="3.0" />
+    	<param name="latch" value="true" />
+    	<remap from="cloud_in" to="/orb_slam3/all_points" />
+    </node>
+</launch>
