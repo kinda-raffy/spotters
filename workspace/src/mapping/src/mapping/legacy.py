@@ -51,6 +51,7 @@ def main():
         "/orb_slam3/all_points", PointCloud2, updated_point_cloud_callback
     )
 
+
 def debug():
     sample_ply_data = o3d.data.PLYPointCloud()
     pcd = o3d.io.read_point_cloud(sample_ply_data.path)
