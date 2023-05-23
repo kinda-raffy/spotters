@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(spot_slam)
+project(orb_slam3_ros)
 
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release)
@@ -177,17 +177,17 @@ target_link_libraries(ros_mono
 )
 
 ## ROS node
-add_executable(ros_mono_inertial
+add_executable(ros_mono_inertial 
   src/ros_mono_inertial.cc
   src/common.cc
 )
-target_link_libraries(ros_mono_inertial
+target_link_libraries(ros_mono_inertial 
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
 ## ROS node
-add_executable(ros_stereo
+add_executable(ros_stereo 
   src/ros_stereo.cc
   src/common.cc
 )
@@ -201,7 +201,7 @@ add_executable(ros_stereo_inertial
   src/ros_stereo_inertial.cc
   src/common.cc
 )
-target_link_libraries(ros_stereo_inertial
+target_link_libraries(ros_stereo_inertial 
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
