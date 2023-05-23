@@ -20,6 +20,7 @@ Deprecated==1.2.13
 diagnostic-analysis==1.11.0
 diagnostic-common-diagnostics==1.11.0
 diagnostic-updater==1.11.0
+distro==1.8.0
 docutils==0.20
 dynamic-reconfigure==1.7.3
 empy==3.3.4
@@ -38,11 +39,18 @@ interactive-markers==1.12.0
 joint-state-publisher==1.15.1
 joint-state-publisher-gui==1.15.1
 laser_geometry==1.6.7
+lxml==4.9.2
 message-filters==1.16.0
 numpy==1.24.3
+opencv-python==4.2.0.34
+packaging==23.1
+ply==3.11
 protobuf==4.23.0
 PyJWT==2.7.0
 pyparsing==3.0.9
+PyQt5==5.15.9
+PyQt5-Qt5==5.15.2
+PyQt5-sip==12.12.1
 python-dateutil==2.8.2
 python-qt-binding==0.4.4
 PyYAML==6.0
@@ -66,6 +74,7 @@ rosmaster==1.16.0
 rosmsg==1.16.0
 rosnode==1.16.0
 rosparam==1.16.0
+rospkg==1.5.0
 rospy==1.16.0
 rosservice==1.16.0
 rostest==1.16.0
@@ -106,16 +115,19 @@ rqt_topic==0.4.13
 rqt_web==0.4.10
 rviz==1.14.20
 sensor-msgs==1.13.1
+sip==4.19.21
 six==1.16.0
 smach==2.5.1
 smach-ros==2.5.1
 smclib==1.8.6
+-e git+https://github.com/kinda-raffy/spot_wrapper.git@eb8e09dc60df239a9afd6e98aa37fc91b252ba7f#egg=spot_wrapper&subdirectory=../../../../../../workspace/src/spot_ros/spot_wrapper
 tf==1.13.2
 tf-conversions==1.13.2
 tf2-geometry-msgs==0.7.6
 tf2-kdl==0.7.6
 tf2-py==0.7.6
 tf2-ros==0.7.6
+tomli==2.0.1
 topic-tools==1.16.0
 transforms3d==0.4.1
 urllib3==2.0.2
