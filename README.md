@@ -20,9 +20,9 @@
 11. Follow the [installation](/workspace/src/spot_slam/README.md) procedure to ready spot_slam for build.
 12. Build workspace packages if you haven't already `cbuildspt`
 
-> :warning: Some required python packages are not supported by pip or are defective (PyKDL, sip). In most cases, apt's own version works perfectly. `apt install python3-<python package>` and `cp /usr/lib/python3/dist-packages/<python package>* /<venv location>/lib/python<version>/site-packages/` to copy the package into your virtual environment.
+> ⚠️ Some required python packages are not supported by pip or are defective (PyKDL, sip). In most cases, apt's own version works perfectly. `apt install python3-<python package>` and `cp /usr/lib/python3/dist-packages/<python package>* /<venv location>/lib/python<version>/site-packages/` to copy the package into your virtual environment.
 
-> :info: Beofore building workspace packages, always make sure you are in spot's virtual environment. You can activate via this command: `spot_env`.
+> ℹ️ Beofore building workspace packages, always make sure you are in spot's virtual environment. You can activate via this command: `spot_env`.
 
 ## Guidelines
 
