@@ -12,14 +12,17 @@
 2. Create a virtual environment `cd spotters; python3 -m virtualenv --python=/usr/bin/python3 spot_venv`
 3. `source .setup.bash`
 4. Activate the pyvenv `spot_env`
-5. Install requriements `pip install -r requirements.txt`
 6. Populate base submodules `git submodule init; git submodule update`
 7. Populate spot_ros submodules `cd workspace/src/spot_ros; git submodule init; git submodule update`
 8. Install spot_ros dependencies `rosdep install --from-paths spot_driver spot_msgs spot_viz spot_description spot_cam --ignore-src -y`
 9. Install the spot wrapper `pip install -e spot_wrapper/`
-10. Build workspace packages `cd ../..; catkin build`
+10. Install requriements `pip install -r requirements.txt`
+11. Follow the [installation](/workspace/src/spot_slam/README.md) procedure to ready spot_slam for build.
+12. Build workspace packages if you haven't already `cbuildspt`
 
 > :warning: Some required python packages are not supported by pip or are defective (PyKDL, sip). In most cases, apt's own version works perfectly. `apt install python3-<python package>` and `cp /usr/lib/python3/dist-packages/<python package>* /<venv location>/lib/python<version>/site-packages/` to copy the package into your virtual environment.
+
+> :info: Beofore building workspace packages, always make sure you are in spot's virtual environment. You can activate via this command: `spot_env`.
 
 ## Guidelines
 
