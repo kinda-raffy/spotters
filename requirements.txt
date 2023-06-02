@@ -115,12 +115,11 @@ rqt_topic==0.4.13
 rqt_web==0.4.10
 rviz==1.14.20
 sensor-msgs==1.13.1
-sip==4.19.21
 six==1.16.0
 smach==2.5.1
 smach-ros==2.5.1
 smclib==1.8.6
--e git+https://github.com/kinda-raffy/spot_wrapper.git@eb8e09dc60df239a9afd6e98aa37fc91b252ba7f#egg=spot_wrapper&subdirectory=../../../../../../workspace/src/spot_ros/spot_wrapper
+spot_wrapper==1.0.0
 tf==1.13.2
 tf-conversions==1.13.2
 tf2-geometry-msgs==0.7.6
