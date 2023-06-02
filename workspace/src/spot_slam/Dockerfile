@@ -3,7 +3,10 @@ FROM amd64/ros:noetic-perception-focal
 ARG DEBIAN_FRONTEND=noninteractive
 ARG ROS_DISTRO=noetic
 
-# Install Orb-SLAM3 ROS package.
+#
+# install ORBSLAM3 ROS package
+#
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         software-properties-common \
@@ -36,7 +39,10 @@ RUN mkdir -p catkin_ws/src && \
 
 RUN echo "source /root/catkin_ws/devel/setup.bash" >> /root/.bashrc
 
-# Install optional RealSenseSDK / RealSense ROS wrapper.
+#
+# install RealSenseSDK / RealSense ROS wrapper
+#
+
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
 RUN add-apt-repository "deb https://librealsense.intel.com/Debian/apt-repo $(lsb_release -sc) main"
 
