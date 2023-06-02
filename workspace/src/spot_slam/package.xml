@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
 <package>
-  <name>spot_slam</name>
+  <name>orb_slam3_ros</name>
   <version>0.0.1</version>
   <description>ORB SLAM3 ROS implementation.</description>
 
-  <maintainer email="contact@kindaraffy.xyz">Raf</maintainer>
   <maintainer email="thienhoangnguyen94@gmail.com">Thien Nguyen</maintainer>
 
   <license>BSD</license>
