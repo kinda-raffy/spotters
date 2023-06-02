@@ -1,5 +1,5 @@
 /**
-*
+* 
 * Common functions and variables across all modes (mono/stereo, with or w/o imu)
 *
 */
@@ -20,7 +20,7 @@ image_transport::Publisher tracking_img_pub;
 // Main functions
 //////////////////////////////////////////////////
 
-bool save_map_srv(spot_slam::SaveMap::Request &req, spot_slam::SaveMap::Response &res)
+bool save_map_srv(orb_slam3_ros::SaveMap::Request &req, orb_slam3_ros::SaveMap::Response &res)
 {
     res.success = pSLAM->SaveMap(req.name);
 
@@ -32,7 +32,7 @@ bool save_map_srv(spot_slam::SaveMap::Request &req, spot_slam::SaveMap::Response
     return res.success;
 }
 
-bool save_traj_srv(spot_slam::SaveMap::Request &req, spot_slam::SaveMap::Response &res)
+bool save_traj_srv(orb_slam3_ros::SaveMap::Request &req, orb_slam3_ros::SaveMap::Response &res)
 {
     const string cam_traj_file = req.name + "_cam_traj.txt";
     const string kf_traj_file = req.name + "_kf_traj.txt";
@@ -85,7 +85,7 @@ void publish_topics(ros::Time msg_time, Eigen::Vector3f Wbb)
 
     if (Twc.translation().array().isNaN()[0] || Twc.rotationMatrix().array().isNaN()(0,0)) // avoid publishing NaN
         return;
-
+    
     // Common topics
     publish_camera_pose(Twc, msg_time);
     publish_tf_transform(Twc, world_frame_id, cam_frame_id, msg_time);
@@ -181,14 +181,14 @@ void publish_tracking_img(cv::Mat image, ros::Time msg_time)
 void publish_tracked_points(std::vector<ORB_SLAM3::MapPoint*> tracked_points, ros::Time msg_time)
 {
     sensor_msgs::PointCloud2 cloud = mappoint_to_pointcloud(tracked_points, msg_time);
-
+    
     tracked_mappoints_pub.publish(cloud);
 }
 
 void publish_all_points(std::vector<ORB_SLAM3::MapPoint*> map_points, ros::Time msg_time)
 {
     sensor_msgs::PointCloud2 cloud = mappoint_to_pointcloud(map_points, msg_time);
-
+    
     all_mappoints_pub.publish(cloud);
 }
 
@@ -198,7 +198,7 @@ void publish_kf_markers(std::vector<Sophus::SE3f> vKFposes, ros::Time msg_time)
     int numKFs = vKFposes.size();
     if (numKFs == 0)
         return;
-
+    
     visualization_msgs::Marker kf_markers;
     kf_markers.header.frame_id = world_frame_id;
     kf_markers.ns = "kf_markers";
@@ -222,7 +222,7 @@ void publish_kf_markers(std::vector<Sophus::SE3f> vKFposes, ros::Time msg_time)
         kf_marker.z = vKFposes[i].translation().z();
         kf_markers.points.push_back(kf_marker);
     }
-
+    
     kf_markers_pub.publish(kf_markers);
 }
 
@@ -292,7 +292,7 @@ cv::Mat SE3f_to_cvMat(Sophus::SE3f T_SE3f)
 
     Eigen::Matrix4f T_Eig3f = T_SE3f.matrix();
     cv::eigen2cv(T_Eig3f, T_cvmat);
-
+    
     return T_cvmat;
 }
 
