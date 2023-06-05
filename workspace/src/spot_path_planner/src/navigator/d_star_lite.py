@@ -1,177 +1,158 @@
-import heapq
-from utils import stateNameToCoords, render_all
+from priority_queue import PriorityQueue, Priority
+from grid import OccupancyGridMap
+import numpy as np
+from utils import heuristic, Vertex, Vertices
+from typing import Dict, List
+
+OBSTACLE = 255
+UNOCCUPIED = 0
 
 
-def topKey(queue, graph, s_current):
-    queue = [(x[1]+heuristic_from_s(graph, x[2], s_current), x[1], x[2]) for x in queue]
-    queue.sort()
-    # print(queue)
-    if len(queue) > 0:
-        return queue[0][:2]
-    else:
-        # print('empty queue!')
-        return (float('inf'), float('inf'))
+class DStarLite:
+    def __init__(self, map: OccupancyGridMap, s_start: (int, int), s_goal: (int, int)):
+        """
+        :param map: the ground truth map of the environment provided by gui
+        :param s_start: start location
+        :param s_goal: end location
+        """
+        self.new_edges_and_old_costs = None
 
+        # algorithm start
+        self.s_start = s_start
+        self.s_goal = s_goal
+        self.s_last = s_start
+        self.k_m = 0  # accumulation
+        self.U = PriorityQueue()
+        self.rhs = np.ones((map.x_dim, map.y_dim)) * np.inf
+        self.g = self.rhs.copy()
 
-def heuristic_from_s(graph, id, s):
+        self.sensed_map = OccupancyGridMap(x_dim=map.x_dim,
+                                           y_dim=map.y_dim,
+                                           exploration_setting='8N')
 
-    x_distance = abs(int(id.split('x')[1][0]) - int(s.split('x')[1][0]))
-    y_distance = abs(int(id.split('y')[1][0]) - int(s.split('y')[1][0]))
-    return x_distance + y_distance
+        self.rhs[self.s_goal] = 0
+        self.U.insert(self.s_goal, Priority(heuristic(self.s_start, self.s_goal), 0))
 
+    def calculate_key(self, s: (int, int)):
+        """
+        :param s: the vertex we want to calculate key
+        :return: Priority class of the two keys
+        """
+        k1 = min(self.g[s], self.rhs[s]) + heuristic(self.s_start, s) + self.k_m
+        k2 = min(self.g[s], self.rhs[s])
+        return Priority(k1, k2)
 
-def calculateKey(graph, id, s_current, k_m):
-    return (min(graph.graph[id].g, graph.graph[id].rhs) + heuristic_from_s(graph, id, s_current) , min(graph.graph[id].g, graph.graph[id].rhs))
-
-
-def updateVertex(graph, queue, id, s_current, k_m):
-    s_goal = graph.goal
-    if id != s_goal:
-        min_rhs = float('inf')
-        for i in graph.graph[id].children:
-            min_rhs = min(
-                min_rhs, graph.graph[i].g + graph.graph[id].children[i])
-        graph.graph[id].rhs = min_rhs
-        y, x = stateNameToCoords(id)
-        if graph.cells[x][y] >= 0:
-            graph.cells[x][y] = 2 if graph.graph[id].rhs == graph.graph[id].g else 3
-        render_all(graph, status="Update Vertex")
-    id_in_queue = [item for item in queue if id in item]
-    if id_in_queue != []:
-        if len(id_in_queue) != 1:
-            raise ValueError('more than one ' + id + ' in the queue!')
-        queue.remove(id_in_queue[0])
-    if graph.graph[id].rhs != graph.graph[id].g:
-        heapq.heappush(queue, calculateKey(graph, id, s_current, k_m) + (id,))
-
-
-def computeShortestPath(graph, queue, s_start, k_m):
-
-
-
-    while  (graph.graph[s_start].rhs != graph.graph[s_start].g or topKey(queue, graph, s_start)< calculateKey(graph, s_start, s_start, k_m)):
-
-
-        # print(graph.graph[s_start])
-        # print('topKey')
-        # print(topKey(queue))
-        # print('calculateKey')
-        # print(calculateKey(graph, s_start, 0))
-        k_old = topKey(queue, graph, s_start)
-
-        #print(k_old)
-        u = heapq.heappop(queue)[2]
-        if graph.graph[u].g > graph.graph[u].rhs:
-            graph.graph[u].g = graph.graph[u].rhs
-            y, x = stateNameToCoords(u)
-            if graph.cells[x][y] >= 0:
-                graph.cells[x][y] = 2 if graph.graph[u].rhs == graph.graph[u].g else 3
-            render_all(graph, status="Computer Shortest Path")
-            for i in graph.graph[u].parents:
-                updateVertex(graph, queue, i, s_start, k_m)
+    def c(self, u: (int, int), v: (int, int)) -> float:
+        """
+        calcuclate the cost between nodes
+        :param u: from vertex
+        :param v: to vertex
+        :return: euclidean distance to traverse. inf if obstacle in path
+        """
+        if not self.sensed_map.is_unoccupied(u) or not self.sensed_map.is_unoccupied(v):
+            return float('inf')
         else:
-            graph.graph[u].g = float('inf')
-            y, x = stateNameToCoords(u)
-            if graph.cells[x][y] >= 0:
-                graph.cells[x][y] = 2 if graph.graph[u].rhs == graph.graph[u].g else 3
-            render_all(graph, status="Computer Shortest Path")
-            updateVertex(graph, queue, u, s_start, k_m)
-            for i in graph.graph[u].parents:
-                updateVertex(graph, queue, i, s_start, k_m)
+            return heuristic(u, v)
 
-        # graph.printGValues()
+    def contain(self, u: (int, int)) -> (int, int):
+        return u in self.U.vertices_in_heap
 
+    def update_vertex(self, u: (int, int)):
+        if self.g[u] != self.rhs[u] and self.contain(u):
+            self.U.update(u, self.calculate_key(u))
+        elif self.g[u] != self.rhs[u] and not self.contain(u):
+            self.U.insert(u, self.calculate_key(u))
+        elif self.g[u] == self.rhs[u] and self.contain(u):
+            self.U.remove(u)
 
-def nextInShortestPath(graph, s_current):
-    min_rhs = float('inf')
-    s_next = None
-    if graph.graph[s_current].rhs == float('inf'):
-        print('You are done stuck')
-    else:
-        for i in graph.graph[s_current].children:
-            # print(i)
-            child_cost = graph.graph[i].g + graph.graph[s_current].children[i]
-            # print(child_cost)
-            if (child_cost) < min_rhs:
-                min_rhs = child_cost
-                s_next = i
-        if s_next:
-            return s_next
-        else:
-            raise ValueError('could not find child for transition!')
+    def compute_shortest_path(self):
+        while self.U.top_key() < self.calculate_key(self.s_start) or self.rhs[self.s_start] > self.g[self.s_start]:
+            u = self.U.top()
+            k_old = self.U.top_key()
+            k_new = self.calculate_key(u)
 
+            if k_old < k_new:
+                self.U.update(u, k_new)
+            elif self.g[u] > self.rhs[u]:
+                self.g[u] = self.rhs[u]
+                self.U.remove(u)
+                pred = self.sensed_map.succ(vertex=u)
+                for s in pred:
+                    if s != self.s_goal:
+                        self.rhs[s] = min(self.rhs[s], self.c(s, u) + self.g[u])
+                    self.update_vertex(s)
+            else:
+                self.g_old = self.g[u]
+                self.g[u] = float('inf')
+                pred = self.sensed_map.succ(vertex=u)
+                pred.append(u)
+                for s in pred:
+                    if self.rhs[s] == self.c(s, u) + self.g_old:
+                        if s != self.s_goal:
+                            min_s = float('inf')
+                            succ = self.sensed_map.succ(vertex=s)
+                            for s_ in succ:
+                                temp = self.c(s, s_) + self.g[s_]
+                                if min_s > temp:
+                                    min_s = temp
+                            self.rhs[s] = min_s
+                    self.update_vertex(u)
 
-def scanForObstacles(graph, queue, s_current, scan_range, k_m):
-    states_to_update = {}
-    range_checked = 0
-    if scan_range >= 1:
-        for neighbor in graph.graph[s_current].children:
-            neighbor_coords = stateNameToCoords(neighbor)
-            states_to_update[neighbor] = graph.cells[neighbor_coords[1]
-                                                     ][neighbor_coords[0]]
-        range_checked = 1
-    # print(states_to_update)
+    def rescan(self) -> Vertices:
 
-    while range_checked < scan_range:
-        new_set = {}
-        for state in states_to_update:
-            new_set[state] = states_to_update[state]
-            for neighbor in graph.graph[state].children:
-                if neighbor not in new_set:
-                    neighbor_coords = stateNameToCoords(neighbor)
-                    new_set[neighbor] = graph.cells[neighbor_coords[1]
-                                                    ][neighbor_coords[0]]
-        range_checked += 1
-        states_to_update = new_set
+        new_edges_and_old_costs = self.new_edges_and_old_costs
+        self.new_edges_and_old_costs = None
+        return new_edges_and_old_costs
 
-    new_obstacle = False
-    for state in states_to_update:
-        if states_to_update[state] < 0:  # found cell with obstacle
-            # print('found obstacle in ', state)
-            for neighbor in graph.graph[state].children:
-                # first time to observe this obstacle where one wasn't before
-                if(graph.graph[state].children[neighbor] != float('inf')):
-                    neighbor_coords = stateNameToCoords(state)
-                    graph.cells[neighbor_coords[1]][neighbor_coords[0]] = -2
-                    graph.graph[neighbor].children[state] = float('inf')
-                    render_all(graph, status="Update Edge Cost due to Changes")
-                    graph.graph[state].children[neighbor] = float('inf')
-                    render_all(graph, status="Update Edge Cost due to Changes")
-                    updateVertex(graph, queue, state, s_current, k_m)
-                    new_obstacle = True
+    def move_and_replan(self, robot_position: (int, int)):
+        path = [robot_position]
+        self.s_start = robot_position
+        self.s_last = self.s_start
+        self.compute_shortest_path()
 
-        # elif states_to_update[state] == 0: #cell without obstacle
-            # for neighbor in graph.graph[state].children:
-                # if(graph.graph[state].children[neighbor] != float('inf')):
+        while self.s_start != self.s_goal:
+            assert (self.rhs[self.s_start] != float('inf')), "There is no known path!"
 
-    # print(graph)
-    return new_obstacle
+            succ = self.sensed_map.succ(self.s_start, avoid_obstacles=False)
+            min_s = float('inf')
+            arg_min = None
+            for s_ in succ:
+                temp = self.c(self.s_start, s_) + self.g[s_]
+                if temp < min_s:
+                    min_s = temp
+                    arg_min = s_
 
+            ### algorithm sometimes gets stuck here for some reason !!! FIX
+            self.s_start = arg_min
+            path.append(self.s_start)
+            # scan graph for changed costs
+            changed_edges_with_old_cost = self.rescan()
+            #print("len path: {}".format(len(path)))
+            # if any edge costs changed
+            if changed_edges_with_old_cost:
+                self.k_m += heuristic(self.s_last, self.s_start)
+                self.s_last = self.s_start
 
-def moveAndRescan(graph, queue, s_current, scan_range, k_m):
-    if(s_current == graph.goal):
-        return 'goal', k_m
-    else:
-        results = scanForObstacles(graph, queue, s_current, scan_range, k_m)
-        k_m += heuristic_from_s(graph, s_current, graph.goal)
-        computeShortestPath(graph, queue, s_current, k_m)
-        s_last = s_current
-        s_new = nextInShortestPath(graph, s_current)
-        new_coords = stateNameToCoords(s_new)
-
-        if(graph.cells[new_coords[1]][new_coords[0]] == -1):  # just ran into new obstacle
-            s_new = s_current  # need to hold tight and scan/replan first
-
-        # print(graph)
-
-
-        return s_new, k_m
-
-
-def initDStarLite(graph, queue, s_start, s_goal, k_m):
-    graph.graph[s_goal].rhs = 0
-    heapq.heappush(queue, calculateKey(
-        graph, s_goal, s_start, k_m) + (s_goal,))
-    computeShortestPath(graph, queue, s_start, k_m)
-
-    return (graph, queue, k_m)
+                # for all directed edges (u,v) with changed edge costs
+                vertices = changed_edges_with_old_cost.vertices
+                for vertex in vertices:
+                    v = vertex.pos
+                    succ_v = vertex.edges_and_c_old
+                    for u, c_old in succ_v.items():
+                        c_new = self.c(u, v)
+                        if c_old > c_new:
+                            if u != self.s_goal:
+                                self.rhs[u] = min(self.rhs[u], self.c(u, v) + self.g[v])
+                        elif self.rhs[u] == c_old + self.g[v]:
+                            if u != self.s_goal:
+                                min_s = float('inf')
+                                succ_u = self.sensed_map.succ(vertex=u)
+                                for s_ in succ_u:
+                                    temp = self.c(u, s_) + self.g[s_]
+                                    if min_s > temp:
+                                        min_s = temp
+                                self.rhs[u] = min_s
+                            self.update_vertex(u)
+            self.compute_shortest_path()
+        print("path found!")
+        return path, self.g, self.rhs
