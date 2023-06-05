@@ -7,7 +7,7 @@ UNOCCUPIED = 0
 
 
 class OccupancyGridMap:
-    def __init__(self, x_dim, y_dim, exploration_setting='8N'):
+    def __init__(self, x_dim, y_dim, occupancy_grid_map, exploration_setting='8N'):
         """
         set initial values for the map occupancy grid
         |----------> y, column
@@ -25,7 +25,7 @@ class OccupancyGridMap:
         self.map_extents = (x_dim, y_dim)
 
         # the obstacle map
-        self.occupancy_grid_map = np.zeros(self.map_extents, dtype=np.uint8)
+        self.occupancy_grid_map = occupancy_grid_map
 
         # obstacles
         self.visited = {}

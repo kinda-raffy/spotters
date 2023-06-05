@@ -10,16 +10,24 @@ from geometry_msgs.msg import (
 )
 
 from navigator import grid, graph, d_star_lite
+from navigator_new import OccupancyGridMap
 from nav_msgs.msg import OccupancyGrid
 
 from spot_driver.spot_ros import SpotROS
 
+INITIAL_WIDTH = 1000
+INITIAL_HEIGHT = 1000
 current_pose = Pose() # Current position of the robot
 next_pose = Pose() # Next pose within the path to go to.
+# According to navigator_new/grid.py, y_dim is essentially the width of a grid
+occupancy_grid_map = OccupancyGridMap(y_dim = INITIAL_WIDTH, x_dim = INITIAL_HEIGHT)
 
 def occupancy_callback(data):
-    print("Received occupancy grid")
     # TODO - Update map
+    y_dim = data.info.width
+    x_dim = data.info.height
+    occupancy_grid_map.set_map([data.data[i:i+y_dim] for i in range(0, len(data.data), y_dim)][:x_dim])
+    
     # TODO - If goal exists, update path as well
 
 def goal_callback(data):
