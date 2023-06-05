@@ -1,0 +1,7 @@
+<launch>
+  <!-- Start the map publisher node -->
+  <node name="map_publisher" pkg="spot_path_planner" type="publish_to_map.py" output="screen"/>
+
+  <!-- Start the map subscriber node -->
+  <node name="map_subscriber" pkg="spot_path_planner" type="subscribe_to_map.py" output="screen"/>
+</launch>
