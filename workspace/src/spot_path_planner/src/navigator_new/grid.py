@@ -126,6 +126,28 @@ class OccupancyGridMap:
                  if self.in_bounds((x, y))]
         return {node: UNOCCUPIED if self.is_unoccupied(pos=node) else OBSTACLE for node in nodes}
 
+    """
+    When you want to update a part of the map, this should be used. Observations should be a matrix of occupancy grids
+    relative to the current position.    
+    """
+    def updateLocalKnowledge(self, dim_x, dim_y, global_position: (int, int), observations):
+        print("Updating local knowledge...")
+        # TODO
+        (px, py) = global_position
+        # i, j will start on top left corner of the map
+        i, j = px - dim_x / 2, py - dim_y / 2
+        
+        # Iterates through the observations relative to our own pos,
+        # and applies the observations to the known map.
+        for row in observations:
+            for cell in row:
+                if cell == 1:
+                    self.set_obstacle(self, (i, j))
+                elif cell == 0:
+                    self.remove_obstacle(self, (i, j))
+                i += 1
+            j += 1
+
 
 class SLAM:
     def __init__(self, map: OccupancyGridMap, view_range: int):
