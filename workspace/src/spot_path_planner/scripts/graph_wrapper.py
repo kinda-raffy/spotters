@@ -3,6 +3,7 @@ from graph import Node, Graph
 
 class GraphWrapper(Graph):
     def __init__(self, map_msg, connect8=True):
+        # TODO: This function needs to be tested to ensure it works as inteneded (convert occupancy map in a format that is compatible with the code)
         self.x_dim = map_msg.info.width
         self.y_dim = map_msg.info.height
         occupancy_map = map_msg.data

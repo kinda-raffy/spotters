@@ -10,6 +10,7 @@ if __name__ == "__main__":
     map_msg = rospy.wait_for_message('/map', OccupancyGrid)
 
     graph = GraphWrapper(map_msg)
+    # TODO: we need to find a way to receive s_start and s_goal via topic
     s_start = 'x1y2'
     s_goal = 'x5y8'
     graph.goal = s_goal
@@ -45,7 +46,7 @@ if __name__ == "__main__":
                     pos_coords = stateNameToCoords(s_current)
                     graph.pos_coords = pos_coords
                     # print('got pos coords: ', pos_coords)
-
+        
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # User clicks the mouse. Get the position
                 pos = pygame.mouse.get_pos()
