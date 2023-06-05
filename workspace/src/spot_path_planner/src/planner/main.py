@@ -19,7 +19,7 @@ INITIAL_WIDTH = 1000
 INITIAL_HEIGHT = 1000
 current_pose = Pose() # Current position of the robot
 next_pose = Pose() # Next pose within the path to go to.
-# According to navigator_new/grid.py, y_dim is essentially the width of a grid
+# TODO: y_dim is apaprently the width. We need to confirm this through testing.
 occupancy_grid_map = OccupancyGridMap(y_dim = INITIAL_WIDTH, x_dim = INITIAL_HEIGHT)
 
 def occupancy_callback(data):
