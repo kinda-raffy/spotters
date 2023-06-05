@@ -95,10 +95,10 @@ void publish_topics(ros::Time msg_time, Eigen::Vector3f Wbb)
     tf::Transform rotation_camera_to_world;
     rotation_camera_to_world.setOrigin(tf::Vector3(0.0, 0.0, 0.0));
     tf::Quaternion q;
-    q.setRPY(M_PI/2, 0, 0);  // Rotate 90 degrees about the x-axis.
+    q.setRPY(M_PI/2, 3 * M_PI/2, 0);  // Rotate to world coordinates.
     rotation_camera_to_world.setRotation(q);
 
-    // Apply the rotation to camera pose to get pose in world coordinates.
+    // Apply the rotation to camera pose to get pose.
     tf::Transform Twc_tf = SE3f_to_tfTransform(Twc);
     tf::Transform Tcw_world = Twc_tf * rotation_camera_to_world;
 
@@ -106,7 +106,7 @@ void publish_topics(ros::Time msg_time, Eigen::Vector3f Wbb)
     Sophus::SE3f Tcw_world_SE3f = tfTransform_to_SE3f(Tcw_world);
 
     // Publish the new frame
-    publish_tf_transform(Tcw_world_SE3f, world_frame_id, "camera_world", msg_time);
+    publish_tf_transform(Tcw_world_SE3f, world_frame_id, "camera_link", msg_time);
 
 
     publish_tracking_img(pSLAM->GetCurrentFrame(), msg_time);

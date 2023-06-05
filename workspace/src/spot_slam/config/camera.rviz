@@ -4,13 +4,8 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Status1
         - /Object Frames1/Frames1
-        - /Cameras1/Mono Camera1
         - /VSLAM1
-        - /VSLAM1/ORB Cloud1
-        - /VSLAM1/Filtered Points1
-        - /Mapping1
         - /Mapping1/3D Map1/Namespaces1
       Splitter Ratio: 0.5708582997322083
     Tree Height: 871
@@ -46,9 +41,45 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        base_link:
+          Value: true
+        body:
+          Value: true
         camera:
           Value: true
+        front_left_hip:
+          Value: true
+        front_left_lower_leg:
+          Value: true
+        front_left_upper_leg:
+          Value: true
+        front_rail:
+          Value: true
+        front_right_hip:
+          Value: true
+        front_right_lower_leg:
+          Value: true
+        front_right_upper_leg:
+          Value: true
         origin:
+          Value: true
+        real_front_rail:
+          Value: true
+        real_rear_rail:
+          Value: true
+        rear_left_hip:
+          Value: true
+        rear_left_lower_leg:
+          Value: true
+        rear_left_upper_leg:
+          Value: true
+        rear_rail:
+          Value: true
+        rear_right_hip:
+          Value: true
+        rear_right_lower_leg:
+          Value: true
+        rear_right_upper_leg:
           Value: true
       Marker Alpha: 1
       Marker Scale: 0.5
@@ -58,6 +89,32 @@ Visualization Manager:
       Show Names: true
       Tree:
         origin:
+          body:
+            base_link:
+              {}
+            front_left_hip:
+              front_left_upper_leg:
+                front_left_lower_leg:
+                  {}
+            front_rail:
+              {}
+            front_right_hip:
+              front_right_upper_leg:
+                front_right_lower_leg:
+                  {}
+            real_front_rail:
+              real_rear_rail:
+                {}
+            rear_left_hip:
+              rear_left_upper_leg:
+                rear_left_lower_leg:
+                  {}
+            rear_rail:
+              {}
+            rear_right_hip:
+              rear_right_upper_leg:
+                rear_right_lower_leg:
+                  {}
           camera:
             {}
       Update Interval: 0
@@ -318,6 +375,107 @@ Visualization Manager:
           Value: true
       Enabled: false
       Name: Mapping
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        body:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_hip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_lower_leg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_left_upper_leg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_rail:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        front_right_hip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_lower_leg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        front_right_upper_leg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        real_front_rail:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        real_rear_rail:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rear_left_hip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_left_lower_leg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_left_upper_leg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_rail:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        rear_right_hip:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_right_lower_leg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_right_upper_leg:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: RobotModel
+      Robot Description: robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -346,7 +504,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.474676489830017
+      Distance: 10.358781814575195
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -354,17 +512,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.9878796339035034
-        Y: -0.9124918580055237
-        Z: 1.867928403953556e-06
+        X: 2.67703914642334
+        Y: 1.0004165172576904
+        Z: 1.877368504210608e-06
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.0697963535785675
+      Pitch: -0.2052040696144104
       Target Frame: camera
-      Yaw: 3.8663878440856934
+      Yaw: 3.876386880874634
     Saved:
       - Class: rviz/FrameAligned
         Enable Stereo Rendering:
@@ -410,10 +568,10 @@ Window Geometry:
     collapsed: false
   Height: 1022
   Hide Left Dock: false
-  Hide Right Dock: false
+  Hide Right Dock: true
   Mono Camera:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001af000003a4fc020000000ffb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000002e100000185000000b0fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000003a4000000c900fffffffb00000016004d006f006e006f002000430061006d006500720061030000036300000036000000ec000000d2fb0000000e0054007200610063006b0065007203000001c5000000360000019f0000015afb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000180074007200610063006b0069006e006700200069006d006702000003c5000002b6000001c00000017efb000000180072006100770020006c00650066007400200069006d0067020000058f000002b7000001e50000017dfb0000000a0047007200610070006800000001e4000001290000000000000000fb0000000a004700720061007000680000000264000001450000000000000000fb00000014004c0069006e006500200067007200610070006800000002420000016700000000000000000000000100000150000003a4fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d000003a4000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073d00000042fc0100000002fb0000000800540069006d006500000000000000073d0000041800fffffffb0000000800540069006d0065010000000000000450000000000000000000000475000003a400000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001af000003a4fc020000000ffb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000002e100000185000000b0fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000003a4000000c900fffffffb00000016004d006f006e006f002000430061006d006500720061030000043d00000035000000f7000000d5fb0000000e0054007200610063006b006500720300000533000000350000024d000001e6fb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000180074007200610063006b0069006e006700200069006d006702000003c5000002b6000001c00000017efb000000180072006100770020006c00650066007400200069006d0067020000058f000002b7000001e50000017dfb0000000a0047007200610070006800000001e4000001290000000000000000fb0000000a004700720061007000680000000264000001450000000000000000fb00000014004c0069006e006500200067007200610070006800000002420000016700000000000000000000000100000150000003a4fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d000003a4000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073d00000042fc0100000002fb0000000800540069006d006500000000000000073d0000041800fffffffb0000000800540069006d00650100000000000004500000000000000000000005cb000003a400000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -423,7 +581,7 @@ Window Geometry:
   Tracker:
     collapsed: false
   Views:
-    collapsed: false
+    collapsed: true
   Width: 1920
   X: 0
   Y: 27
