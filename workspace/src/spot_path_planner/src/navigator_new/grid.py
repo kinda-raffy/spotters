@@ -128,13 +128,18 @@ class OccupancyGridMap:
 
     """
     When you want to update a part of the map, this should be used. Observations should be a matrix of occupancy grids
-    relative to the current position.    
+    relative to the current position.
+    
+    dim_x should represent heigh of the input map
+    dim_y should represent width of the input map
+    
+    Yes, it's not the other way around. This is just how this D* implementation works...
     """
     def updateLocalKnowledge(self, dim_x, dim_y, global_position: (int, int), observations):
-        print("Updating local knowledge...")
-        # TODO
         (px, py) = global_position
         # i, j will start on top left corner of the map
+        # i will represent the height / column
+        # j will represent the width / row
         i, j = px - dim_x / 2, py - dim_y / 2
         
         # Iterates through the observations relative to our own pos,
