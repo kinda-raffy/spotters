@@ -1,23 +1,33 @@
+import cv2
 import rospy
-import open3d as o3d
-from sensor_msgs.msg import PointCloud2
-from std_msgs.msg import Header
-import sensor_msgs.point_cloud2 as pc2
 import numpy as np
+import open3d as o3d
+from cv_bridge import CvBridge
+from scipy.spatial import ConvexHull
+
+import sensor_msgs.point_cloud2 as pc2
+from std_msgs.msg import Header
+from nav_msgs.msg import OccupancyGrid
+from sensor_msgs.msg import (
+    PointCloud2,
+    Image
+)
 
 
 class PointCloudFilter:
     def __init__(self):
         rospy.init_node('point_cloud_filter', anonymous=True)
-        self.pub = rospy.Publisher('/filtered_points', PointCloud2, queue_size=10)
-
-        rospy.Subscriber('/orb_slam3/all_points', PointCloud2, self.callback_all_points)
-        # TODO ~ Change to actual depth topic.
-        # rospy.Subscriber('/spot/all_depth_points', PointCloud2, self.callback_depth_points)
-
         # Initialize point clouds.
         self.all_orb_points = o3d.geometry.PointCloud()
         # self.depth_points = o3d.geometry.PointCloud()
+
+        self.pub = rospy.Publisher('/filtered_points', PointCloud2, queue_size=10)
+        rospy.Subscriber('/orb_slam3/all_points', PointCloud2, self.callback_all_points)
+        # TODO ~ Change to actual depth topic.
+        # rospy.Subscriber('/spot/all_depth_points', PointCloud2, self.callback_depth_points)
+        self.map_pub = rospy.Publisher('/map', OccupancyGrid, queue_size=1)
+        self.image_pub = rospy.Publisher('/map_image', Image, queue_size=1)
+        rospy.Subscriber('/projected_map', OccupancyGrid, self.callback_projected_map)
 
         # Counter for skipping callbacks.
         self.counter = 0
@@ -26,6 +36,7 @@ class PointCloudFilter:
         self.enable_icp = False
         self.enable_bilateral_smoothing = False
 
+    # --- Callbacks.
     def callback_all_points(self, data):
         if self.counter % 10 == 0:
             self.all_orb_points = self.convert_ros_to_o3d(data)
@@ -38,14 +49,11 @@ class PointCloudFilter:
             # self.process_point_clouds()
         self.counter += 1
 
-    def convert_ros_to_o3d(self, data):
-        pc = pc2.read_points(data, field_names=("x", "y", "z"), skip_nans=True)
-        pcd = o3d.geometry.PointCloud()
-        pcd.points = o3d.utility.Vector3dVector(list(pc))
-        return pcd
+    def callback_projected_map(self, data):
+        self.compute_map(data)
 
+    # --- Pipelines.
     def process_point_clouds(self):
-        # Fast Global Registration.
         if self.enable_global_registration:
             print("[0.0] Performing Global Registration.")
             voxel_size = 0.05
@@ -76,7 +84,6 @@ class PointCloudFilter:
             _, ind = self.all_orb_points.remove_radius_outlier(nb_points=16, radius=0.2)
             self.all_orb_points = self.all_orb_points.select_by_index(ind)
 
-            # Bilateral Filtering.
             print("[2.0] Smoothening points via bilateral filtering.")
             np_points = np.asarray(self.all_orb_points.points)
             filtered_points = self.bilateral_filter(np_points, sigma_spatial=0.02, sigma_value=0.1)
@@ -90,6 +97,37 @@ class PointCloudFilter:
         print("[-.-] Pipeline complete.\n")
         self.pub.publish(ros_cloud)
 
+    def compute_map(self, projected_map):
+        # 1D to 2D conversion.
+        grid = np.array(projected_map.data).reshape(
+            (projected_map.info.height, projected_map.info.width)
+        )
+
+        # Compute the convex hull.
+        points = np.transpose(np.nonzero(grid))  # Get occupied points.
+        hull = ConvexHull(points)
+
+        # Create a new grid for publishing.
+        # new_grid = np.zeros_like(grid)
+        new_grid = np.zeros_like(grid, dtype=np.uint8)
+        for simplex in hull.simplices:
+            contour = points[simplex]
+            contour[:, 1] = grid.shape[0] - contour[:, 1]  # Flip y-coordinates
+            cv2.drawContours(new_grid, [contour], 0, (255), -1)
+
+        # Convert the new grid to an OccupancyGrid message.
+        new_msg = OccupancyGrid()
+        new_msg.header = projected_map.header
+        new_msg.info = projected_map.info
+        new_msg.data = new_grid.flatten().tolist()
+        self.map_pub.publish(new_msg)
+
+        # Convert the new occupancy grid to an image.
+        bridge = CvBridge()
+        image_msg = bridge.cv2_to_imgmsg(new_grid, "mono8")
+        self.image_pub.publish(image_msg)
+
+    # --- Processing.
     def prepare_dataset(self, voxel_size):
         source_down = self.depth_points.voxel_down_sample(voxel_size)
         target_down = self.all_orb_points.voxel_down_sample(voxel_size)
@@ -136,6 +174,13 @@ class PointCloudFilter:
             # Compute weighted average.
             filtered_points[i] = np.sum(weights[:, None] * points, axis=0) / np.sum(weights)
         return filtered_points
+
+    # --- Utilities.
+    def convert_ros_to_o3d(self, data):
+        pc = pc2.read_points(data, field_names=("x", "y", "z"), skip_nans=True)
+        pcd = o3d.geometry.PointCloud()
+        pcd.points = o3d.utility.Vector3dVector(list(pc))
+        return pcd
 
     def convert_o3d_to_ros(self, pcd):
         header = Header()
