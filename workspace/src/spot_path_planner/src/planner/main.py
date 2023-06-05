@@ -14,11 +14,23 @@ from nav_msgs.msg import OccupancyGrid
 
 from spot_driver.spot_ros import SpotROS
 
+current_pose = Pose() # Current position of the robot
+next_pose = Pose() # Next pose within the path to go to.
+
 def occupancy_callback(data):
     print("Received occupancy grid")
+    # TODO - Update map
+    # TODO - If goal exists, update path as well
 
 def goal_callback(data):
     print("Received new goal")
+    # TODO - Update path
+    
+def pose_callback(data):
+    print("Received new pose")
+    global current_pose
+    current_pose = data
+    # TODO - Update position in map based on current pose relative to start
 
 def publish_path(pub_path, message, rate):
     while not rospy.is_shutdown():
@@ -38,6 +50,7 @@ def main():
     
     sub_goal = rospy.Subscriber('/goal', Pose, occupancy_callback)
     sub_grid = rospy.Subscriber('/grid', OccupancyGrid, occupancy_callback)
+    sub_pose = rospy.Subscriber('/pose', Pose, pose_callback)
     pub_path = rospy.Publisher('/spot_path', Pose, queue_size=10)
 
     rate = rospy.Rate(10)
