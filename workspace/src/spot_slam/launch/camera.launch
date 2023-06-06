@@ -10,7 +10,8 @@
         <param name="image_height" value="480" />
         <param name="pixel_format" value="yu12" />
         <param name="color_format" value="yuv422p" />
-        <param name="camera_frame_id" value="usb_cam" />
+        <param name="camera_frame_id" value="camera_link" />
+        <!-- <param name="camera_frame_id" value="usb_cam" /> -->
         <param name="io_method" value="read"/>
     </node>
 

@@ -3,8 +3,8 @@
     <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
         <remap from="cloud_in" to="/filtered_points" />
 
-    	<!-- <param name="resolution" value="0.04" /> -->
-    	<param name="resolution" value="0.01" />
+    	<param name="resolution" value="0.04" />
+    	<!-- <param name="resolution" value="0.01" /> -->
     	<param name="frame_id" type="string" value="origin" />
     	<param name="base_frame_id" type="string" value="camera_world" />
     	<param name="height_map" value="true" />
