@@ -9,7 +9,11 @@ from geometry_msgs.msg import (
     Quaternion,
     PoseArray
 )
-from nav_msgs.msg import OccupancyGrid
+from nav_msgs.msg import (
+    OccupancyGrid,
+    Path
+)
+
 
 
 from navigator.d_star_lite import DStarLite
@@ -32,6 +36,8 @@ last_position = None
 dstar = None
 slam = None
 is_goal_reached = False
+path = None
+
 
 def publish_path(pub_path, message, rate):
     while not rospy.is_shutdown():
@@ -51,8 +57,12 @@ def main():
     start_pos = (round(nav_msg.poses[0].position.x), round(nav_msg.poses[0].position.y))
     goal_pos =  (round(nav_msg.poses[1].position.x), round(nav_msg.poses[1].position.y))
 
+    pub_path = rospy.Publisher('path', Path, queue_size=10)
+
     while not rospy.is_shutdown() and not is_goal_reached:
         map_msg = rospy.wait_for_message('map', OccupancyGrid) 
+        # Assume that the robot's position in the map frame is published to curr_pos
+        curr_pos_msg = rospy.wait_for_message('curr_pos', Pose)
         if new_map is None:
             initial_width = map_msg.info.width
             initial_height = map_msg.info.height
@@ -70,8 +80,6 @@ def main():
             
             path, g, rhs = dstar.move_and_replan(robot_position=new_position)
         else:
-            # Assume that the robot's position in the map frame is published to curr_pos
-            curr_pos_msg = rospy.wait_for_message('curr_pos', Pose)
             new_position = (round(curr_pos_msg.position.x), round(curr_pos_msg.position.y))
             new_map.set_map()
             new_map.set_map([map_msg.data[i:i+initial_width] for i in range(0, len(map_msg.data), initial_width)][:initial_height])
@@ -89,6 +97,28 @@ def main():
 
                 # d star
                 path, g, rhs = dstar.move_and_replan(robot_position=new_position)
+
+        # If the length of path is 1, set is_goal_reached to true
+        if len(path) == 1:
+            is_goal_reached = True
+        else:
+             # Otherwise, publish path
+            path_msg = Path()
+            path_msg.header.frame_id = 'map'
+            path_msg.header.stamp = rospy.Time.now()
+
+            for pos in path:
+                pos_stamped = PoseStamped()
+                pos_stamped.pose.position.x = pos[0]
+                pos_stamped.pose.position.y = pos[1]
+                pos_stamped.pose.position.z = curr_pos_msg.position.z
+                path_msg.poses.append(pos_stamped)
+            pub_path.publish(path_msg)
+
+       
+
+        
+        
 
 
 if __name__ == '__main__':
