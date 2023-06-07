@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import rospy
 from std_msgs.msg import Header
 from geometry_msgs.msg import (
@@ -16,27 +17,16 @@ from nav_msgs.msg import (
 
 
 
-from navigator.d_star_lite import DStarLite
-from navigator.grid import OccupancyGridMap, SLAM
+from d_star_lite import DStarLite
+from grid import OccupancyGridMap, SLAM
 
 
-from spot_driver.spot_ros import SpotROS
+# from spot_driver.spot_ros import SpotROS
 
 # As a prototype path planner, we assume that the robot has scouted the whole map before sending a goal_pos to navigate to.
 # Therefore, goal_pos will be always within the map.
 
-start_pos = None
-goal_pos = None
-initial_width = None
-initial_height = None
-new_map = None
-old_map = None
-new_position = None
-last_position = None
-dstar = None
-slam = None
-is_goal_reached = False
-path = None
+
 
 
 def publish_path(pub_path, message, rate):
@@ -46,10 +36,22 @@ def publish_path(pub_path, message, rate):
     
 
 def main():
-    SR = SpotROS()
-    SR.main()
+    start_pos = None
+    goal_pos = None
+    initial_width = None
+    initial_height = None
+    new_map = None
+    old_map = None
+    new_position = None
+    last_position = None
+    dstar = None
+    slam = None
+    is_goal_reached = False
+    path = None
+    # SR = SpotROS()
+    # SR.main()
 
-    rospy.init_node('path_planner', anonymous=True)
+    rospy.init_node('path_planner_node', anonymous=True)
 
     # Assume that the start and goal positions in the map frame are published to /nav_from_to
     nav_msg = rospy.wait_for_message('nav_from_to', PoseArray)
@@ -57,7 +59,7 @@ def main():
     start_pos = (round(nav_msg.poses[0].position.x), round(nav_msg.poses[0].position.y))
     goal_pos =  (round(nav_msg.poses[1].position.x), round(nav_msg.poses[1].position.y))
 
-    pub_path = rospy.Publisher('path', Path, queue_size=10)
+    pub_path = rospy.Publisher('path', Path, queue_size=100)
 
     while not rospy.is_shutdown() and not is_goal_reached:
         map_msg = rospy.wait_for_message('map', OccupancyGrid) 
@@ -81,7 +83,6 @@ def main():
             path, g, rhs = dstar.move_and_replan(robot_position=new_position)
         else:
             new_position = (round(curr_pos_msg.position.x), round(curr_pos_msg.position.y))
-            new_map.set_map()
             new_map.set_map([map_msg.data[i:i+initial_width] for i in range(0, len(map_msg.data), initial_width)][:initial_height])
             old_map = new_map
             slam.set_ground_truth_map(gt_map=new_map)
@@ -101,19 +102,18 @@ def main():
         # If the length of path is 1, set is_goal_reached to true
         if len(path) == 1:
             is_goal_reached = True
-        else:
-             # Otherwise, publish path
-            path_msg = Path()
-            path_msg.header.frame_id = 'map'
-            path_msg.header.stamp = rospy.Time.now()
+       
+        path_msg = Path()
+        path_msg.header.frame_id = 'map'
+        path_msg.header.stamp = rospy.Time.now()
 
-            for pos in path:
-                pos_stamped = PoseStamped()
-                pos_stamped.pose.position.x = pos[0]
-                pos_stamped.pose.position.y = pos[1]
-                pos_stamped.pose.position.z = curr_pos_msg.position.z
-                path_msg.poses.append(pos_stamped)
-            pub_path.publish(path_msg)
+        for pos in path:
+            pos_stamped = PoseStamped()
+            pos_stamped.pose.position.x = pos[0]
+            pos_stamped.pose.position.y = pos[1]
+            pos_stamped.pose.position.z = curr_pos_msg.position.z
+            path_msg.poses.append(pos_stamped)
+        pub_path.publish(path_msg)
 
        
 

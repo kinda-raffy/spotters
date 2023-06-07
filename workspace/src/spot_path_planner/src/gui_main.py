@@ -1,11 +1,27 @@
+#!/usr/bin/env python3
+import rospy
 from gui import Animation
 from d_star_lite import DStarLite
 from grid import OccupancyGridMap, SLAM
+from geometry_msgs.msg import (
+    Twist,
+    PoseStamped,
+    Pose,
+    Vector3,
+    Point,
+    Quaternion,
+    PoseArray
+)
+from nav_msgs.msg import (
+    OccupancyGrid,
+    Path
+)
 
-OBSTACLE = 255
+OBSTACLE = 100
 UNOCCUPIED = 0
 
 if __name__ == '__main__':
+    rospy.init_node('gui_main_node', anonymous=True)
 
     """
     set initial values for the map occupancy grid
@@ -16,9 +32,9 @@ if __name__ == '__main__':
     x, row
     """
     x_dim = 100
-    y_dim = 80
-    start = (10, 10)
-    goal = (40, 70)
+    y_dim = 100
+    start = (0, 0)
+    goal = (99, 99)
     view_range = 5
 
     gui = Animation(title="D* Lite Path Planning",
@@ -52,15 +68,40 @@ if __name__ == '__main__':
     # move and compute path
     path, g, rhs = dstar.move_and_replan(robot_position=new_position)
 
+    map_pub = rospy.Publisher('map', OccupancyGrid, queue_size=100)
+    curr_pos_pub = rospy.Publisher('curr_pos', Pose, queue_size=100)
+
+    rate = rospy.Rate(1)
+
     while not gui.done:
         # update the map
         # print(path)
         # drive gui
         gui.run_game(path=path)
 
-        new_position = gui.current
-        new_observation = gui.observation
         new_map = gui.world
+
+        map_msg = OccupancyGrid()
+        map_msg.header.stamp = rospy.Time.now()
+        map_msg.header.frame_id = 'map'
+
+        map_msg.info.resolution = 1
+        map_msg.info.width = y_dim
+        map_msg.info.height = x_dim
+        map_msg.data = [cell for row in new_map.occupancy_grid_map for cell in row]
+        
+        map_pub.publish(map_msg)
+
+
+        new_position = gui.current
+
+        curr_pos_msg = Pose()
+        curr_pos_msg.position.x = new_position[0]
+        curr_pos_msg.position.y = new_position[1]
+        curr_pos_msg.position.z = 0
+        curr_pos_pub.publish(curr_pos_msg)
+
+        
 
         """
         if new_observation is not None:
@@ -70,9 +111,9 @@ if __name__ == '__main__':
                 dstar.global_map.remove_obstacle(pos=new_observation["pos"])
         """
 
-        if new_observation is not None:
-            old_map = new_map
-            slam.set_ground_truth_map(gt_map=new_map)
+       
+        old_map = new_map
+        slam.set_ground_truth_map(gt_map=new_map)
 
         if new_position != last_position:
             last_position = new_position
@@ -85,3 +126,5 @@ if __name__ == '__main__':
 
             # d star
             path, g, rhs = dstar.move_and_replan(robot_position=new_position)
+        
+        rate.sleep()

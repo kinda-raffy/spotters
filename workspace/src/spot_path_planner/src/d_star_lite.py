@@ -4,7 +4,7 @@ import numpy as np
 from utils import heuristic, Vertex, Vertices
 from typing import Dict, List
 
-OBSTACLE = 255
+OBSTACLE = 100
 UNOCCUPIED = 0
 
 
