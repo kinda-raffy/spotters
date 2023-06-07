@@ -1,8 +1,9 @@
+import pprint
 import rospy
 import numpy as np
 import open3d as o3d
 import matplotlib.pyplot as plt
-from mapping.hull import Alpha_Shaper
+from mapping.hull import AlphaShaper
 from mapping.hull_plotter import plot_alpha_shape
 
 from cv_bridge import CvBridge
@@ -42,7 +43,7 @@ class Pipeline:
 
     def compute_pipeline(self, data):
         self.compute_pcd_map(data)
-
+        
     # --- Pipelines.
     def compute_pcd_map(self, original_map):
         np_grid = np.array(original_map.data)
@@ -56,14 +57,14 @@ class Pipeline:
 
         pcd_map = np.zeros_like(binary_grid)
         # for coordinate in free_coordinates:
-        #     pcd_map[coordinate[0], coordinate[1]] = 100
+            # pcd_map[coordinate[0], coordinate[1]] = 100
         
         _alpha = 25.0
-        alpha_shaper = Alpha_Shaper(occupied_coordinates)
+        alpha_shaper = AlphaShaper(occupied_coordinates)
         alpha_shape = alpha_shaper.get_shape(alpha=_alpha)
         
         _convex = 1.0
-        convex_shaper = Alpha_Shaper(occupied_coordinates)
+        convex_shaper = AlphaShaper(occupied_coordinates)
         convex_shape = convex_shaper.get_shape(alpha=_convex)
 
         # Create the matplotlib visualization
@@ -74,20 +75,13 @@ class Pipeline:
         ax.set_title(f"$\\alpha={_alpha:.3} convex={_convex:.3}$")
         ax.set_aspect('equal')
 
-        # Create the matplotlib visualization
-        # fig, ax = plt.subplots(1, 1)
-        # ax.scatter(*zip(*occupied_coordinates), c='black', s=0.5, alpha=0.3)
-        # plot_alpha_shape(ax, alpha_shape)
-        # ax.set_title(f"$\\alpha={_alpha:.3}$")
-        # ax.set_aspect('equal')
-
         # Convert the matplotlib figure to an image
         bridge = CvBridge()
         fig.canvas.draw()  # Render the matplotlib figure
         image = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
         image_msg = bridge.cv2_to_imgmsg(image, encoding="rgb8")
-        
+
         self.hull_pub.publish(image_msg)
         
         navigable_map = OccupancyGrid()

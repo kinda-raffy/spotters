@@ -49,7 +49,7 @@ class Delaunay(Triangulation):
         return self.simplices.shape[0]
 
 
-class Alpha_Shaper(Delaunay):
+class AlphaShaper(Delaunay):
     mask: NDArray  # for type hinting
 
     def __init__(self, points: NDArray, normalize=True):
