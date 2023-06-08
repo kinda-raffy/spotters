@@ -148,12 +148,28 @@ class SLAM:
             return float('inf')
         else:
             return heuristic(u, v)
+        
+    def pad_local_observation(self, local_observation):
+        # Filter out the locations for obstacles
+        obstacle_locations = [k for k, v in local_observation.items() if v == OBSTACLE]
+        # For every obstacle location, create adjacent locations to it.
+        for obstacle_location in obstacle_locations:
+            adjacent_locations = [(obstacle_location[0] - 1, obstacle_location[1]),
+                                (obstacle_location[0] + 1, obstacle_location[1]),
+                                (obstacle_location[0], obstacle_location[1] - 1),
+                                (obstacle_location[0], obstacle_location[1] + 1)]
+            # If any of these adjacent_locations exists in local_observation, treat it as an obstacle.
+            for adjacent_location in adjacent_locations:
+                if adjacent_location in local_observation:
+                    local_observation[adjacent_location] = OBSTACLE
 
     def rescan(self, global_position: (int, int)):
 
         # rescan local area
         local_observation = self.ground_truth_map.local_observation(global_position=global_position,
                                                                     view_range=self.view_range)
+        
+        self.pad_local_observation(local_observation=local_observation)
 
         vertices = self.update_changed_edge_costs(local_grid=local_observation)
         return vertices, self.slam_map

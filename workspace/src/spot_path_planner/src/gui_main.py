@@ -21,7 +21,7 @@ OBSTACLE = 100
 UNOCCUPIED = 0
 
 if __name__ == '__main__':
-    rospy.init_node('gui_main_node', anonymous=True)
+    # rospy.init_node('gui_main_node', anonymous=True)
 
     """
     set initial values for the map occupancy grid
@@ -80,7 +80,6 @@ if __name__ == '__main__':
         gui.run_game(path=path)
 
         new_map = gui.world
-        print(new_map.occupancy_grid_map)
 
         map_msg = OccupancyGrid()
         map_msg.header.stamp = rospy.Time.now()
