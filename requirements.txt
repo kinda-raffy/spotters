@@ -42,7 +42,6 @@ laser_geometry==1.6.7
 lxml==4.9.2
 message-filters==1.16.0
 numpy==1.24.3
-opencv-python==4.2.0.34
 packaging==23.1
 ply==3.11
 protobuf==4.23.0

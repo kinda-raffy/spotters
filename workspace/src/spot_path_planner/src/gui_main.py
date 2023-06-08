@@ -34,7 +34,7 @@ if __name__ == '__main__':
     x_dim = 100
     y_dim = 100
     start = (0, 0)
-    goal = (99, 99)
+    goal = (99,99)
     view_range = 5
 
     gui = Animation(title="D* Lite Path Planning",
@@ -80,6 +80,7 @@ if __name__ == '__main__':
         gui.run_game(path=path)
 
         new_map = gui.world
+        print(new_map.occupancy_grid_map)
 
         map_msg = OccupancyGrid()
         map_msg.header.stamp = rospy.Time.now()
