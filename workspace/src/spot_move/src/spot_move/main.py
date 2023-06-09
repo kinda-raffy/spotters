@@ -68,7 +68,7 @@ class SpotMovement:
 
     def send_next_trajectory(self):
         # NOTE - Trajectories are evaluated by the goal_reached_strategy callback.
-        if not self.empty_path():
+        if not self._empty_path():
             self.last_sent_pose = pose = self._pop_next_pose()
             rospy.logdebug("Sending next trajectory.")
             self.handler.send_trajectory_command(pose, self.default_timeout)
@@ -96,7 +96,7 @@ class SpotMovement:
         rospy.logdebug("Getting next trajectory.")
         return self.path.pop(0)
     
-    def empty_path(self) -> bool:
+    def _empty_path(self) -> bool:
         return self.path == list()
 
 
