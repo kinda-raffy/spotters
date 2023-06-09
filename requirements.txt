@@ -36,6 +36,7 @@ grpcio==1.54.0
 idna==3.4
 image-geometry==1.16.2
 interactive-markers==1.12.0
+joblib==1.2.0
 joint-state-publisher==1.15.1
 joint-state-publisher-gui==1.15.1
 laser_geometry==1.6.7
@@ -114,18 +115,23 @@ rqt_top==0.4.10
 rqt_topic==0.4.13
 rqt_web==0.4.10
 rviz==1.14.20
+scikit-learn==1.2.2
+scipy==1.10.1
 sensor-msgs==1.13.1
+shapely==2.0.1
 six==1.16.0
+sklearn==0.0.post5
 smach==2.5.1
 smach-ros==2.5.1
 smclib==1.8.6
-spot_wrapper==1.0.0
+-e git+https://github.com/kinda-raffy/spot_wrapper.git@a13b334ce300046719c3c21826ee7a7125be5936#egg=spot_wrapper&subdirectory=../../../../../../workspace/src/spot_ros/spot_wrapper
 tf==1.13.2
 tf-conversions==1.13.2
 tf2-geometry-msgs==0.7.6
 tf2-kdl==0.7.6
 tf2-py==0.7.6
 tf2-ros==0.7.6
+threadpoolctl==3.1.0
 tomli==2.0.1
 topic-tools==1.16.0
 transforms3d==0.4.1
