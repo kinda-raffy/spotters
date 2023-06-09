@@ -44,7 +44,7 @@ path = None
 is_planning_started = False
 curr_pos_z = None
 
-ROBOT_NAME = "targaryen/"
+ROBOT_NAME = "/"
 
 from collections import Counter
 
@@ -77,7 +77,7 @@ def map_callback(msg):
 
     # After the map is updated, read the curr_pos in the updated map frame
     curr_pos_msg = rospy.wait_for_message('curr_pos', PoseStamped)
-    curr_pos = (round(curr_pos_msg.pose.position.x / map_resolution) + map_height / 2, round(curr_pos_msg.pose.position.y / map_resolution) + map_width / 2)
+    curr_pos = (round(curr_pos_msg.pose.position.x / map_resolution) + map_height // 2, round(curr_pos_msg.pose.position.y / map_resolution) + map_width // 2)
     
     if start_pos is None:
         start_pos = curr_pos
@@ -96,7 +96,7 @@ if __name__ == '__main__':
             goal_pos_msg = rospy.wait_for_message('goal_pos', PoseStamped)
             print(goal_pos_msg.pose)
             print(map_resolution)
-            goal_pos  = ((round(goal_pos_msg.pose.position.x / map_resolution)) + map_height / 2, (round(goal_pos_msg.pose.position.y / map_resolution)) + map_width / 2)
+            goal_pos  = ((round(goal_pos_msg.pose.position.x / map_resolution)) + map_height // 2, (round(goal_pos_msg.pose.position.y / map_resolution)) + map_width // 2)
             
             if not is_planning_started:
                 # y dim is the dimension in the direction of y; therefore it is equal to the width. 

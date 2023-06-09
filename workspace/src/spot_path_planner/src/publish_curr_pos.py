@@ -6,7 +6,7 @@ import tf2_geometry_msgs
 from nav_msgs.msg import Odometry, Path
 from geometry_msgs.msg import PoseStamped
 
-ROBOT_NAME = 'targaryen/'
+ROBOT_NAME = '/'
 
 def odom_callback(msg):
     global tf_buffer, curr_pos_pub
