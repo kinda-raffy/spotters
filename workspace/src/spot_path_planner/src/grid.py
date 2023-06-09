@@ -52,6 +52,8 @@ class OccupancyGridMap:
         (x, y) = (round(pos[0]), round(pos[1]))  # make sure pos is int
         (row, col) = (x, y)
 
+        # TODO: Account for spot size
+
         # if not self.in_bounds(cell=(x, y)):
         #    raise IndexError("Map index out of bounds")
 
