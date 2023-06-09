@@ -34,7 +34,7 @@ def odom_callback(msg):
     curr_pos_pub.pose = map_pose.pose
 
 if __name__ == '__main__':
-    rospy.init_node('path_publisher')
+    rospy.init_node('publish_curr_pos_node')
 
     tf_buffer = tf2_ros.Buffer()
     tf_listener = tf2_ros.TransformListener(tf_buffer)

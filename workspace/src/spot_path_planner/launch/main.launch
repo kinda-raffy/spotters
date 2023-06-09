@@ -1,7 +1,8 @@
 <launch>
   <!-- Start the map publisher node -->
-  <node name="start_goal_publisher_node" pkg="spot_path_planner" type="start_goal_publisher.py" output="screen"/>
-  <node name="gui_main_node" pkg="spot_path_planner" type="gui_main.py" output="screen"/>
+  <node name="publish_curr_pos_node" pkg="spot_path_planner" type="publish_curr_pos.py" output="screen"/>
+
   <node name="path_planner_node" pkg="spot_path_planner" type="path_planner.py" output="screen"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find spot_path_planner)/config/rosbot.rviz" />
 
 </launch>

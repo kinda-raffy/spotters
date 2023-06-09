@@ -84,7 +84,7 @@ def map_callback(msg):
 
 
 if __name__ == '__main__':
-    rospy.init_node('path_planner', anonymous=True)
+    rospy.init_node('path_planner_node', anonymous=True)
     pub_path = rospy.Publisher('path', Path, queue_size=10)
     sub_map = rospy.Subscriber(ROBOT_NAME + 'map', OccupancyGrid, map_callback)
 
