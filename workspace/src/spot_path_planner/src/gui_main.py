@@ -21,7 +21,7 @@ OBSTACLE = 100
 UNOCCUPIED = 0
 
 if __name__ == '__main__':
-    # rospy.init_node('gui_main_node', anonymous=True)
+    rospy.init_node('gui_main_node', anonymous=True)
 
     """
     set initial values for the map occupancy grid

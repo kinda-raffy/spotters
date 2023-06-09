@@ -26,30 +26,20 @@ from grid import OccupancyGridMap, SLAM
 # As a prototype path planner, we assume that the robot has scouted the whole map before sending a goal_pos to navigate to.
 # Therefore, goal_pos will be always within the map.
 
+start_pos = None
+goal_pos = None
+initial_width = None
+initial_height = None
+new_map = None
+old_map = None
+new_position = None
+last_position = None
+dstar = None
+slam = None
+is_goal_reached = False
+path = None
 
-
-
-def publish_path(pub_path, message, rate):
-    while not rospy.is_shutdown():
-        pub_path.publish(message)
-        rate.sleep()
-    
-
-def main():
-    start_pos = None
-    goal_pos = None
-    initial_width = None
-    initial_height = None
-    new_map = None
-    old_map = None
-    new_position = None
-    last_position = None
-    dstar = None
-    slam = None
-    is_goal_reached = False
-    path = None
-    # SR = SpotROS()
-    # SR.main()
+if __name__ == '__main__':
     rospy.init_node('path_planner', anonymous=True)
     pub_path = rospy.Publisher('path', Path, queue_size=10)
 
@@ -109,15 +99,3 @@ def main():
             pos_stamped.pose.position.z = curr_pos_msg.position.z
             path_msg.poses.append(pos_stamped)
         pub_path.publish(path_msg)
-
-       
-
-        
-        
-
-
-if __name__ == '__main__':
-    try:
-        main()
-    except rospy.ROSInterruptException:
-        pass

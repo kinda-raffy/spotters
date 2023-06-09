@@ -15,7 +15,7 @@ LOCAL_GRID = (0, 0, 80)  # BLUE
 colors = {
     0: UNOCCUPIED,
     1: GOAL,
-    255: OBSTACLE
+    100: OBSTACLE
 }
 
 
