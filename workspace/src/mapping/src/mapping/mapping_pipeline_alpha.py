@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 from nav_msgs.msg import OccupancyGrid
 
 
-def generate_occupancy_grid(grid: OccupancyGrid) -> None:
+def generate_occupancy_grid(grid: OccupancyGrid) -> NDArray:
     values = np.array(grid).reshape((grid.info.height, grid.info.width))
     coordinates = np.column_stack(np.where(values == 100))
     points = [shapely.Point(rank, file) for rank, file in coordinates]
@@ -61,9 +61,9 @@ def filter_triangle(
             abs(coordinate1[1] - coordinate2[1]) ** 2
         )
 
-    length1: float = calculate_distance(vertex1, vertex2)
-    length2: float = calculate_distance(vertex2, vertex3)
-    length3: float = calculate_distance(vertex3, vertex1)
+    length1 = calculate_distance(vertex1, vertex2)
+    length2 = calculate_distance(vertex2, vertex3)
+    length3 = calculate_distance(vertex3, vertex1)
     half_peri = sum(length1, length2, length3) / 2
     area = math.sqrt(
         half_peri
