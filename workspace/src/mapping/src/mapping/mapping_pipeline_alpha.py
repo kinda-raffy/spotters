@@ -11,18 +11,14 @@ from nav_msgs.msg import OccupancyGrid
 def generate_occupancy_grid(grid: OccupancyGrid) -> None:
     values = np.array(grid).reshape((grid.info.height, grid.info.width))
     coordinates = np.column_stack(np.where(values == 100))
-    alphas = generate_occlusion_polygons(coordinates)
-    print(alphas, coordinates)  # TODO: Finish this pipeline.
+    points = [shapely.Point(rank, file) for rank, file in coordinates]
+    alphas = generate_occlusion_polygons(points)
     array = np.zeros((grid.info.height, grid.into.width))
     for rank, file in np.ndindex(array.shape):
         point = shapely.Point(rank, file)
         if shapely.within(point, alphas):
             array[rank][file] = 100
-    np.rot90(array, k=1)  # Align Cartesian points and array indices.
     return array.flatten()
-
-
-# points = [shapely.Point(rank, file) for rank, file in occluded_coordinates]
 
 
 def generate_occlusion_polygons(
@@ -34,7 +30,6 @@ def generate_occlusion_polygons(
             return
         edges.add(edge)
         points.append(feature_coordinates[[vertex1, vertex2]])
-
 
     if feature_points.size <= 3:
         return shapely.MultiPoint(feature_points).convex_hull
@@ -66,9 +61,9 @@ def filter_triangle(
             abs(coordinate1[1] - coordinate2[1]) ** 2
         )
 
-    length1 = calculate_distance(vertex1, vertex2)
-    length2 = calculate_distance(vertex2, vertex3)
-    length3 = calculate_distance(vertex3, vertex1)
+    length1: float = calculate_distance(vertex1, vertex2)
+    length2: float = calculate_distance(vertex2, vertex3)
+    length3: float = calculate_distance(vertex3, vertex1)
     half_peri = sum(length1, length2, length3) / 2
     area = math.sqrt(
         half_peri
