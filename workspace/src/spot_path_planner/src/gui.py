@@ -18,7 +18,6 @@ colors = {
     100: OBSTACLE
 }
 
-
 class Animation:
     def __init__(self,
                  title="D* Lite Path Planning",
