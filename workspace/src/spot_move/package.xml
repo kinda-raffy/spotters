@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>movement</name>
+  <name>spot_move</name>
   <version>0.0.0</version>
-  <description>The movement package</description>
+  <description>Tanslates spotter movements to legible robot commmands.</description>
   <maintainer email="contact@kindaraffy.xyz">Rafat Mahiuddn</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>catkin</buildtool_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>spot_driver</exec_depend>
+  <build_depend>spot_msgs</build_depend>
+  <exec_depend>spot_msgs</exec_depend>
 </package>

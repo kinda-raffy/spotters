@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+import rospy
+import actionlib
+import time
+import random
+from std_msgs.msg import Duration
+from nav_msgs.msg import Path
+from geometry_msgs.msg import PoseStamped
+from spot_msgs.msg import TrajectoryAction, TrajectoryGoal, TrajectoryResult
+from typing import NoReturn, Callable, List
+
+class DummyTrajectoryActionServer:
+    def __init__(self):
+        self.server = actionlib.SimpleActionServer('/spot/trajectory', TrajectoryAction, self.execute, False)
+        self.server.start()
+
+    def execute(self, goal):
+        rospy.logdebug("Received a goal")
+        time.sleep(2)  # Simulated action.
+        
+        if random.random() < 0.4:
+            rospy.logdebug("Action failed")
+            self.server.set_aborted(TrajectoryResult(success=False, message="Failure"))
+        else:
+            rospy.logdebug("Action completed")
+            self.server.set_succeeded(TrajectoryResult(success=True, message="Success"))
+
+class DummyPathPublisher:
+    def __init__(self):
+        self.publisher = rospy.Publisher("/spotters/navigator/path", Path, queue_size=10)
+
+    def publish_path(self):
+        path = Path()
+        
+        for i in range(1000):
+            pose = PoseStamped()
+            pose.pose.position.x = float(i)
+            path.poses.append(pose)
+        self.publisher.publish(path)
+        rospy.logdebug("Published a path with 1000 poses")
+
+if __name__ == '__main__':
+    rospy.init_node('dummy_trajectory_action_server_and_publisher', log_level=rospy.DEBUG)
+    rospy.loginfo("Starting dummy_trajectory_action_server_and_publisher...")
+    if not rospy.has_param("/ros/console/config"):
+        rospy.set_param("/ros/console/config", "{'log4j.logger.ros': 'DEBUG'}")
+    server = DummyTrajectoryActionServer()
+    publisher = DummyPathPublisher()
+
+    while not rospy.is_shutdown():
+        publisher.publish_path()
+        rospy.sleep(random.randint(10, 20))
