@@ -15,6 +15,6 @@ include_directories(
 
 catkin_install_python(PROGRAMS
   scripts/map
+  scripts/pipeline
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-

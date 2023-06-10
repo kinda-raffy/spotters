@@ -26,7 +26,7 @@ def construct_occupancy_grid(
     shapes = list()
     # Initialise the tree with all shapes.
     for ordinal, alpha in enumerate(alphas.geoms):
-        index.insert(ordinal, alpha)
+        index.insert(ordinal, alpha.bounds)
         shapes.append(alpha)
     length, height = grid.info.width, grid.info.height
     # Create blank grid and iterate over subgrids, labelling if occupied.
@@ -36,7 +36,7 @@ def construct_occupancy_grid(
         np.arange(0, length, 3)
     ):
         point = shapely.Point(rank, file)
-        indices = list(index.intersection(point.x, point.y, point.x, point.y))
+        indices = list(index.intersection((point.x, point.y, point.x, point.y)))
         for alpha in indices:
             if shapes[alpha].contains(point):
                 array[
@@ -63,7 +63,7 @@ def generate_occlusion_polygons(coordinates: NDArray, alpha: float = 1) -> None:
         points.append(feature_coordinates[[vertex1, vertex2]])
 
     feature_points = [shapely.Point(rank, file) for rank, file in coordinates]
-    if feature_points.size <= 3:
+    if len(feature_points) <= 3:
         return shapely.MultiPoint(feature_points).convex_hull
     feature_coordinates = np.array([point.coords[0] for point in feature_points])
     triangles = spatial.Delaunay(feature_coordinates)

@@ -1,4 +1,4 @@
-import pprint
+import time
 import rospy
 import numpy as np
 import open3d as o3d
@@ -19,7 +19,6 @@ from sensor_msgs.msg import (
     Image
 )
 
-import time
 
 
 class Pipeline:
@@ -119,7 +118,7 @@ class Pipeline:
             self.all_orb_points.points = o3d.utility.Vector3dVector(filtered_points)
 
         print(f"[{pipeline_state + 1.0}] Removing outliers.")
-        _, ind = self.all_orb_points.remove_radius_outlier(nb_points=50, radius=0.2)
+        _, ind = self.all_orb_points.remove_radius_outlier(nb_points=50, radius=0.1)
         self.all_orb_points = self.all_orb_points.select_by_index(ind)
 
         ros_cloud = self._o3d_to_ros(self.all_orb_points)
@@ -158,5 +157,9 @@ class Pipeline:
 
 
 def main():
-    filter = Pipeline()
+    _ = Pipeline()
     rospy.spin()
+
+
+if __name__ == '__main__':
+    main()
