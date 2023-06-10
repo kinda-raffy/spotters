@@ -114,6 +114,7 @@ rqt_tf_tree==0.6.3
 rqt_top==0.4.10
 rqt_topic==0.4.13
 rqt_web==0.4.10
+Rtree==1.0.1
 rviz==1.14.20
 scikit-learn==1.2.2
 scipy==1.10.1
