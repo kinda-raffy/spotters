@@ -1,6 +1,6 @@
 import math
-import rtree
 import itertools
+import rtree
 import shapely
 import shapely.ops
 import numpy as np
@@ -15,6 +15,41 @@ def generate_occupancy_grid(grid: OccupancyGrid) -> NDArray:
     coordinates = np.column_stack(np.where(values == 100))
     alphas = generate_occlusion_polygons(coordinates)
     return construct_occupancy_grid(grid, alphas)
+
+
+def construct_occupancy_grid(
+    grid: OccupancyGrid,
+    alphas: shapely.GeometryCollection,
+) -> NDArray[np.uint8]:
+    index = rtree.index.Index()
+    shapes = list()
+    # Initialise the tree with all shapes.
+    for ordinal, alpha in enumerate(alphas.geoms):
+        index.insert(ordinal, alpha)
+        shapes.append(alpha)
+    length, height = grid.info.width, grid.info.height
+    # Create blank grid and iterate over subgrids, labelling if occupied.
+    array = np.zeros((height, length), np.uint8)
+    for rank, file in itertools.product(
+        np.arange(0, height, 3),
+        np.arange(0, length, 3)
+    ):
+        point = shapely.Point(rank, file)
+        indices = list(index.intersection(point.x, point.y, point.x, point.y))
+        for alpha in indices:
+            if shapes[alpha].contains(point):
+                array[
+                    max(0, rank - 1) : min(rank + 2, length),
+                    max(0, file - 1) : min(file + 2, height),
+                ] = 100
+                break
+    return array.flatten()
+
+
+def derive_cartesian_coordinates(coordinates: NDArray) -> None:
+    array_indices = np.stack(np.indices(coordinates.shape), axis=2)
+    cartesian_coordinates = np.rot90(array_indices, k=1)
+    print(cartesian_coordinates)
 
 
 def generate_occlusion_polygons(coordinates: NDArray, alpha: float = 1) -> None:
@@ -68,37 +103,3 @@ def filter_triangle(
         * (half_peri - length3)
     )
     return (length1 * length2 * length3) / (4 * area) < 1 / alpha
-
-
-def construct_occupancy_grid(
-    grid: OccupancyGrid,
-    alphas: shapely.GeometryCollection,
-) -> NDArray[np.uint8]:
-    index = rtree.index.Index()
-    shapes = list()
-    # Initialise the tree with all shapes.
-    for ordinal, alpha in enumerate(alphas.geoms):
-        index.insert(ordinal, alpha)
-        shapes.append(alpha)
-    length, height = grid.info.width, grid.info.height
-    # Create blank grid and iterate over subgrids, labelling if occupied.
-    array = np.zeros((height, length), np.uint8)
-    centres = itertools.product(np.arange(0, height, 3), np.arange(0, length, 3))
-    for rank, file in centres:
-        point = shapely.Point(rank, file)
-        indices = list(index.intersection(point.x, point.y, point.x, point.y))
-        for alpha in indices:
-            if not shapes[alpha].contains(point):
-                continue
-            array[
-                max(0, rank - 1) : min(rank + 2, length),
-                max(0, file - 1) : min(file + 2, height),
-            ] = 100
-            break
-    return array.flatten()
-
-
-def derive_cartesian_coordinates(coordinates: NDArray) -> None:
-    array_indices = np.stack(np.indices(coordinates.shape), axis=2)
-    cartesian_coordinates = np.rot90(array_indices, k=1)
-    print(cartesian_coordinates)
