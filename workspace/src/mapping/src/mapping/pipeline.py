@@ -3,6 +3,7 @@ import rospy
 import numpy as np
 import open3d as o3d
 import matplotlib.pyplot as plt
+from mapping.mapping_pipeline_alpha import generate_occupancy_grid
 from mapping.hull import AlphaShaper
 from mapping.hull_plotter import plot_alpha_shape
 
@@ -17,6 +18,8 @@ from sensor_msgs.msg import (
     PointCloud2,
     Image
 )
+
+import time
 
 
 class Pipeline:
@@ -46,43 +49,49 @@ class Pipeline:
         
     # --- Pipelines.
     def compute_pcd_map(self, original_map):
-        np_grid = np.array(original_map.data)
-        np_grid = np.reshape(
-            np_grid, (original_map.info.height, original_map.info.width)
-        )  # Reshape to 2D.
-        binary_grid = np.where(np_grid == 100, 1, 0)
+        # np_grid = np.array(original_map.data)
+        # np_grid = np.reshape(
+        #     np_grid, (original_map.info.height, original_map.info.width)
+        # )  # Reshape to 2D.
+        # binary_grid = np.where(np_grid == 100, 1, 0)
 
-        occupied_coordinates = np.argwhere(binary_grid == 1)
-        # free_coordinates = np.argwhere(binary_grid == 0)
+        # occupied_coordinates = np.argwhere(binary_grid == 1)
+        # # free_coordinates = np.argwhere(binary_grid == 0)
 
-        pcd_map = np.zeros_like(binary_grid)
-        # for coordinate in free_coordinates:
-            # pcd_map[coordinate[0], coordinate[1]] = 100
+        # pcd_map = np.zeros_like(binary_grid)
+        # # for coordinate in free_coordinates:
+        #     # pcd_map[coordinate[0], coordinate[1]] = 100
         
-        _alpha = 25.0
-        alpha_shaper = AlphaShaper(occupied_coordinates)
-        alpha_shape = alpha_shaper.get_shape(alpha=_alpha)
+        # _alpha = 25.0
+        # alpha_shaper = AlphaShaper(occupied_coordinates)
+        # alpha_shape = alpha_shaper.get_shape(alpha=_alpha)
         
-        _convex = 1.0
-        convex_shaper = AlphaShaper(occupied_coordinates)
-        convex_shape = convex_shaper.get_shape(alpha=_convex)
+        # _convex = 1.0
+        # convex_shaper = AlphaShaper(occupied_coordinates)
+        # convex_shape = convex_shaper.get_shape(alpha=_convex)
 
-        # Create the matplotlib visualization
-        fig, ax = plt.subplots(1, 1)
-        ax.scatter(*zip(*occupied_coordinates), c='black', s=0.5, alpha=0.3)
-        plot_alpha_shape(ax, alpha_shape, "red")
-        plot_alpha_shape(ax, convex_shape, "grey")  # Plot the convex shape
-        ax.set_title(f"$\\alpha={_alpha:.3} convex={_convex:.3}$")
-        ax.set_aspect('equal')
+        # # Create the matplotlib visualization
+        # fig, ax = plt.subplots(1, 1)
+        # ax.scatter(*zip(*occupied_coordinates), c='black', s=0.5, alpha=0.3)
+        # plot_alpha_shape(ax, alpha_shape, "red")
+        # plot_alpha_shape(ax, convex_shape, "grey")  # Plot the convex shape
+        # ax.set_title(f"$\\alpha={_alpha:.3} convex={_convex:.3}$")
+        # ax.set_aspect('equal')
 
-        # Convert the matplotlib figure to an image
-        bridge = CvBridge()
-        fig.canvas.draw()  # Render the matplotlib figure
-        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
-        image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-        image_msg = bridge.cv2_to_imgmsg(image, encoding="rgb8")
+        # # Convert the matplotlib figure to an image
+        # bridge = CvBridge()
+        # fig.canvas.draw()  # Render the matplotlib figure
+        # image = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+        # image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+        # image_msg = bridge.cv2_to_imgmsg(image, encoding="rgb8")
 
-        self.hull_pub.publish(image_msg)
+        # self.hull_pub.publish(image_msg)
+        
+        print("Starting processing.")
+        start=time.time()
+        new_map_data = generate_occupancy_grid(original_map)
+        print(f"Processing complete in {time.time() - start:.2f}.\n")
+        
         
         navigable_map = OccupancyGrid()
         navigable_map.header.stamp = rospy.Time.now()
@@ -92,8 +101,8 @@ class Pipeline:
         navigable_map.info.width = original_map.info.width
         navigable_map.info.height = original_map.info.height
         navigable_map.info.origin = original_map.info.origin
-        navigable_map.data = np.ravel(pcd_map).tolist()
-        
+        # navigable_map.data = np.ravel(pcd_map).tolist()
+        navigable_map.data = new_map_data
         self.map_pub.publish(navigable_map)
 
 
@@ -110,7 +119,7 @@ class Pipeline:
             self.all_orb_points.points = o3d.utility.Vector3dVector(filtered_points)
 
         print(f"[{pipeline_state + 1.0}] Removing outliers.")
-        _, ind = self.all_orb_points.remove_radius_outlier(nb_points=8, radius=0.07)
+        _, ind = self.all_orb_points.remove_radius_outlier(nb_points=50, radius=0.2)
         self.all_orb_points = self.all_orb_points.select_by_index(ind)
 
         ros_cloud = self._o3d_to_ros(self.all_orb_points)

@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Object Frames1/Frames1
         - /VSLAM1
+        - /Mapping1
         - /Mapping1/3D Map1/Namespaces1
       Splitter Ratio: 0.5708582997322083
     Tree Height: 464
@@ -19,19 +20,20 @@ Panels:
     Name: Tool Properties
     Splitter Ratio: 0.5886790156364441
   - Class: rviz/Views
-    Expanded: ~
+    Expanded:
+      - /Current View1
     Name: Views
     Splitter Ratio: 0.4785100221633911
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: ORB Cloud
   - Class: spot_viz/SpotControlPanel
     Name: SpotControlPanel
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: ORB Cloud
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -50,6 +52,8 @@ Visualization Manager:
           Value: true
         body:
           Value: true
+        camera:
+          Value: true
         camera_link:
           Value: true
         front_left_hip:
@@ -65,6 +69,8 @@ Visualization Manager:
         front_right_lower_leg:
           Value: true
         front_right_upper_leg:
+          Value: true
+        origin:
           Value: true
         real_front_rail:
           Value: true
@@ -91,33 +97,36 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        camera_link:
-          body:
-            base_link:
-              {}
-            front_left_hip:
-              front_left_upper_leg:
-                front_left_lower_leg:
-                  {}
-            front_rail:
-              {}
-            front_right_hip:
-              front_right_upper_leg:
-                front_right_lower_leg:
-                  {}
-            real_front_rail:
-              real_rear_rail:
+        origin:
+          camera:
+            {}
+          camera_link:
+            body:
+              base_link:
                 {}
-            rear_left_hip:
-              rear_left_upper_leg:
-                rear_left_lower_leg:
+              front_left_hip:
+                front_left_upper_leg:
+                  front_left_lower_leg:
+                    {}
+              front_rail:
+                {}
+              front_right_hip:
+                front_right_upper_leg:
+                  front_right_lower_leg:
+                    {}
+              real_front_rail:
+                real_rear_rail:
                   {}
-            rear_rail:
-              {}
-            rear_right_hip:
-              rear_right_upper_leg:
-                rear_right_lower_leg:
-                  {}
+              rear_left_hip:
+                rear_left_upper_leg:
+                  rear_left_lower_leg:
+                    {}
+              rear_rail:
+                {}
+              rear_right_hip:
+                rear_right_upper_leg:
+                  rear_right_lower_leg:
+                    {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -434,7 +443,7 @@ Visualization Manager:
       Name: VSLAM
     - Class: rviz/Group
       Displays:
-        - Alpha: 0.699999988079071
+        - Alpha: 0.4000000059604645
           Class: rviz/Map
           Color Scheme: map
           Draw Behind: false
@@ -473,14 +482,24 @@ Visualization Manager:
           Use rainbow: true
           Value: false
         - Class: rviz/MarkerArray
-          Enabled: true
+          Enabled: false
           Marker Topic: /occupied_cells_vis_array
           Name: 3D Map
           Namespaces:
             {}
           Queue Size: 100
+          Value: false
+        - Alpha: 0.699999988079071
+          Class: rviz/Map
+          Color Scheme: costmap
+          Draw Behind: false
+          Enabled: true
+          Name: Map
+          Topic: /spotters/mapping/map
+          Unreliable: false
+          Use Timestamp: false
           Value: true
-      Enabled: false
+      Enabled: true
       Name: Mapping
   Enabled: true
   Global Options:
@@ -510,7 +529,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 10.358781814575195
+      Distance: 2.5363221168518066
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -518,17 +537,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 2.67703914642334
-        Y: 1.0004165172576904
-        Z: 1.877368504210608e-06
+        X: 0.9396002888679504
+        Y: -0.9899790287017822
+        Z: 1.8475661818229128e-06
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: -0.2052040696144104
+      Pitch: 0.8202027678489685
       Target Frame: camera
-      Yaw: 3.876386880874634
+      Yaw: 5.82820463180542
     Saved:
       - Class: rviz/FrameAligned
         Enable Stereo Rendering:
