@@ -14,29 +14,6 @@ import time
 def generate_occupancy_grid(grid: OccupancyGrid) -> NDArray:
     values = np.array(grid.data).reshape((grid.info.height, grid.info.width))
     coordinates = np.column_stack(np.where(values == 100))
-<<<<<<< HEAD
-    points = [shapely.Point(rank, file) for rank, file in coordinates]
-    alphas = generate_occlusion_polygons(points)
-    array = np.zeros((grid.info.height, grid.info.width), np.int8)
-    start=time.time()
-    for rank in np.arange(0, grid.info.height - 2, 3):
-        for file in np.arange(0, grid.info.width - 2, 3):
-            point = shapely.Point(rank, file)
-            if shapely.within(point, alphas):
-                array[rank][file] = 100
-                array[rank + 1][file] = 100
-                array[rank + 2][file] = 100
-                array[rank][file + 1] = 100
-                array[rank][file + 2] = 100
-                array[rank + 1][file + 1] = 100
-                array[rank + 2][file + 2] = 100
-    print(f"Created occupancy grid in start {time.time() - start:.2f}.")
-    return array.flatten()
-
-
-def generate_occlusion_polygons(
-        feature_points: Sequence[shapely.Point], alpha: float = 0.5) -> None:
-=======
     alphas = generate_occlusion_polygons(coordinates)
     return construct_occupancy_grid(grid, alphas)
 
@@ -77,7 +54,6 @@ def derive_cartesian_coordinates(coordinates: NDArray) -> None:
 
 
 def generate_occlusion_polygons(coordinates: NDArray, alpha: float = 1) -> None:
->>>>>>> 479f44059a4a8da3d95740bc19fbe1438c42bbfa
 
     def include_edge(vertex1: Sequence[int], vertex2: Sequence[int]) -> None:
         edge: Sequence[int] = (vertex1, vertex2)
@@ -86,12 +62,8 @@ def generate_occlusion_polygons(coordinates: NDArray, alpha: float = 1) -> None:
         edges.add(edge)
         points.append(feature_coordinates[[vertex1, vertex2]])
 
-<<<<<<< HEAD
-    if len(feature_points) <= 3:
-=======
     feature_points = [shapely.Point(rank, file) for rank, file in coordinates]
     if feature_points.size <= 3:
->>>>>>> 479f44059a4a8da3d95740bc19fbe1438c42bbfa
         return shapely.MultiPoint(feature_points).convex_hull
     feature_coordinates = np.array([point.coords[0] for point in feature_points])
     triangles = spatial.Delaunay(feature_coordinates)
