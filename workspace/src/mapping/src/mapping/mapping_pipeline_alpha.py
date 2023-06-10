@@ -1,4 +1,6 @@
 import math
+import rtree
+import itertools
 import shapely
 import shapely.ops
 import numpy as np
@@ -11,18 +13,11 @@ from nav_msgs.msg import OccupancyGrid
 def generate_occupancy_grid(grid: OccupancyGrid) -> NDArray:
     values = np.array(grid).reshape((grid.info.height, grid.info.width))
     coordinates = np.column_stack(np.where(values == 100))
-    points = [shapely.Point(rank, file) for rank, file in coordinates]
-    alphas = generate_occlusion_polygons(points)
-    array = np.zeros((grid.info.height, grid.into.width))
-    for rank, file in np.ndindex(array.shape):
-        point = shapely.Point(rank, file)
-        if shapely.within(point, alphas):
-            array[rank][file] = 100
-    return array.flatten()
+    alphas = generate_occlusion_polygons(coordinates)
+    return construct_occupancy_grid(grid, alphas)
 
 
-def generate_occlusion_polygons(
-        feature_points: Sequence[shapely.Point], alpha: float = 1) -> None:
+def generate_occlusion_polygons(coordinates: NDArray, alpha: float = 1) -> None:
 
     def include_edge(vertex1: Sequence[int], vertex2: Sequence[int]) -> None:
         edge: Sequence[int] = (vertex1, vertex2)
@@ -31,6 +26,7 @@ def generate_occlusion_polygons(
         edges.add(edge)
         points.append(feature_coordinates[[vertex1, vertex2]])
 
+    feature_points = [shapely.Point(rank, file) for rank, file in coordinates]
     if feature_points.size <= 3:
         return shapely.MultiPoint(feature_points).convex_hull
     feature_coordinates = np.array([point.coords[0] for point in feature_points])
@@ -72,6 +68,34 @@ def filter_triangle(
         * (half_peri - length3)
     )
     return (length1 * length2 * length3) / (4 * area) < 1 / alpha
+
+
+def construct_occupancy_grid(
+    grid: OccupancyGrid,
+    alphas: shapely.GeometryCollection,
+) -> NDArray[np.uint8]:
+    index = rtree.index.Index()
+    shapes = list()
+    # Initialise the tree with all shapes.
+    for ordinal, alpha in enumerate(alphas.geoms):
+        index.insert(ordinal, alpha)
+        shapes.append(alpha)
+    length, height = grid.info.width, grid.info.height
+    # Create blank grid and iterate over subgrids, labelling if occupied.
+    array = np.zeros((height, length), np.uint8)
+    centres = itertools.product(np.arange(0, height, 3), np.arange(0, length, 3))
+    for rank, file in centres:
+        point = shapely.Point(rank, file)
+        indices = list(index.intersection(point.x, point.y, point.x, point.y))
+        for alpha in indices:
+            if not shapes[alpha].contains(point):
+                continue
+            array[
+                max(0, rank - 1) : min(rank + 2, length),
+                max(0, file - 1) : min(file + 2, height),
+            ] = 100
+            break
+    return array.flatten()
 
 
 def derive_cartesian_coordinates(coordinates: NDArray) -> None:
