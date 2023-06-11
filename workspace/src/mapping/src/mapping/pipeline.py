@@ -45,7 +45,7 @@ class Pipeline:
 
     def compute_pipeline(self, data):
         self.compute_pcd_map(data)
-        
+
     # --- Pipelines.
     def compute_pcd_map(self, original_map):
         # np_grid = np.array(original_map.data)
