@@ -1,5 +1,6 @@
 import rospy
-from sensor_msgs.msg import PointCloud2, Empty
+from std_msgs.msg import Empty
+from sensor_msgs.msg import PointCloud2
 
 
 class PointCloudChangeTracker:
@@ -19,7 +20,7 @@ class PointCloudChangeTracker:
             Empty,
             queue_size=1,
         )
-        self.based_loss_threshold = 100
+        self.based_loss_threshold = 1000
         self.last_point_count = 0
         self.growth_aggregate = 0
         self.update_count = 0
@@ -30,11 +31,13 @@ class PointCloudChangeTracker:
         cloud_point_count = cloud.row_step * cloud.height
         change_in_points = cloud_point_count - self.last_point_count
         change_threshold = round(self.avg_point_count_increase * self.change_factor)
-        dark_backward_and_abysm_of_time = Empty()
+        void = Empty()
         if change_in_points > change_threshold:
-            self.squealer.publish(dark_backward_and_abysm_of_time)
+            print(f"detected map merge with change of size: {change_in_points}")
+            self.squealer.publish(void)
         elif change_in_points < self.based_loss_threshold:
-            self.shrinker.publish(dark_backward_and_abysm_of_time)
+            print(f"detected new_map with loss of {change_in_points}")
+            self.shrinker.publish(void)
         else:
             self.growth_aggregate += change_in_points
             self.update_count += 1
