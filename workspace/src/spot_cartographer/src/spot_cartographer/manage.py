@@ -1,6 +1,7 @@
 import rospy
 from std_msg.msg import Empty
 from std_srvs.srv import Empty
+from spot_cartographer.sync import PointCloudChangeTracker
 from typing import (
     Optional,
     NoReturn,
@@ -12,7 +13,12 @@ class Cartographer:
         self.octree_connection: Optional[rospy.ServiceProxy] = None
         self.connect_octo_server()
         rospy.Subscriber(
-            "spotters/cartographer/map_change",
+            "spotters/cartographer/birth",
+            Empty,
+            self.destroy_previous_octree()
+        )
+        rospy.Subscriber(
+            "spotters/cartographer/merge",
             Empty,
             self.destroy_previous_octree()
         )
@@ -35,15 +41,16 @@ class Cartographer:
             self.connect_octo_server()
             self.destroy_previous_octree()
 
-    def manage(self) -> None:
+    def manage(self) -> NoReturn:
         rospy.logdebug("[Cartographer] Managing.")
+        _ = PointCloudChangeTracker()
+        rospy.spin()
 
 
 def main() -> NoReturn:
     rospy.init_node("spot_cartographer", log_level=rospy.DEBUG)
     cartographer = Cartographer()
     cartographer.manage()
-    rospy.spin()
 
 
 if __name__ == "__main__":

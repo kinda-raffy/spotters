@@ -10,12 +10,12 @@ class PointCloudChangeTracker:
             self.detect_significant_changes,
         )
         self.squealer = rospy.Publisher(
-            "spotters/cartographer/map_change",
+            "spotters/cartographer/merge",
             Empty,
             queue_size=1,
         )
         self.shrinker = rospy.Publisher(
-            "spotters/cartographer/map_change",
+            "spotters/cartographer/birth",
             Empty,
             queue_size=1,
         )
@@ -30,20 +30,12 @@ class PointCloudChangeTracker:
         cloud_point_count = cloud.row_step * cloud.height
         change_in_points = cloud_point_count - self.last_point_count
         change_threshold = round(self.avg_point_count_increase * self.change_factor)
-        vast_unyielding_void = Empty()
+        dark_backward_and_abysm_of_time = Empty()
         if change_in_points > change_threshold:
-            self.squealer.publish(vast_unyielding_void)
+            self.squealer.publish(dark_backward_and_abysm_of_time)
         elif change_in_points < self.based_loss_threshold:
-            self.shrinker.publish(vast_unyielding_void)
+            self.shrinker.publish(dark_backward_and_abysm_of_time)
         else:
             self.growth_aggregate += change_in_points
             self.update_count += 1
             self.avg_point_count_increase = round(self.growth_aggregate / self.update_count)
-
-
-def main() -> None:
-    raise NotImplementedError()
-
-
-if __name__ == "__main__":
-    main()
