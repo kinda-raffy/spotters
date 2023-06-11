@@ -1,5 +1,5 @@
 class NavTask:
-    def __init__(self):
+    def __init__(self, curr_to_goal_distance = None):
         self.curr_pos = None
         self.goal_pos = None
         self.map_width = None
@@ -9,7 +9,14 @@ class NavTask:
         self.ultimate_goal_pos = None
         self.is_set_up = False
         self.is_goal_changed = False
+        self.is_localisation_lost = False
         self.is_complete = False
+
+        # When the localisation is lost,
+        if curr_to_goal_distance is not None:
+            self.curr_to_goal_distance = curr_to_goal_distance
+        else:
+            self.curr_to_goal_distance = None
         
     def is_set_up_needed(self):
         res = False
@@ -76,6 +83,11 @@ class NavTask:
             else:
                 self.set_goal_pos(self.ultimate_goal_pos)
         return res 
+    
+    def recover_goal_pos(self):
+        goal_pos = (self.curr_pos[0] + self.curr_to_goal_distance[0], 
+                    self.curr_pos[1] + self.curr_to_goal_distance[1])
+        self.set_goal_pos(goal_pos)
         
         
         

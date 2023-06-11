@@ -18,14 +18,14 @@ from nav_msgs.msg import (
 # SETTINGS
 # Map size
 w = 10
-h = 10
+h = 9
 
 # Global vars
 pos_x = 0
 pos_y = 0
 
-goal_x = 9
-goal_y = 9
+goal_x = 7
+goal_y = 7
 
 
 # Set the dummy map here
@@ -72,8 +72,7 @@ def goal_pos(x, y):
 def path_next(data):
     global pos_x, pos_y
     
-    if len(data.poses) > 1:
-        nextpose = data.poses[1]
+    nextpose = data.poses[1]
     pos_x = round(nextpose.pose.position.x)
     pos_y = round(nextpose.pose.position.y)
 

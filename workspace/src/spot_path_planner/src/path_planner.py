@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 import rospy
-from std_msgs.msg import Header
+from std_msgs.msg import (
+    Header,
+    Bool
+)
 from geometry_msgs.msg import (
     Twist,
     PoseStamped,
@@ -72,10 +75,23 @@ def map_callback(msg):
 def curr_pos_callback(msg):
     global navtask
     navtask.curr_pos = (round(msg.pose.position.y), round(msg.pose.position.x))
+    
+    # Store the distance between the goal and the current postiions
+    if navtask.is_set_up:
+        navtask.curr_to_goal_distance = (navtask.goal_pos[0] - navtask.curr_pos[0],
+                                          navtask.goal_pos[1] - navtask.curr_pos[1])
+        
 
 def goal_pos_callback(msg):
     global navtask
     navtask.set_goal_pos((round(msg.pose.position.y), round(msg.pose.position.x)))
+
+def is_localisation_lost_callback(msg):
+    global navtask
+    if msg.data == True:
+        navtask.is_localisation_lost = True
+    else:
+        navtask.is_localisation_lost = False
 
 
 rospy.init_node('path_planner_node', anonymous=True)
@@ -83,15 +99,19 @@ pub_path = rospy.Publisher('path', Path, queue_size=10)
 sub_map = rospy.Subscriber('map', OccupancyGrid, map_callback)
 sub_curr_pos = rospy.Subscriber('curr_pos', PoseStamped, curr_pos_callback)
 sub_goal_pos = rospy.Subscriber('goal_pos', PoseStamped, goal_pos_callback)
+sub_is_localisation_lost = rospy.Subscriber('is_localisation_lost', Bool, is_localisation_lost_callback )
 
 rate = rospy.Rate(1)
 
 while not rospy.is_shutdown():
-    while not navtask.is_ultimate_goal_reached():
+    # If the localisation is lost, create a navtask again
+    if navtask.is_localisation_lost:
+        navtask = NavTask(navtask.curr_to_goal_distance)
+        while navtask.curr_pos is None:
+            rate.sleep()
+        navtask.recover_goal_pos()
+    while not navtask.is_ultimate_goal_reached() and not navtask.is_localisation_lost:
         if navtask.is_set_up_needed():
-            # print(navtask.curr_pos)
-            # print(navtask.goal_pos)
-            # print(navtask.curr_map)
 
             # y dim is the dimension in the direction of y; therefore it is equal to the width. 
             new_map = OccupancyGridMap(y_dim = navtask.map_width, x_dim = navtask.map_height)
