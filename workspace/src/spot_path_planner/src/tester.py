@@ -24,8 +24,8 @@ h = 9
 pos_x = 0
 pos_y = 0
 
-goal_x = 7
-goal_y = 7
+goal_x = 9
+goal_y = 19
 
 
 # Set the dummy map here
@@ -39,7 +39,7 @@ def map():
     map.info.resolution = 1
 
     for i in range(w * h):
-        if i > w * 4 - 1 and i < w * 5 - 1:
+        if (i > w * 4 - 1 and i < w * 5 - 1) or (i > w * 8 and i < w * 9):
             map.data.append(100)
         else:
             map.data.append(0)
