@@ -10,7 +10,7 @@ import sensor_msgs.point_cloud2 as pc2
 class PointCloudProcessingFacility:
     def __init__(self):
         # TODO: Publish to a new topic.
-        self.pub = rospy.Publisher('filtered_points', PointCloud2, queue_size=10)
+        self.pub = rospy.Publisher('filtered_points', PointCloud2, queue_size=1)
         # TODO: Merged with point cloud data.
         rospy.Subscriber('/orb_slam3/all_points', PointCloud2, self.process_point_cloud)
         self.last_callback = 0

@@ -63,9 +63,13 @@ def construct_occupancy_grid(
     index = rtree.index.Index()
     shapes = list()
     # Initialise the tree with all shapes.
-    for ordinal, alpha in enumerate(alphas.geoms):
-        index.insert(ordinal, alpha.bounds)
-        shapes.append(alpha)
+    if isinstance(alphas, shapely.Polygon):
+        index.insert(0, alphas.bounds)
+        shapes.append(alphas)
+    else:
+        for ordinal, alpha in enumerate(alphas.geoms):
+            index.insert(ordinal, alpha.bounds)
+            shapes.append(alpha)
     length, height = grid.info.width, grid.info.height
     # Create blank grid and iterate over subgrids, labelling if occupied.
     array = np.zeros((height, length), np.uint8)

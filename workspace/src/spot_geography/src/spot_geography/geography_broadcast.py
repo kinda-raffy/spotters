@@ -21,7 +21,7 @@ from typing import (
 class GeographyBroadcastStation:
     def __init__(self) -> None:
         self.cloud_facility = PointCloudProcessingFacility()
-        self.positions_channel = rospy.Publisher("/spotters/mapping/pos", PoseArray, queue_size=10)
+        self.positions_channel = rospy.Publisher("/spotters/mapping/pos", PoseArray, queue_size=1)
         self.occupancy_channel = rospy.Publisher("/spotters/mapping/map", OccupancyGrid, queue_size=1)
 
     def initiate_broadcast(self) -> None:
@@ -70,7 +70,7 @@ class GeographyBroadcastStation:
 
 
 def main() -> None:
-    rospy.init_node("spotters_geography_broadcast")
+    rospy.init_node("spotters_geography_broadcast", log_level=rospy.DEBUG)
     station = GeographyBroadcastStation()
     station.initiate_broadcast()
 
