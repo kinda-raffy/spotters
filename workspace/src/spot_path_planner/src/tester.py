@@ -17,8 +17,15 @@ from nav_msgs.msg import (
 
 # SETTINGS
 # Map size
-w = 5
-h = 5
+w = 10
+h = 10
+
+# Global vars
+pos_x = 0
+pos_y = 0
+
+goal_x = 9
+goal_y = 9
 
 
 # Set the dummy map here
@@ -32,7 +39,7 @@ def map():
     map.info.resolution = 1
 
     for i in range(w * h):
-        if i == w + 1:
+        if i > w * 4 - 1 and i < w * 5 - 1:
             map.data.append(100)
         else:
             map.data.append(0)
@@ -62,6 +69,12 @@ def goal_pos(x, y):
 
     return curr_pos
 
+def path_next(data):
+    global pos_x, pos_y
+
+    nextpose = data.poses[1]
+    pos_x = round(nextpose.pose.position.x)
+    pos_y = round(nextpose.pose.position.y)
 
 if __name__ == '__main__':
     print("Starting tester node")
@@ -70,14 +83,9 @@ if __name__ == '__main__':
     pub_map = rospy.Publisher('map', OccupancyGrid, queue_size=10)
     pub_pos = rospy.Publisher('curr_pos', PoseStamped, queue_size=10)
     pub_goal = rospy.Publisher('goal_pos', PoseStamped, queue_size=10)
+    sub_path = rospy.Subscriber('path', Path, path_next)
 
-    rate = rospy.Rate(1)
-
-    pos_x = 0
-    pos_y = 0
-
-    goal_x = 3
-    goal_y = 3
+    rate = rospy.Rate(0.5)
 
     while not rospy.is_shutdown():
         pub_pos.publish(curr_pos(pos_x, pos_y))
