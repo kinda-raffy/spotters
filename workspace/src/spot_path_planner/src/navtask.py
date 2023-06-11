@@ -25,7 +25,8 @@ class NavTask:
         return res
     
     def set_goal_pos(self, cartesian_goal_pos):
-        self.goal_pos = cartesian_goal_pos
+        if not self.map_width is None and not self.map_height is None:
+            self.goal_pos = self.bound_goal_pos(cartesian_goal_pos)
         # if self.map_width and self.map_height:
         #     # Return the bounded_goal and store the original goal in ultimate_goal
         #     cartesian_goal_pos = self.bound_goal_pos(cartesian_goal_pos)
@@ -46,23 +47,33 @@ class NavTask:
         self.ultimate_goal_pos = goal_pos
         
         goal_x_value, goal_y_value = goal_pos
-        temp_goal_x_value = None
-        temp_goal_y_value = None  
+
+        (gx, gy) = goal_pos
+        temp_goal_x_value = gx
+        temp_goal_y_value = gy
         # Assuming that all the map coordinates are positive,
+
         max_x_value = self.map_height - 1
         max_y_value = self.map_width - 1
         min_x_value = 0
         min_y_value = 0
         
-        if goal_x_value > max_x_value:
-            temp_goal_x_value = min(goal_x_value, max_x_value)
-        if goal_x_value < min_x_value:
-            temp_goal_x_value = max(goal_x_value, min_x_value)
-        if goal_y_value > max_y_value:
-            temp_goal_y_value = min(goal_y_value, max_y_value)
-        if goal_y_value < min_y_value:
-            temp_goal_y_value = max(goal_y_value, min_y_value)
-        
+        (x, y) = self.curr_pos
+
+        if goal_x_value > max_x_value and goal_x_value < min_x_value:
+            temp_goal_x_value = (x + goal_x_value) / 2
+        elif goal_x_value > max_x_value:
+            temp_goal_x_value = max_x_value
+        elif goal_x_value < min_x_value:
+            temp_goal_x_value = min_x_value
+
+        if goal_y_value > max_y_value and goal_y_value < min_y_value:
+            temp_goal_y_value = (y + goal_y_value) / 2
+        elif goal_y_value > max_y_value:
+            temp_goal_y_value = max_y_value
+        elif goal_y_value < min_y_value:
+            temp_goal_y_value = min_y_value
+
         return (temp_goal_x_value, temp_goal_y_value)
     
     def is_ultimate_goal_reached(self):
