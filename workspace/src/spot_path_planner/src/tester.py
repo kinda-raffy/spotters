@@ -25,7 +25,7 @@ pos_x = 0
 pos_y = 0
 
 goal_x = 9
-goal_y = 9
+goal_y = 19
 
 
 # Set the dummy map here
@@ -89,8 +89,8 @@ if __name__ == '__main__':
 
     while not rospy.is_shutdown():
         pub_pos.publish(curr_pos(pos_x, pos_y))
-        pub_goal.publish(goal_pos(goal_x, goal_y))
         pub_map.publish(map())
+        pub_goal.publish(goal_pos(goal_x, goal_y))
 
         rate.sleep()
 
