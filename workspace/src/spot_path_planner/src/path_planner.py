@@ -14,60 +14,40 @@ from nav_msgs.msg import (
     OccupancyGrid,
     Path
 )
-
-
-
 from d_star_lite import DStarLite
 from grid import OccupancyGridMap, SLAM
-
+from navtask import NavTask
+import numpy as np
 
 # from spot_driver.spot_ros import SpotROS
 
 # As a prototype path planner, we assume that the robot has scouted the whole map before sending a goal_pos to navigate to.
 # Therefore, goal_pos will be always within the map.
 
-curr_pos = None
-start_pos = None
-goal_pos = None
-map_width = None
-map_height = None
-map_resolution = None
+navtask = NavTask()
+
 new_map = None
-curr_map = None
 old_map = None
 new_position = None
 last_position = None
+# TODO: Implement the translation from cartesian coordinates to d_star_lite indices
+# curr_location = None
+# goal_lcoation = None
 dstar = None
 slam = None
-is_goal_reached = False
 path = None
-is_planning_started = False
-curr_pos_z = None
-
-ROBOT_NAME = "/"
 
 OBSTACLE = 100
 UNOCCUPIED = 0
-UNKNOWN = -1
-
-from collections import Counter
 
 def map_callback(msg):
-    global map_width, map_height, map_resolution, curr_map, curr_pos, start_pos
-
-    map_width = msg.info.width
-    map_height = msg.info.height
-    map_resolution = msg.info.resolution
-
-    # msg.data includes unknown cells represented as the value -1. Convert all -1s to 0  (UNOCCUPIED)
-    map_data = []
-    for num in msg.data:
-        if num == UNKNOWN:
-            map_data.append(UNOCCUPIED)
-        else:
-            map_data.append(num)
+    global navtask
     
-    curr_map = [map_data[i:i+map_width] for i in range(0, len(map_data), map_width)]
+    navtask.map_width = msg.info.width
+    navtask.map_height = msg.info.height 
+    navtask.map_resolution = msg.info.resolution
+    
+    navtask.curr_map = np.reshape(msg.data, (navtask.map_height, navtask.map_width))
 
     # # Check the contents of map_data        
     # val_counts = {}
@@ -78,7 +58,7 @@ def map_callback(msg):
     #         val_counts[num] = 1
     # print(val_counts)
 
-        # Colour the entire map black and grey so that it can be visualised in rviz
+    # # Colour the entire map black and grey so that it can be visualised in rviz
     # map_pub = rospy.Publisher('map2', OccupancyGrid, queue_size = 100)
     # map_data = []
     # for idx, num in enumerate(msg.data):
@@ -90,51 +70,43 @@ def map_callback(msg):
     # map_pub.publish(msg)
 
 def curr_pos_callback(msg):
-    global curr_pos, start_pos
-    # Update the current position only when map_resolution has been updated
-    if map_resolution is not None:
-        # TODO: this curr_pos is incorrect
-        curr_pos = (round(msg.pose.position.x / map_resolution), round(msg.pose.position.y / map_resolution))
+    global navtask
+    navtask.curr_pos = (round(msg.pose.position.y), round(msg.pose.position.x))
 
-        if start_pos is None:
-            start_pos = curr_pos
+def goal_pos_callback(msg):
+    global navtask
+    navtask.set_goal_pos((round(msg.pose.position.y), round(msg.pose.position.x)))
 
 
+rospy.init_node('path_planner_node', anonymous=True)
+pub_path = rospy.Publisher('path', Path, queue_size=10)
+sub_map = rospy.Subscriber('map', OccupancyGrid, map_callback)
+sub_curr_pos = rospy.Subscriber('curr_pos', PoseStamped, curr_pos_callback)
+sub_goal_pos = rospy.Subscriber('goal_pos', PoseStamped, goal_pos_callback)
 
+rate = rospy.Rate(1)
 
-if __name__ == '__main__':
-    rospy.init_node('path_planner_node', anonymous=True)
-    pub_path = rospy.Publisher('path', Path, queue_size=10)
-    sub_map = rospy.Subscriber(ROBOT_NAME + 'map', OccupancyGrid, map_callback)
-    sub_curr_pos = rospy.Subscriber(ROBOT_NAME + 'curr_pos', PoseStamped, curr_pos_callback)
+while not rospy.is_shutdown():
+    while not navtask.is_ultimate_goal_reached():
+        if navtask.is_set_up_needed():
+            print(navtask.curr_pos)
+            print(navtask.goal_pos)
+            print(navtask.curr_map)
 
-    rate = rospy.Rate(1)
-
-    while not rospy.is_shutdown() and goal_pos is None:
-        # Update the current position only when map_resolution has been updated
-        if map_resolution is not None:
-            goal_pos_msg = rospy.wait_for_message('goal_pos', PoseStamped)
-            goal_pos  = (round(goal_pos_msg.pose.position.x / map_resolution), round(goal_pos_msg.pose.position.y / map_resolution))
-
-    while not rospy.is_shutdown() and not is_goal_reached:
-        if not is_planning_started:
             # y dim is the dimension in the direction of y; therefore it is equal to the width. 
-            new_map = OccupancyGridMap(y_dim = map_width, x_dim = map_height)
-            new_map.set_map(curr_map)
+            new_map = OccupancyGridMap(y_dim = navtask.map_width, x_dim = navtask.map_height)
+            new_map.set_map(navtask.curr_map)
+            new_position = navtask.curr_pos
+            last_position = navtask.curr_pos
 
-            new_position = start_pos
-            last_position = start_pos
+            dstar = DStarLite(map=new_map, s_start=navtask.curr_pos, s_goal=navtask.goal_pos)
 
-            dstar = DStarLite(map=new_map, s_start=start_pos, s_goal=goal_pos)
-
-            slam = SLAM(map=new_map, view_range=30)
-            
+            slam = SLAM(map=new_map, view_range=2)
+        
             path, g, rhs = dstar.move_and_replan(robot_position=new_position)
-
-            is_planning_started = True
         else:
-            new_position = curr_pos
-            new_map.set_map(curr_map)
+            new_position = navtask.curr_pos
+            new_map.set_map(navtask.curr_map)
             slam.set_ground_truth_map(gt_map=new_map)
 
             if new_position != last_position:
@@ -146,29 +118,24 @@ if __name__ == '__main__':
                 dstar.new_edges_and_old_costs = new_edges_and_old_costs
                 dstar.sensed_map = slam_map
 
-                (x, y) = curr_pos
-                print("X+1: " + str(dstar.sensed_map.is_unoccupied((x + 1, y))) + " X-1: " + str(dstar.sensed_map.is_unoccupied((x - 1, y))) + "Y+1: " + str(dstar.sensed_map.is_unoccupied((x, y + 1))) + " Y-1: " + str(dstar.sensed_map.is_unoccupied((x, y - 1))))
-
                 # d star
                 path, g, rhs = dstar.move_and_replan(robot_position=new_position)
-
-        # If the length of path is 1, set is_goal_reached to true
-        if len(path) == 1:
-            is_goal_reached = True
     
         path_msg = Path()
         path_msg.header.frame_id = 'map'
         path_msg.header.stamp = rospy.Time.now()
-        path_values = {}
 
         for pos in path:
             pos_stamped = PoseStamped()
-            pos_stamped.pose.position.x = (pos[0]) * map_resolution
-            pos_stamped.pose.position.y = (pos[1]) * map_resolution
+            pos_stamped.pose.position.x = pos[1]
+            pos_stamped.pose.position.y = pos[0]
             # TODO: we assume that z position is 0 (this needs to be updated)
             pos_stamped.pose.position.z = 0
             path_msg.poses.append(pos_stamped)
 
         pub_path.publish(path_msg)
 
-        rate.sleep()
+
+
+    rate.sleep()
+    

@@ -107,7 +107,9 @@ class DStarLite:
     def move_and_replan(self, robot_position: (int, int)):
         path = [robot_position]
         self.s_start = robot_position
+        print(self.s_start)
         self.s_last = self.s_start
+        print(self.s_last)
         self.compute_shortest_path()
 
         while self.s_start != self.s_goal:
