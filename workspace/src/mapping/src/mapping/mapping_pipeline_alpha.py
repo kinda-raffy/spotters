@@ -148,6 +148,7 @@ def generate_occlusion_polygons(coordinates: NDArray, alpha: float = 1) -> None:
     feature_coordinates = np.array([point.coords[0] for point in feature_points])
     triangles = spatial.Delaunay(feature_coordinates)
     edges, points = set(), list()
+    filter_start=time.time()
     for vertex1_index, vertex2_index, vertex3_index in triangles.vertices:
         coordinate1 = feature_coordinates[vertex1_index]
         coordinate2 = feature_coordinates[vertex2_index]
@@ -156,8 +157,13 @@ def generate_occlusion_polygons(coordinates: NDArray, alpha: float = 1) -> None:
             include_edge(vertex1_index, vertex2_index)
             include_edge(vertex2_index, vertex3_index)
             include_edge(vertex3_index, vertex1_index)
+    shapely_start = time.time()
     polygons = shapely.ops.polygonize(shapely.MultiLineString(points))
-    return shapely.unary_union(polygons).buffer(1)
+    shapely_time = time.time() - shapely_start
+    filter_time = time.time() - filter_start - shapely_time
+    print(f"Created shapely polygons in {shapely_time:.2f}.")
+    print(f"Filtered triangle in {filter_time:.2f}.")
+    return shapely.unary_union(polygons).buffer(2)
 
 
 def filter_triangle(
@@ -165,7 +171,7 @@ def filter_triangle(
     vertex2: Sequence[int],
     vertex3: Sequence[int],
     alpha: float,
-) -> Bool:
+) -> bool:
 
     def calculate_distance(coordinate1, coordinate2) -> float:
         return math.sqrt(  # TODO: Verify absolute value is correct.
@@ -176,7 +182,7 @@ def filter_triangle(
     length1 = calculate_distance(vertex1, vertex2)
     length2 = calculate_distance(vertex2, vertex3)
     length3 = calculate_distance(vertex3, vertex1)
-    half_peri = sum(length1, length2, length3) / 2
+    half_peri = (length1 + length2 + length3) / 2
     area = math.sqrt(
         half_peri
         * (half_peri - length1)
