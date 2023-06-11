@@ -89,9 +89,6 @@ rate = rospy.Rate(1)
 while not rospy.is_shutdown():
     while not navtask.is_ultimate_goal_reached():
         if navtask.is_set_up_needed():
-            print(navtask.curr_pos)
-            print(navtask.goal_pos)
-            print(navtask.curr_map)
 
             # y dim is the dimension in the direction of y; therefore it is equal to the width. 
             new_map = OccupancyGridMap(y_dim = navtask.map_width, x_dim = navtask.map_height)

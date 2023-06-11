@@ -71,8 +71,9 @@ def goal_pos(x, y):
 
 def path_next(data):
     global pos_x, pos_y
-
-    nextpose = data.poses[1]
+    
+    if len(data.poses) > 1:
+        nextpose = data.poses[1]
     pos_x = round(nextpose.pose.position.x)
     pos_y = round(nextpose.pose.position.y)
 
