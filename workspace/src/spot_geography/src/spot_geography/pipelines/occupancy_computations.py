@@ -78,8 +78,8 @@ def construct_occupancy_grid(
         for alpha in indices:
             if shapes[alpha].contains(point):
                 array[
-                    max(0, rank - 1) : min(rank + 2, length),
-                    max(0, file - 1) : min(file + 2, height),
+                    max(0, rank - 1) : min(rank + 2, height),
+                    max(0, file - 1) : min(file + 2, length),
                 ] = 100
                 break
     rospy.logdebug(f"[Occupancy Grid] Generating occupancy grid in {time.time() - start}.")
