@@ -43,7 +43,7 @@ class Pipeline:
 
     def compute_pipeline(self, data):
         self.compute_pcd_map(data)
-        
+
     # --- Pipelines.
     def compute_pcd_map(self, original_map):
         np_grid = np.array(original_map.data)
@@ -58,11 +58,11 @@ class Pipeline:
         pcd_map = np.zeros_like(binary_grid)
         # for coordinate in free_coordinates:
             # pcd_map[coordinate[0], coordinate[1]] = 100
-        
+
         _alpha = 25.0
         alpha_shaper = AlphaShaper(occupied_coordinates)
         alpha_shape = alpha_shaper.get_shape(alpha=_alpha)
-        
+
         _convex = 1.0
         convex_shaper = AlphaShaper(occupied_coordinates)
         convex_shape = convex_shaper.get_shape(alpha=_convex)
@@ -83,7 +83,7 @@ class Pipeline:
         image_msg = bridge.cv2_to_imgmsg(image, encoding="rgb8")
 
         self.hull_pub.publish(image_msg)
-        
+
         navigable_map = OccupancyGrid()
         navigable_map.header.stamp = rospy.Time.now()
         navigable_map.header.frame_id = original_map.header.frame_id

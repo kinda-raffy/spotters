@@ -1,20 +1,107 @@
 import math
 import itertools
+import rospy
 import rtree
 import shapely
 import shapely.ops
 import numpy as np
-import scipy.spatial as spatial
-from typing import Sequence, Bool
 from numpy.typing import NDArray
+from typing import (
+    Sequence,
+    Optional,
+    Tuple,
+    Bool,
+)
+import scipy.spatial as spatial
+from std_msgs.msg import Header
 from nav_msgs.msg import OccupancyGrid
+from geometry_msgs.msg import (
+    PoseStamped,
+    PoseArray,
+    Pose,
+    Point,
+)
 
 
-def generate_occupancy_grid(grid: OccupancyGrid) -> NDArray:
+class GeographyBroadcastStation:
+    def __init__(self) -> None:
+        rospy.init_node("geography_broadcast_station", anonymous=True)
+        self.positions_channel = rospy.Publisher("/spotters/mapping/pos", PoseArray, queue_size=10)
+        self.occupancy_channel = rospy.Publisher("/spotters/mapping/map", OccupancyGrid, queue_size=10)
+
+    def initiate_broadcast(self) -> None:
+
+        def broadcast(grid: OccupancyGrid) -> None:
+            array, positions = self.generate_geography(grid)
+            self.broadcast_geography(array, grid, positions)
+
+        rospy.Subscriber('/projected_map', OccupancyGrid, broadcast)
+        rospy.spin()
+
+    def generate_geography(self, grid: OccupancyGrid) -> Tuple[NDArray, Optional[PoseArray]]:
+
+        def update_robot_position(pose: PoseStamped) -> None:
+            nonlocal position
+            position = pose.pose
+
+        position: Optional[Pose] = None
+        rospy.Subscriber("orb_slam3/camera_pose", PoseStamped, update_robot_position, queue_size=1)
+        occupancy = generate_occupancy_grid(grid)
+        positions = generate_positions_data(grid.data.width, grid.data.height, position)
+        return occupancy, positions
+
+    def broadcast_geography(
+        self,
+        data: NDArray,
+        grid: OccupancyGrid,
+        positions: Optional[PoseArray] = None
+    ) -> None:
+        header = Header()
+        header.stamp = rospy.Time.now()
+        header.frame_id = grid.header.frame_id
+        if positions is not None:
+            positions.header = header
+            self.positions_channel.publish(positions)
+        generated = OccupancyGrid()
+        generated.data = data
+        generated.header = header
+        generated.info.map_load_time = rospy.Time.now()
+        generated.info.resolution = grid.info.resolution
+        generated.info.width =  grid.info.width
+        generated.info.height = grid.info.height
+        generated.info.origin = grid.info.origin
+        self.occupancy_channel.publish(generated)
+
+
+def generate_occupancy_grid(grid: OccupancyGrid) -> NDArray[np.int8]:
     values = np.array(grid).reshape((grid.info.height, grid.info.width))
     coordinates = np.column_stack(np.where(values == 100))
     alphas = generate_occlusion_polygons(coordinates)
     return construct_occupancy_grid(grid, alphas)
+
+
+def generate_positions_data(width: int, height: int, pose: Pose) -> Optional[PoseArray]:
+    if pose is None:
+        return
+    cartesian = np.rot90(np.stack(np.indices((height, width)), axis=2))
+    cartesian[:,:,0] -= cartesian.shape[1] // 2
+    cartesian[:,:,1] -= cartesian.shape[0] // 2
+    poses: Sequence[Pose] = [pose]
+    try:
+        indices = np.stack(np.where((cartesian == [pose.x, pose.y]).all(axis=2)), axis=1)[0]
+        position = Point()
+        position.x = indices[0]
+        position.y = indices[1]
+        position.z = -1
+        index = Pose()
+        index.position = position
+        index.orientation = pose.orientation
+        poses.append(index)
+    except IndexError:
+        poses.append(None)
+    array: PoseArray = PoseArray()
+    array.poses = poses
+    return array
 
 
 def construct_occupancy_grid(
@@ -44,12 +131,6 @@ def construct_occupancy_grid(
                 ] = 100
                 break
     return array.flatten()
-
-
-def derive_cartesian_coordinates(coordinates: NDArray) -> None:
-    array_indices = np.stack(np.indices(coordinates.shape), axis=2)
-    cartesian_coordinates = np.rot90(array_indices, k=1)
-    print(cartesian_coordinates)
 
 
 def generate_occlusion_polygons(coordinates: NDArray, alpha: float = 1) -> None:
@@ -103,3 +184,12 @@ def filter_triangle(
         * (half_peri - length3)
     )
     return (length1 * length2 * length3) / (4 * area) < 1 / alpha
+
+
+def main() -> None:
+    station = GeographyBroadcastStation()
+    station.initiate_broadcast()
+
+
+if __name__ == "__main__":
+    main()
