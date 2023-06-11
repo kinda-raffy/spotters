@@ -33,12 +33,11 @@ class PointCloudChangeTracker:
         change_threshold = round(self.avg_point_count_increase * self.change_factor)
         void = Empty()
         if change_in_points > change_threshold:
-            print(f"detected map merge with change of size: {change_in_points}")
+            rospy.logdebug(f"detected map merge with change of size: {change_in_points}")
             self.squealer.publish(void)
         elif change_in_points < self.based_loss_threshold:
-            print(f"detected new_map with loss of {change_in_points}")
+            rospy.logdebug(f"detected new_map with loss of {change_in_points}")
             self.shrinker.publish(void)
-        else:
-            self.growth_aggregate += change_in_points
-            self.update_count += 1
-            self.avg_point_count_increase = round(self.growth_aggregate / self.update_count)
+        self.growth_aggregate += change_in_points
+        self.update_count += 1
+        self.avg_point_count_increase = round(self.growth_aggregate / self.update_count)

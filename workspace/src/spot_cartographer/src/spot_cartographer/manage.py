@@ -35,6 +35,7 @@ class Cartographer:
             if self.octree_connection is None:
                 raise rospy.ServiceException("Octree connection not established.")
             self.octree_connection()
+
         except rospy.ServiceException as error:
             rospy.logerror(f"Failed to reset octree: {error}")
         except rospy.ROSException:
