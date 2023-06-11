@@ -44,6 +44,27 @@ class OccupancyGridMap:
         """
         self.occupancy_grid_map = new_ogrid
 
+    def update_map_part(self, new_ogrid, offset: (int, int), dim: (int, int)):
+        """
+        When you want to update a part of the map, this should be used instead of set_map.
+        Offset should be where the robot is right now in terms of x, y / height, width
+        Dim should be the dimensions of new_ogrid
+        new_ogrid should be the map itself
+        """
+        (ox, oy) = offset
+        (height, width) = dim
+        # i, j are the starting points of where to iterate from.
+        i, j = ox - height / 2, oy - width / 2
+
+        for row in new_ogrid:
+            for cell in row:
+                if cell == 1:
+                    self.set_obstacle(self, (i, j))
+                elif cell == 0:
+                    self.remove_obstacle(self, (i, j))
+                i += 1
+            j += 1
+
     def is_unoccupied(self, pos: (int, int)) -> bool:
         """
         :param pos: cell position we wish to check
