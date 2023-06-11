@@ -39,7 +39,7 @@ def map():
     map.info.resolution = 1
 
     for i in range(w * h):
-        if i > w * 4 - 1 and i < w * 5 - 1:
+        if (i > w * 4 - 1 and i < w * 5 - 1) or (i > w * 8 and i < w * 9):
             map.data.append(100)
         else:
             map.data.append(0)
@@ -90,8 +90,8 @@ if __name__ == '__main__':
 
     while not rospy.is_shutdown():
         pub_pos.publish(curr_pos(pos_x, pos_y))
-        pub_map.publish(map())
         pub_goal.publish(goal_pos(goal_x, goal_y))
+        pub_map.publish(map())
 
         rate.sleep()
 

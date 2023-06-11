@@ -88,11 +88,8 @@ rate = rospy.Rate(1)
 
 while not rospy.is_shutdown():
     while not navtask.is_ultimate_goal_reached():
+        # If the map isn't set up, then make the initial map.
         if navtask.is_set_up_needed():
-            # print(navtask.curr_pos)
-            # print(navtask.goal_pos)
-            # print(navtask.curr_map)
-
             # y dim is the dimension in the direction of y; therefore it is equal to the width. 
             new_map = OccupancyGridMap(y_dim = navtask.map_width, x_dim = navtask.map_height)
             new_map.set_map(navtask.curr_map)
@@ -104,7 +101,8 @@ while not rospy.is_shutdown():
             slam = SLAM(map=new_map, view_range=2)
         
             path, g, rhs = dstar.move_and_replan(robot_position=new_position)
-        else:
+        # If the map is already setup, then do replanning when moving around.
+        elif navtask.is_set_up:
             new_position = navtask.curr_pos
             new_map.set_map(navtask.curr_map)
             slam.set_ground_truth_map(gt_map=new_map)
@@ -120,7 +118,10 @@ while not rospy.is_shutdown():
 
                 # d star
                 path, g, rhs = dstar.move_and_replan(robot_position=new_position)
-
+        else:
+            # The map isn't set up yet. Wait until it is.
+            rate.sleep()
+            continue
 
         if len(path) > 1:
             path_msg = Path()

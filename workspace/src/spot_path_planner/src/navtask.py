@@ -23,7 +23,7 @@ class NavTask:
             self.is_set_up = True
             self.is_goal_changed = False
         return res
-    
+
     def set_goal_pos(self, cartesian_goal_pos):
         if not self.map_width is None and not self.map_height is None:
             self.goal_pos = self.bound_goal_pos(cartesian_goal_pos)
