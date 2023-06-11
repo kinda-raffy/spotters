@@ -89,9 +89,9 @@ rate = rospy.Rate(1)
 while not rospy.is_shutdown():
     while not navtask.is_ultimate_goal_reached():
         if navtask.is_set_up_needed():
-            print(navtask.curr_pos)
-            print(navtask.goal_pos)
-            print(navtask.curr_map)
+            # print(navtask.curr_pos)
+            # print(navtask.goal_pos)
+            # print(navtask.curr_map)
 
             # y dim is the dimension in the direction of y; therefore it is equal to the width. 
             new_map = OccupancyGridMap(y_dim = navtask.map_width, x_dim = navtask.map_height)
@@ -120,20 +120,22 @@ while not rospy.is_shutdown():
 
                 # d star
                 path, g, rhs = dstar.move_and_replan(robot_position=new_position)
-    
-        path_msg = Path()
-        path_msg.header.frame_id = 'map'
-        path_msg.header.stamp = rospy.Time.now()
 
-        for pos in path:
-            pos_stamped = PoseStamped()
-            pos_stamped.pose.position.x = pos[1]
-            pos_stamped.pose.position.y = pos[0]
-            # TODO: we assume that z position is 0 (this needs to be updated)
-            pos_stamped.pose.position.z = 0
-            path_msg.poses.append(pos_stamped)
 
-        pub_path.publish(path_msg)
+        if len(path) > 1:
+            path_msg = Path()
+            path_msg.header.frame_id = 'map'
+            path_msg.header.stamp = rospy.Time.now()
+
+            for pos in path:
+                pos_stamped = PoseStamped()
+                pos_stamped.pose.position.x = pos[1]
+                pos_stamped.pose.position.y = pos[0]
+                # TODO: we assume that z position is 0 (this needs to be updated)
+                pos_stamped.pose.position.z = 0
+                path_msg.poses.append(pos_stamped)
+
+            pub_path.publish(path_msg)
 
 
 
