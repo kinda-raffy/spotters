@@ -40,6 +40,184 @@ Toolbars:
 Visualization Manager:
   Class: ""
   Displays:
+    - Class: rviz/Group
+      Displays:
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 0.6000000238418579
+              Cell Size: 0.05000000074505806
+              Class: rviz/Grid
+              Color: 0; 0; 255
+              Enabled: true
+              Line Style:
+                Line Width: 0.029999999329447746
+                Value: Lines
+              Name: Grid
+              Normal Cell Count: 0
+              Offset:
+                X: 0
+                Y: 0
+                Z: 0
+              Plane: YZ
+              Plane Cell Count: 8
+              Reference Frame: camera
+              Value: true
+            - Alpha: 0.6000000238418579
+              Cell Size: 0.05000000074505806
+              Class: rviz/Grid
+              Color: 255; 0; 0
+              Enabled: true
+              Line Style:
+                Line Width: 0.029999999329447746
+                Value: Lines
+              Name: Grid
+              Normal Cell Count: 0
+              Offset:
+                X: 0
+                Y: 0
+                Z: 0
+              Plane: XZ
+              Plane Cell Count: 8
+              Reference Frame: camera
+              Value: true
+            - Alpha: 0.6000000238418579
+              Cell Size: 0.05000000074505806
+              Class: rviz/Grid
+              Color: 0; 255; 0
+              Enabled: true
+              Line Style:
+                Line Width: 0.029999999329447746
+                Value: Lines
+              Name: Grid
+              Normal Cell Count: 0
+              Offset:
+                X: 0
+                Y: 0
+                Z: 0
+              Plane: XY
+              Plane Cell Count: 8
+              Reference Frame: camera
+              Value: true
+          Enabled: true
+          Name: Camera
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 0.6000000238418579
+              Cell Size: 1
+              Class: rviz/Grid
+              Color: 173; 127; 168
+              Enabled: true
+              Line Style:
+                Line Width: 0.029999999329447746
+                Value: Billboards
+              Name: Grid
+              Normal Cell Count: 0
+              Offset:
+                X: 0
+                Y: 0
+                Z: 0
+              Plane: YZ
+              Plane Cell Count: 1
+              Reference Frame: origin
+              Value: true
+            - Alpha: 0.6000000238418579
+              Cell Size: 2
+              Class: rviz/Grid
+              Color: 233; 185; 110
+              Enabled: true
+              Line Style:
+                Line Width: 0.029999999329447746
+                Value: Billboards
+              Name: Grid
+              Normal Cell Count: 0
+              Offset:
+                X: 0
+                Y: 0
+                Z: 0
+              Plane: XZ
+              Plane Cell Count: 1
+              Reference Frame: origin
+              Value: true
+            - Alpha: 0.6000000238418579
+              Cell Size: 2
+              Class: rviz/Grid
+              Color: 114; 159; 207
+              Enabled: true
+              Line Style:
+                Line Width: 0.029999999329447746
+                Value: Billboards
+              Name: Grid
+              Normal Cell Count: 0
+              Offset:
+                X: 0
+                Y: 0
+                Z: 0
+              Plane: XY
+              Plane Cell Count: 2
+              Reference Frame: origin
+              Value: true
+          Enabled: true
+          Name: Origin
+        - Class: rviz/Group
+          Displays:
+            - Alpha: 0.5
+              Cell Size: 5
+              Class: rviz/Grid
+              Color: 146; 109; 17
+              Enabled: true
+              Line Style:
+                Line Width: 0.029999999329447746
+                Value: Billboards
+              Name: Grid
+              Normal Cell Count: 0
+              Offset:
+                X: 0
+                Y: 0
+                Z: 0
+              Plane: YZ
+              Plane Cell Count: 1
+              Reference Frame: odom
+              Value: true
+            - Alpha: 0.5
+              Cell Size: 5
+              Class: rviz/Grid
+              Color: 226; 84; 153
+              Enabled: true
+              Line Style:
+                Line Width: 0.029999999329447746
+                Value: Billboards
+              Name: Grid
+              Normal Cell Count: 0
+              Offset:
+                X: 0
+                Y: 0
+                Z: 0
+              Plane: XZ
+              Plane Cell Count: 1
+              Reference Frame: odom
+              Value: true
+            - Alpha: 0.5
+              Cell Size: 5
+              Class: rviz/Grid
+              Color: 64; 114; 191
+              Enabled: true
+              Line Style:
+                Line Width: 0.029999999329447746
+                Value: Billboards
+              Name: Grid
+              Normal Cell Count: 0
+              Offset:
+                X: 0
+                Y: 0
+                Z: 0
+              Plane: XY
+              Plane Cell Count: 1
+              Reference Frame: odom
+              Value: true
+          Enabled: true
+          Name: Odom
+      Enabled: true
+      Name: World Reference
     - Class: rviz/TF
       Enabled: true
       Filter (blacklist): ""
@@ -302,7 +480,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-      Name: RobotModel
+      Name: Spot Model
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
@@ -310,182 +488,188 @@ Visualization Manager:
       Visual Enabled: true
     - Class: rviz/Group
       Displays:
-        - Class: rviz/Group
-          Displays:
-            - Alpha: 0.6000000238418579
-              Cell Size: 0.05000000074505806
-              Class: rviz/Grid
-              Color: 0; 0; 255
-              Enabled: true
-              Line Style:
-                Line Width: 0.029999999329447746
-                Value: Lines
-              Name: Grid
-              Normal Cell Count: 0
-              Offset:
-                X: 0
-                Y: 0
-                Z: 0
-              Plane: YZ
-              Plane Cell Count: 8
-              Reference Frame: camera
-              Value: true
-            - Alpha: 0.6000000238418579
-              Cell Size: 0.05000000074505806
-              Class: rviz/Grid
-              Color: 255; 0; 0
-              Enabled: true
-              Line Style:
-                Line Width: 0.029999999329447746
-                Value: Lines
-              Name: Grid
-              Normal Cell Count: 0
-              Offset:
-                X: 0
-                Y: 0
-                Z: 0
-              Plane: XZ
-              Plane Cell Count: 8
-              Reference Frame: camera
-              Value: true
-            - Alpha: 0.6000000238418579
-              Cell Size: 0.05000000074505806
-              Class: rviz/Grid
-              Color: 0; 255; 0
-              Enabled: true
-              Line Style:
-                Line Width: 0.029999999329447746
-                Value: Lines
-              Name: Grid
-              Normal Cell Count: 0
-              Offset:
-                X: 0
-                Y: 0
-                Z: 0
-              Plane: XY
-              Plane Cell Count: 8
-              Reference Frame: camera
-              Value: true
+        - Alpha: 0.4000000059604645
+          Auto Size:
+            Auto Size Factor: 1
+            Value: true
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 10
+            Min Value: -10
+            Value: true
+          Axis: Z
+          Channel Name: z
+          Class: rviz/DepthCloud
+          Color: 255; 255; 255
+          Color Image Topic: ""
+          Color Transformer: Intensity
+          Color Transport Hint: raw
+          Decay Time: 0
+          Depth Map Topic: /spot/depth/back/image
+          Depth Map Transport Hint: raw
           Enabled: true
-          Name: Camera
-        - Class: rviz/Group
-          Displays:
-            - Alpha: 0.6000000238418579
-              Cell Size: 0.03999999910593033
-              Class: rviz/Grid
-              Color: 173; 127; 168
-              Enabled: true
-              Line Style:
-                Line Width: 0.029999999329447746
-                Value: Lines
-              Name: Grid
-              Normal Cell Count: 0
-              Offset:
-                X: 0
-                Y: 0
-                Z: 0
-              Plane: YZ
-              Plane Cell Count: 15
-              Reference Frame: origin
-              Value: true
-            - Alpha: 0.6000000238418579
-              Cell Size: 0.03999999910593033
-              Class: rviz/Grid
-              Color: 233; 185; 110
-              Enabled: true
-              Line Style:
-                Line Width: 0.029999999329447746
-                Value: Lines
-              Name: Grid
-              Normal Cell Count: 0
-              Offset:
-                X: 0
-                Y: 0
-                Z: 0
-              Plane: XZ
-              Plane Cell Count: 15
-              Reference Frame: origin
-              Value: true
-            - Alpha: 0.6000000238418579
-              Cell Size: 0.03999999910593033
-              Class: rviz/Grid
-              Color: 114; 159; 207
-              Enabled: true
-              Line Style:
-                Line Width: 0.029999999329447746
-                Value: Lines
-              Name: Grid
-              Normal Cell Count: 0
-              Offset:
-                X: 0
-                Y: 0
-                Z: 0
-              Plane: XY
-              Plane Cell Count: 15
-              Reference Frame: origin
-              Value: true
+          Invert Rainbow: true
+          Max Color: 255; 255; 255
+          Min Color: 0; 0; 0
+          Name: Back
+          Occlusion Compensation:
+            Occlusion Time-Out: 30
+            Value: false
+          Position Transformer: XYZ
+          Queue Size: 5
+          Selectable: true
+          Size (Pixels): 3
+          Style: Boxes
+          Topic Filter: true
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
+        - Alpha: 0.4000000059604645
+          Auto Size:
+            Auto Size Factor: 1
+            Value: true
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 10
+            Min Value: -10
+            Value: true
+          Axis: Z
+          Channel Name: z
+          Class: rviz/DepthCloud
+          Color: 255; 255; 255
+          Color Image Topic: ""
+          Color Transformer: Intensity
+          Color Transport Hint: raw
+          Decay Time: 0
+          Depth Map Topic: /spot/depth/frontleft/image
+          Depth Map Transport Hint: raw
           Enabled: true
-          Name: Origin
-        - Class: rviz/Group
-          Displays:
-            - Alpha: 0.6000000238418579
-              Cell Size: 0.03999999910593033
-              Class: rviz/Grid
-              Color: 245; 121; 0
-              Enabled: true
-              Line Style:
-                Line Width: 0.029999999329447746
-                Value: Lines
-              Name: Grid
-              Normal Cell Count: 0
-              Offset:
-                X: 0
-                Y: 0
-                Z: 0
-              Plane: YZ
-              Plane Cell Count: 10
-              Reference Frame: odom
-              Value: true
-            - Alpha: 0.6000000238418579
-              Cell Size: 0.03999999910593033
-              Class: rviz/Grid
-              Color: 237; 212; 0
-              Enabled: true
-              Line Style:
-                Line Width: 0.029999999329447746
-                Value: Lines
-              Name: Grid
-              Normal Cell Count: 0
-              Offset:
-                X: 0
-                Y: 0
-                Z: 0
-              Plane: XZ
-              Plane Cell Count: 10
-              Reference Frame: odom
-              Value: true
-            - Alpha: 0.6000000238418579
-              Cell Size: 0.03999999910593033
-              Class: rviz/Grid
-              Color: 115; 210; 22
-              Enabled: true
-              Line Style:
-                Line Width: 0.029999999329447746
-                Value: Lines
-              Name: Grid
-              Normal Cell Count: 0
-              Offset:
-                X: 0
-                Y: 0
-                Z: 0
-              Plane: XY
-              Plane Cell Count: 10
-              Reference Frame: odom
-              Value: true
+          Invert Rainbow: true
+          Max Color: 255; 255; 255
+          Min Color: 0; 0; 0
+          Name: Front Left
+          Occlusion Compensation:
+            Occlusion Time-Out: 30
+            Value: false
+          Position Transformer: XYZ
+          Queue Size: 5
+          Selectable: true
+          Size (Pixels): 3
+          Style: Boxes
+          Topic Filter: true
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
+        - Alpha: 0.4000000059604645
+          Auto Size:
+            Auto Size Factor: 1
+            Value: true
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 10
+            Min Value: -10
+            Value: true
+          Axis: Z
+          Channel Name: z
+          Class: rviz/DepthCloud
+          Color: 255; 255; 255
+          Color Image Topic: ""
+          Color Transformer: Intensity
+          Color Transport Hint: raw
+          Decay Time: 0
+          Depth Map Topic: /spot/depth/frontright/image
+          Depth Map Transport Hint: raw
           Enabled: true
-          Name: Odom
+          Invert Rainbow: true
+          Max Color: 255; 255; 255
+          Min Color: 0; 0; 0
+          Name: Front Right
+          Occlusion Compensation:
+            Occlusion Time-Out: 30
+            Value: false
+          Position Transformer: XYZ
+          Queue Size: 5
+          Selectable: true
+          Size (Pixels): 3
+          Style: Boxes
+          Topic Filter: true
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
+        - Alpha: 0.4000000059604645
+          Auto Size:
+            Auto Size Factor: 1
+            Value: true
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 10
+            Min Value: -10
+            Value: true
+          Axis: Z
+          Channel Name: z
+          Class: rviz/DepthCloud
+          Color: 255; 255; 255
+          Color Image Topic: ""
+          Color Transformer: Intensity
+          Color Transport Hint: raw
+          Decay Time: 0
+          Depth Map Topic: /spot/depth/left/image
+          Depth Map Transport Hint: raw
+          Enabled: true
+          Invert Rainbow: true
+          Max Color: 255; 255; 255
+          Min Color: 0; 0; 0
+          Name: Left
+          Occlusion Compensation:
+            Occlusion Time-Out: 30
+            Value: false
+          Position Transformer: XYZ
+          Queue Size: 5
+          Selectable: true
+          Size (Pixels): 3
+          Style: Boxes
+          Topic Filter: true
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
+        - Alpha: 0.4000000059604645
+          Auto Size:
+            Auto Size Factor: 1
+            Value: true
+          Autocompute Intensity Bounds: true
+          Autocompute Value Bounds:
+            Max Value: 10
+            Min Value: -10
+            Value: true
+          Axis: Z
+          Channel Name: z
+          Class: rviz/DepthCloud
+          Color: 255; 255; 255
+          Color Image Topic: ""
+          Color Transformer: Intensity
+          Color Transport Hint: raw
+          Decay Time: 0
+          Depth Map Topic: /spot/depth/right/image
+          Depth Map Transport Hint: raw
+          Enabled: true
+          Invert Rainbow: true
+          Max Color: 255; 255; 255
+          Min Color: 0; 0; 0
+          Name: Right
+          Occlusion Compensation:
+            Occlusion Time-Out: 30
+            Value: false
+          Position Transformer: XYZ
+          Queue Size: 5
+          Selectable: true
+          Size (Pixels): 3
+          Style: Boxes
+          Topic Filter: true
+          Use Fixed Frame: true
+          Use rainbow: true
+          Value: true
       Enabled: true
-      Name: World Reference
+      Name: Spot Depth
     - Class: rviz/Group
       Displays:
         - Class: rviz/Image
@@ -641,11 +825,19 @@ Visualization Manager:
           Color Scheme: map
           Draw Behind: false
           Enabled: true
-          Name: 2D Map
+          Name: Projected Map
           Topic: /projected_map
           Unreliable: false
           Use Timestamp: false
           Value: true
+        - Class: rviz/MarkerArray
+          Enabled: false
+          Marker Topic: /occupied_cells_vis_array
+          Name: 3D Map
+          Namespaces:
+            {}
+          Queue Size: 100
+          Value: false
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
@@ -674,20 +866,12 @@ Visualization Manager:
           Use Fixed Frame: true
           Use rainbow: true
           Value: false
-        - Class: rviz/MarkerArray
-          Enabled: false
-          Marker Topic: /occupied_cells_vis_array
-          Name: 3D Map
-          Namespaces:
-            {}
-          Queue Size: 100
-          Value: false
         - Alpha: 0.699999988079071
           Class: rviz/Map
           Color Scheme: costmap
           Draw Behind: false
           Enabled: true
-          Name: Map
+          Name: Computed Map
           Topic: /spotters/mapping/map
           Unreliable: false
           Use Timestamp: false
@@ -722,7 +906,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 1.6484543085098267
+      Distance: 9.719555854797363
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -730,17 +914,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.18478962779045105
-        Y: -0.19779448211193085
-        Z: 1.9071708265983034e-06
+        X: -0.26584482192993164
+        Y: 0.31400442123413086
+        Z: 2.8608451430045534e-06
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.2947971224784851
+      Pitch: 0.294796347618103
       Target Frame: camera
-      Yaw: 4.53819465637207
+      Yaw: 1.2900148630142212
     Saved:
       - Class: rviz/FrameAligned
         Enable Stereo Rendering:
