@@ -22,10 +22,16 @@ from grid import OccupancyGridMap, SLAM
 from navtask import NavTask
 import numpy as np
 
-# from spot_driver.spot_ros import SpotROS
-
-# As a prototype path planner, we assume that the robot has scouted the whole map before sending a goal_pos to navigate to.
-# Therefore, goal_pos will be always within the map.
+# =========================================================================
+# =                             SETTINGS                                  =
+NODE_ID = "path_planner_node"
+MAP_SUBSCRIBER_TOPIC = "spotters/geography/map"
+POS_SUBSCRIBER_TOPIC = "spotters/geography/pos"
+GOAL_SUBSCRIBER_TOPIC = "spotters/conductor/goal"
+LOST_SUBSCRIBER_TOPIC = "spotters/cartographer/tracking_state"
+PATH_PUBLISHER_TOPIC = "spotters/navigator/path"
+# =                                                                       =
+# =========================================================================
 
 navtask = NavTask()
 
@@ -91,12 +97,12 @@ if DEBUG:
     print("Source: path_planner from Spot Path Planner")
     print("============================================")
 
-rospy.init_node('path_planner_node', anonymous=True)
-pub_path = rospy.Publisher('path', Path, queue_size=10)
-sub_map = rospy.Subscriber('map', OccupancyGrid, map_callback)
-sub_curr_pos = rospy.Subscriber('curr_pos', PoseStamped, curr_pos_callback)
-sub_goal_pos = rospy.Subscriber('goal_pos', PoseStamped, goal_pos_callback)
-sub_is_localisation_lost = rospy.Subscriber('is_localisation_lost', Bool, is_localisation_lost_callback )
+rospy.init_node(NODE_ID, anonymous=True)
+pub_path = rospy.Publisher(PATH_PUBLISHER_TOPIC, Path, queue_size=10)
+sub_map = rospy.Subscriber(MAP_SUBSCRIBER_TOPIC, OccupancyGrid, map_callback)
+sub_curr_pos = rospy.Subscriber(POS_SUBSCRIBER_TOPIC, PoseStamped, curr_pos_callback)
+sub_goal_pos = rospy.Subscriber(GOAL_SUBSCRIBER_TOPIC, PoseStamped, goal_pos_callback)
+sub_is_localisation_lost = rospy.Subscriber(LOST_SUBSCRIBER_TOPIC, Bool, is_localisation_lost_callback )
 
 rate = rospy.Rate(1)
 
@@ -184,8 +190,8 @@ while not rospy.is_shutdown():
 
             for pos in path:
                 pos_stamped = PoseStamped()
-                pos_stamped.pose.position.x = pos[1]
-                pos_stamped.pose.position.y = pos[0]
+                pos_stamped.pose.position.x = pos[0]
+                pos_stamped.pose.position.y = pos[1]
                 # TODO: we assume that z position is 0 (this needs to be updated)
                 pos_stamped.pose.position.z = 0
                 path_msg.poses.append(pos_stamped)
