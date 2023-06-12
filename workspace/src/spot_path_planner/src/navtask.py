@@ -117,7 +117,18 @@ class NavTask:
                     self.curr_pos[1] + self.curr_to_goal_distance[1])
         self.set_goal_pos(goal_pos)
         
+    def is_out_of_bounds(self, pos):
+        x, y = pos
+
+        max_x_value = self.map_height - 1
+        max_y_value = self.map_width - 1
+        min_x_value = 0
+        min_y_value = 0
+
+        if x > max_x_value or x < min_x_value or y > max_y_value or y < min_y_value:
+            return True
         
+        return False
         
         
         

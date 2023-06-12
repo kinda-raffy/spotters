@@ -17,15 +17,15 @@ from nav_msgs.msg import (
 
 # SETTINGS
 # Map size
-w = 11
-h = 11
+w = 100
+h = 100
 
 # Global vars
 pos_x = 0
 pos_y = 0
 
-goal_x = 9
-goal_y = 19
+goal_x = 30
+goal_y = 30
 
 
 # Set the dummy map here

@@ -132,18 +132,23 @@ while not rospy.is_shutdown():
             dstar = DStarLite(map=new_map, s_start=navtask.curr_pos, s_goal=navtask.goal_pos)
 
             slam = SLAM(map=new_map, view_range=5)
-        
-            path, g, rhs = dstar.move_and_replan(robot_position=new_position)
 
-            if DEBUG:
-                print("============================================")
-                print("Navtask setup success")
-                print("This includes map, current pos, and goal.")
-                print("Map width: " + str(navtask.map_width))
-                print("Map height: " + str(navtask.map_height))
-                print("Map resolution: " + str(navtask.map_resolution))
-                print("Current Position: " + str(navtask.curr_pos))
-                print("Target Position: " + str(navtask.goal_pos))
+            if navtask.is_out_of_bounds(new_position):
+                    print("============================================")
+                    print("WARNING! Might be out of bounds!")
+                    navtask.is_set_up = False
+            else:
+                path, g, rhs = dstar.move_and_replan(robot_position=new_position)
+
+                if DEBUG:
+                    print("============================================")
+                    print("Navtask setup success")
+                    print("This includes map, current pos, and goal.")
+                    print("Map width: " + str(navtask.map_width))
+                    print("Map height: " + str(navtask.map_height))
+                    print("Map resolution: " + str(navtask.map_resolution))
+                    print("Current Position: " + str(navtask.curr_pos))
+                    print("Target Position: " + str(navtask.goal_pos))
 
         # If the map is already setup, then do replanning when moving around.
         elif navtask.is_set_up:
@@ -161,10 +166,17 @@ while not rospy.is_shutdown():
                 dstar.sensed_map = slam_map
 
                 # d star
-                path, g, rhs = dstar.move_and_replan(robot_position=new_position)
-                if DEBUG:
+                if navtask.is_out_of_bounds(new_position):
                     print("============================================")
-                    print("Replanning!")
+                    print("WARNING! Might be out of bounds!")
+                else:
+                    print(path)
+                    print(g)
+                    print(rhs)
+                    path, g, rhs = dstar.move_and_replan(robot_position=new_position)
+                    if DEBUG:
+                        print("============================================")
+                        print("Replanning!")
         else:
             # The map isn't set up yet. Wait until it is.
             if DEBUG:
