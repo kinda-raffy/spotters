@@ -12,10 +12,13 @@
     <!-- RVIZ -->
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find orb_slam3_ros)/config/spotters_1080.rviz" output="screen" />
     <!-- <include file="$(find spot_viz)/launch/view_robot.launch"/> --> -->
-    <!-- Mapping (Circular dependency) -->
-    <!-- <include file="$(find mapping)/launch/octomap.launch"/> -->
-    <!-- <include file="$(find mapping)/launch/pipeline.launch"/> -->
-    
+    <!-- Geography (Circular dependency) -->
+    <include file="$(find spot_geography)/launch/octomap.launch"/>
+    <include file="$(find spot_geography)/launch/pipeline.launch"/>
+    <!--  Cartographer -->
+    <include file="$(find spot_cartographer)/launch/manage.launch"/>
+    <!-- Movement -->
+    <!-- <include file="$(find spot_movement)/launch/enable.launch"/> -->
     <!-- Trajectory path
     <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="trajectory_server_orb_slam3" output="screen" ns="orb_slam3_ros" >
         <param name="/target_frame_name"        value="/origin" />

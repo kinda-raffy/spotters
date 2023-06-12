@@ -15,6 +15,6 @@ include_directories(
 
 catkin_install_python(PROGRAMS
   scripts/enable_movement
-  scripts/test/main
+  scripts/__test_main
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

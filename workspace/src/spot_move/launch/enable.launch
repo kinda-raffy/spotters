@@ -1,0 +1,3 @@
+<launch>
+     <node name="spot_move" pkg="spot_move" type="enable_movement" output="screen" />
+</launch>

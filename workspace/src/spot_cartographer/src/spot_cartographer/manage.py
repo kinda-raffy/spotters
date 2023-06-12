@@ -1,6 +1,6 @@
 import rospy
-from std_msgs.msg import Empty
-from std_srvs.srv import Empty
+import std_msgs.msg
+import std_srvs.srv
 from spot_cartographer.sync import PointCloudChangeTracker
 from typing import (
     Optional,
@@ -14,12 +14,12 @@ class Cartographer:
         self.connect_octo_server()
         rospy.Subscriber(
             "spotters/cartographer/birth",
-            Empty,
+            std_msgs.msg.Empty,
             self.destroy_previous_octree
         )
         rospy.Subscriber(
             "spotters/cartographer/merge",
-            Empty,
+            std_msgs.msg.Empty,
             self.destroy_previous_octree
         )
 
@@ -27,7 +27,7 @@ class Cartographer:
         rospy.logdebug("[Cartographer] Waiting for octree connection.")
         rospy.wait_for_service(self.service)
         self.octree_connection = \
-            rospy.ServiceProxy(self.service, Empty, persistent=True)
+            rospy.ServiceProxy(self.service, std_srvs.srv.Empty, persistent=True)
         rospy.logdebug("[Cartographer] Octree connection established.")
 
     def destroy_previous_octree(self, _) -> None:
