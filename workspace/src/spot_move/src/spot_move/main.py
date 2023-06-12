@@ -1,17 +1,19 @@
 import rospy
 import actionlib
+import math
 
 from actionlib_msgs.msg import GoalStatus
 from std_msgs.msg import Duration
 from nav_msgs.msg import Path
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import (
-    PoseStamped,
+    PoseStamped, Pose
 )
 from spot_msgs.msg import (
     TrajectoryAction,
     TrajectoryGoal,
 )
+from tf.transformations import quaternion_from_euler
 from typing import (
     NoReturn,
     Callable,
@@ -69,10 +71,25 @@ class SpotMovement:
     def send_next_trajectory(self):
         # NOTE - Trajectories are evaluated by the goal_reached_strategy callback.
         if not self._empty_path():
-            self.last_sent_pose = pose = self._pop_next_pose()
+            yawless_pose = self._pop_next_pose()
+            quaternion = quaternion_from_euler(0,0,0)
+            if self.last_sent_pose:
+                yaw = self.extrapolate_turning_angle(self.last_sent_pose.pose, yawless_pose.pose)
+                quaternion = quaternion_from_euler(0, 0, yaw)
+            next_pose = PoseStamped(
+                yawless_pose.header,
+                Pose(
+                    yawless_pose.pose.point,
+                    quaternion
+                )
+                )
+            self.last_sent_pose = next_pose
             rospy.logdebug("Sending next trajectory.")
-            self.handler.send_trajectory_command(pose, self.default_timeout)
-    
+            self.handler.send_trajectory_command(next_pose, self.default_timeout)
+
+    def extrapolate_turning_angle(one: PoseStamped, two: PoseStamped) -> float:
+        return math.degrees(math.atan2(two.x - one.x, two.y - one.y))
+
     def send_last_sent_pose(self) -> NoReturn:
         assert self.last_sent_pose is not None, \
             "Client claims a pose has been sent but no history of that pose exists."
