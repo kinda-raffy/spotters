@@ -1,5 +1,5 @@
 /**
-* 
+*
 * Adapted from ORB-SLAM3: Examples/ROS/src/ros_mono.cc
 *
 */
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 
     if (voc_file == "file_not_set" || settings_file == "file_not_set")
     {
-        ROS_ERROR("Please provide voc_file and settings_file in the launch file");       
+        ROS_ERROR("Please provide voc_file and settings_file in the launch file");
         ros::shutdown();
         return 1;
     }
@@ -56,6 +56,8 @@ int main(int argc, char **argv)
 
     setup_publishers(node_handler, image_transport, node_name);
     setup_services(node_handler, node_name);
+
+    poll_status();
 
     ros::spin();
 

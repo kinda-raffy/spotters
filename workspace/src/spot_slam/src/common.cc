@@ -10,9 +10,37 @@ ORB_SLAM3::System::eSensor sensor_type = ORB_SLAM3::System::NOT_SET;
 
 // ROS Variables.
 std::string world_frame_id, cam_frame_id, imu_frame_id;
-ros::Publisher pose_pub, odom_pub, kf_markers_pub;
+ros::Publisher pose_pub, odom_pub, kf_markers_pub, tracking_state_pub;
 ros::Publisher big_change_pub, tracked_mappoints_pub, all_mappoints_pub;
 image_transport::Publisher tracking_img_pub;
+
+enum eTrackingState{
+    SYSTEM_NOT_READY=-1,
+    NO_IMAGES_YET=0,
+    NOT_INITIALIZED=1,
+    OK=2,
+    RECENTLY_LOST=3,
+    LOST=4,
+    OK_KLT=5
+};
+
+// Boutique functions.
+void poll_status() {
+    int8_t previous_state = -1;
+    ros::Rate rate(10); // Hz.
+    while (ros::ok()) {
+        const int8_t state = pSLAM->GetTrackingState();
+        if (state != previous_state) {
+            ROS_INFO("[SpotSLAM] Tracking state has been changed to %d from %d", state, previous_state);
+            std_msgs::Int8 echo;
+            echo.data = state;
+            tracking_state_pub.publish(echo);
+            previous_state = state;
+        }
+        ros::spinOnce();
+        rate.sleep();
+    }
+}
 
 // Main functions.
 bool save_map_srv(orb_slam3_ros::SaveMap::Request &req, orb_slam3_ros::SaveMap::Response &res) {
@@ -56,8 +84,8 @@ void setup_publishers(ros::NodeHandle &node_handler, image_transport::ImageTrans
     pose_pub = node_handler.advertise<geometry_msgs::PoseStamped>(node_name + "/camera_pose", 1);
     tracked_mappoints_pub = node_handler.advertise<sensor_msgs::PointCloud2>(node_name + "/tracked_points", 1);
     all_mappoints_pub = node_handler.advertise<sensor_msgs::PointCloud2>(node_name + "/all_points", 1);
+    tracking_state_pub = node_handler.advertise<std_msgs::Int8>(node_name + "/tracking_state", 1);
     // map_merge_pub = node_handler.advertise<sensor_msgs::TODO>(node_name + "/map_merge", 1);
-    // big_change_pub = node_handler.advertise<std_msgs::Bool>(node_name + "/big_change", 1);
     tracking_img_pub = image_transport.advertise(node_name + "/tracking_image", 1);
     kf_markers_pub = node_handler.advertise<visualization_msgs::Marker>(node_name + "/kf_markers", 1000);
     if (

@@ -93,7 +93,7 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
             }
         }
     }
-    
+
     // Obtain the angles which will be used to rotate the world frame
     Tc0w = Sophus::SE3f();
     if (sensor==System::MONOCULAR)
@@ -116,10 +116,10 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
             {
                 dWorldRPY[i] = 0;
             }
-            std::cout << strAngleNames[i] << " " << dWorldRPY[i] << " "; 
+            std::cout << strAngleNames[i] << " " << dWorldRPY[i] << " ";
         }
         std::cout << endl;
-        
+
         Eigen::AngleAxisf AngleR(dWorldRPY[0], Eigen::Vector3f::UnitX());
         Eigen::AngleAxisf AngleP(dWorldRPY[1], Eigen::Vector3f::UnitY());
         Eigen::AngleAxisf AngleY(dWorldRPY[2], Eigen::Vector3f::UnitZ());

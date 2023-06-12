@@ -7,9 +7,7 @@ import shapely
 import shapely.ops
 import numpy as np
 from numpy.typing import NDArray
-from typing import (
-    Sequence,
-)
+from typing import Sequence
 from nav_msgs.msg import OccupancyGrid
 from scipy.spatial import Delaunay
 
