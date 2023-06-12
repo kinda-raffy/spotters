@@ -155,7 +155,7 @@ while not rospy.is_shutdown():
                 last_position = new_position
                 
                 # slam
-                new_edges_and_old_costs, slam_map = slam.rescan(global_position=new_position)
+                new_edges_and_old_costs, slam_map = slam.rescan(global_position=new_position, curr_pos=new_position)
 
                 dstar.new_edges_and_old_costs = new_edges_and_old_costs
                 dstar.sensed_map = slam_map
@@ -196,6 +196,12 @@ while not rospy.is_shutdown():
                 for pos in path:
                     pt = pt + "[" + str(pos[1]) + " " + str(pos[0]) + "] "
                 print(pt)
+        elif len(path) == 1:
+            if DEBUG:
+                print("============================================")
+                print("You have arrived - or is close to your destination.")
+                print("Current Position: " + str(navtask.curr_pos))
+                print("Target Position: " + str(navtask.goal_pos))
         
         rate.sleep()
 

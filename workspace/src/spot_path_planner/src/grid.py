@@ -137,7 +137,7 @@ class OccupancyGridMap:
         (row, col) = (x, y)
         self.occupancy_grid_map[row, col] = UNOCCUPIED
 
-    def local_observation(self, global_position: (int, int), view_range: int = 2) -> Dict:
+    def local_observation(self, global_position: (int, int), curr_pos: (int, int), view_range: int = 2) -> Dict:
         """
         :param global_position: position of robot in the global map frame
         :param view_range: how far ahead we should look
@@ -147,7 +147,7 @@ class OccupancyGridMap:
         nodes = [(x, y) for x in range(px - view_range, px + view_range + 1)
                  for y in range(py - view_range, py + view_range + 1)
                  if self.in_bounds((x, y))]
-        return {node: UNOCCUPIED if self.is_unoccupied(pos=node) else OBSTACLE for node in nodes}
+        return {node: UNOCCUPIED if self.is_unoccupied(pos=node) or node == curr_pos else OBSTACLE for node in nodes}
 
 
 class SLAM:
@@ -186,10 +186,11 @@ class SLAM:
                 if adjacent_location in local_observation:
                     local_observation[adjacent_location] = OBSTACLE
 
-    def rescan(self, global_position: (int, int)):
+    def rescan(self, global_position: (int, int), curr_pos: (int, int)):
 
         # rescan local area
         local_observation = self.ground_truth_map.local_observation(global_position=global_position,
+                                                                    curr_pos=curr_pos,
                                                                     view_range=self.view_range)
         
         #self.pad_local_observation(local_observation=local_observation)
