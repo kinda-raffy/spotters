@@ -72,26 +72,38 @@ void setup_publishers(ros::NodeHandle &node_handler, image_transport::ImageTrans
 void publish_topics(ros::Time msg_time, Eigen::Vector3f Wbb)
 {
     Sophus::SE3f Twc = pSLAM->GetCamTwc();
-    if (
-        Twc.translation().array().isNaN()[0]
-        || Twc.rotationMatrix().array().isNaN()(0,0)
-    ) { return; } // avoid publishing NaN
+
+    if (Twc.translation().array().isNaN()[0] || Twc.rotationMatrix().array().isNaN()(0,0)) // avoid publishing NaN
+        return;
+
+    Sophus::SE3f rollTransformation = Sophus::SE3f::rotX(M_PI/2);
+    Sophus::SE3f yawTransformation = Sophus::SE3f::rotZ(M_PI/2);
+
+    Sophus::SE3f tranformedTwc = Twc * rollTransformation * yawTransformation;
+
+    Sophus::SE3f invertedTwc = tranformedTwc.inverse();
     // Common topics
-    publish_camera_pose(Twc, msg_time);
-    publish_tf_transform(Twc, world_frame_id, cam_frame_id, msg_time);
-    // Rotation camera frame into world coordinates.
-    tf::Transform rotation_camera_to_world;
-    rotation_camera_to_world.setOrigin(tf::Vector3(0.0, 0.0, 0.0));
-    tf::Quaternion q;
-    q.setRPY(M_PI/2, 3 * M_PI/2, 0);  // Rotate to world coordinates.
-    rotation_camera_to_world.setRotation(q);
-    // Apply the rotation to camera pose to get pose.
-    tf::Transform Twc_tf = SE3f_to_tfTransform(Twc);
-    tf::Transform Tcw_world = Twc_tf * rotation_camera_to_world;
-    // Convert the tf::Transform back to Sophus::SE3f
-    Sophus::SE3f Tcw_world_SE3f = tfTransform_to_SE3f(Tcw_world);
-    // Publish the new camera-link frame.
-    publish_tf_transform(Tcw_world_SE3f, world_frame_id, "camera_link", msg_time);
+    publish_camera_pose(invertedTwc, msg_time);
+    publish_tf_transform(invertedTwc, cam_frame_id, world_frame_id, msg_time);
+
+    // // Rotation camera frame into world coordinates.
+    // tf::Transform rotation_camera_to_world;
+    // rotation_camera_to_world.setOrigin(tf::Vector3(0.0, 0.0, 0.0));
+    // tf::Quaternion q;
+    // q.setRPY(M_PI/2, 3 * M_PI/2, 0);  // Rotate to world coordinates.
+    // rotation_camera_to_world.setRotation(q);
+
+    // // Apply the rotation to camera pose to get pose.
+    // tf::Transform Twc_tf = SE3f_to_tfTransform(Twc);
+    // tf::Transform Tcw_world = Twc_tf * rotation_camera_to_world;
+
+    // // Convert the tf::Transform back to Sophus::SE3f
+    // Sophus::SE3f Tcw_world_SE3f = tfTransform_to_SE3f(Tcw_world);
+
+    // // Publish the new frame
+    // publish_tf_transform(Tcw_world_SE3f, "camera_link", cam_frame_id, msg_time);
+
+
     publish_tracking_img(pSLAM->GetCurrentFrame(), msg_time);
     publish_tracked_points(pSLAM->GetTrackedMapPoints(), msg_time);
     publish_all_points(pSLAM->GetAllMapPoints(), msg_time);

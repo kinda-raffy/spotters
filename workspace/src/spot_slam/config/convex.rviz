@@ -6,8 +6,8 @@ Panels:
       Expanded:
         - /Object Frames1/Frames1
         - /VSLAM1
+        - /Mapping1
         - /Mapping1/3D Map1/Namespaces1
-        - /Image1
       Splitter Ratio: 0.5708582997322083
     Tree Height: 736
   - Class: rviz/Selection
@@ -27,13 +27,13 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: ORB Cloud
+    SyncSource: ""
   - Class: spot_viz/SpotControlPanel
     Name: SpotControlPanel
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: ORB Cloud
+    SyncSource: ""
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -48,48 +48,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        base_link:
-          Value: true
-        body:
-          Value: true
-        camera:
-          Value: true
-        camera_link:
-          Value: true
-        front_left_hip:
-          Value: true
-        front_left_lower_leg:
-          Value: true
-        front_left_upper_leg:
-          Value: true
-        front_rail:
-          Value: true
-        front_right_hip:
-          Value: true
-        front_right_lower_leg:
-          Value: true
-        front_right_upper_leg:
-          Value: true
-        origin:
-          Value: true
-        real_front_rail:
-          Value: true
-        real_rear_rail:
-          Value: true
-        rear_left_hip:
-          Value: true
-        rear_left_lower_leg:
-          Value: true
-        rear_left_upper_leg:
-          Value: true
-        rear_rail:
-          Value: true
-        rear_right_hip:
-          Value: true
-        rear_right_lower_leg:
-          Value: true
-        rear_right_upper_leg:
-          Value: true
       Marker Alpha: 1
       Marker Scale: 0.5
       Name: Object Frames
@@ -97,36 +55,7 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        origin:
-          camera:
-            {}
-          camera_link:
-            body:
-              base_link:
-                {}
-              front_left_hip:
-                front_left_upper_leg:
-                  front_left_lower_leg:
-                    {}
-              front_rail:
-                {}
-              front_right_hip:
-                front_right_upper_leg:
-                  front_right_lower_leg:
-                    {}
-              real_front_rail:
-                real_rear_rail:
-                  {}
-              rear_left_hip:
-                rear_left_upper_leg:
-                  rear_left_lower_leg:
-                    {}
-              rear_rail:
-                {}
-              rear_right_hip:
-                rear_right_upper_leg:
-                  rear_right_lower_leg:
-                    {}
+        {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -308,7 +237,7 @@ Visualization Manager:
           Unreliable: false
           Value: false
         - Class: rviz/Image
-          Enabled: true
+          Enabled: false
           Image Topic: /orb_slam3/tracking_image
           Max Value: 1
           Median window: 5
@@ -318,7 +247,7 @@ Visualization Manager:
           Queue Size: 2
           Transport Hint: raw
           Unreliable: false
-          Value: true
+          Value: false
       Enabled: true
       Name: Cameras
     - Class: rviz/Group
@@ -363,7 +292,7 @@ Visualization Manager:
           Color: 255; 255; 255
           Color Transformer: FlatColor
           Decay Time: 0
-          Enabled: false
+          Enabled: true
           Invert Rainbow: false
           Max Color: 255; 255; 255
           Min Color: 0; 0; 0
@@ -378,7 +307,7 @@ Visualization Manager:
           Unreliable: false
           Use Fixed Frame: true
           Use rainbow: true
-          Value: false
+          Value: true
         - Alpha: 0.5
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
@@ -443,7 +372,7 @@ Visualization Manager:
       Name: VSLAM
     - Class: rviz/Group
       Displays:
-        - Alpha: 0.699999988079071
+        - Alpha: 0.4000000059604645
           Class: rviz/Map
           Color Scheme: map
           Draw Behind: false
@@ -482,27 +411,25 @@ Visualization Manager:
           Use rainbow: true
           Value: false
         - Class: rviz/MarkerArray
-          Enabled: true
+          Enabled: false
           Marker Topic: /occupied_cells_vis_array
           Name: 3D Map
           Namespaces:
-            map: true
+            {}
           Queue Size: 100
+          Value: false
+        - Alpha: 0.699999988079071
+          Class: rviz/Map
+          Color Scheme: costmap
+          Draw Behind: false
+          Enabled: true
+          Name: Map
+          Topic: /spotters/mapping/map
+          Unreliable: false
+          Use Timestamp: false
           Value: true
       Enabled: true
       Name: Mapping
-    - Class: rviz/Image
-      Enabled: true
-      Image Topic: /spotters/mapping/hull_image
-      Max Value: 1
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: true
-      Queue Size: 2
-      Transport Hint: raw
-      Unreliable: false
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -531,7 +458,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 10.358781814575195
+      Distance: 2.5363221168518066
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -539,17 +466,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.32113713026046753
-        Y: -0.038674771785736084
-        Z: 1.877368504210608e-06
+        X: 0.9396002888679504
+        Y: -0.9899790287017822
+        Z: 1.8475661818229128e-06
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Pitch: 0.8202027678489685
       Target Frame: camera
-      Yaw: 3.1213855743408203
+      Yaw: 5.82820463180542
     Saved:
       - Class: rviz/FrameAligned
         Enable Stereo Rendering:
@@ -592,15 +519,13 @@ Visualization Manager:
         Yaw: 4.031389236450195
 Window Geometry:
   Displays:
-    collapsed: true
-  Height: 1022
-  Hide Left Dock: true
-  Hide Right Dock: false
-  Image:
     collapsed: false
+  Height: 1022
+  Hide Left Dock: false
+  Hide Right Dock: false
   Mono Camera:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001560000031dfc020000000efb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000002e100000185000000b0fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007300000000c40000031d000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000180074007200610063006b0069006e006700200069006d006702000003c5000002b6000001c00000017efb000000180072006100770020006c00650066007400200069006d0067020000058f000002b7000001e50000017dfb0000000a0047007200610070006800000001e4000001290000000000000000fb0000000a004700720061007000680000000264000001450000000000000000fb00000014004c0069006e00650020006700720061007000680000000242000001670000000000000000fb0000000c00430061006d006500720061000000031d000000c4000000000000000000000001000003930000031dfc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fc000000c40000031d000002eb0100001cfa000000000100000003fb0000000a0049006d0061006700650100000000ffffffff0000005e00fffffffb0000002000530070006f00740043006f006e00740072006f006c00500061006e0065006c01000005ba000001c6000001c600fffffffb0000000a005600690065007700730100000000ffffffff0000010000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b20000000000000000000000020000078000000081fc0100000004fb00000016004d006f006e006f002000430061006d0065007200610000000000000000930000009300fffffffb0000000e0054007200610063006b006500720100000000000000930000006700fffffffb0000000800540069006d00650100000099000006e7000003bc00fffffffb0000000a00560069006500770073030000004e00000080000002e100000197000000030000078000000039fc0100000002fb0000000800540069006d006500000000000000073d0000041800fffffffb0000000800540069006d00650100000000000004500000000000000000000003e70000031d00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000001560000031dfc020000000efb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000002e100000185000000b0fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb0000000e0054007200610063006b0065007200000000c40000010a0000001600fffffffb000000100044006900730070006c00610079007301000000c40000031d000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000180074007200610063006b0069006e006700200069006d006702000003c5000002b6000001c00000017efb000000180072006100770020006c00650066007400200069006d0067020000058f000002b7000001e50000017dfb0000000a0047007200610070006800000001e4000001290000000000000000fb0000000a004700720061007000680000000264000001450000000000000000fb00000014004c0069006e0065002000670072006100700068000000024200000167000000000000000000000001000001c60000031dfc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fc000000c40000031d000002eb0100001cfa000000000100000002fb0000002000530070006f00740043006f006e00740072006f006c00500061006e0065006c01000005ba000001c6000001c600fffffffb0000000a005600690065007700730100000000ffffffff0000010000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b20000000000000000000000020000078000000081fc0100000003fb00000016004d006f006e006f002000430061006d0065007200610000000000000000930000009300fffffffb0000000800540069006d0065010000000000000780000003bc00fffffffb0000000a00560069006500770073030000004e00000080000002e100000197000000030000078000000039fc0100000002fb0000000800540069006d006500000000000000073d0000041800fffffffb0000000800540069006d00650100000000000004500000000000000000000004580000031d00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   SpotControlPanel:
