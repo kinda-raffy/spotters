@@ -54,7 +54,7 @@ class System;
 class Settings;
 
 class Tracking
-{  
+{
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -279,10 +279,10 @@ protected:
     KeyFrame* mpReferenceKF;
     std::vector<KeyFrame*> mvpLocalKeyFrames;
     std::vector<MapPoint*> mvpLocalMapPoints;
-    
+
     // System
     System* mpSystem;
-    
+
     //Drawers
     Viewer* mpViewer;
     FrameDrawer* mpFrameDrawer;
