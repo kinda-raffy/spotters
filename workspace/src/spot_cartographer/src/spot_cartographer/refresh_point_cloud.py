@@ -1,7 +1,7 @@
 import rospy
 import std_msgs.msg
 import std_srvs.srv
-from spot_cartographer.sync import PointCloudChangeTracker
+from spot_cartographer.point_cloud_tracker import PointCloudChangeTracker
 from typing import (
     Optional,
     NoReturn,
