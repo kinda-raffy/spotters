@@ -2,14 +2,14 @@ from priority_queue import PriorityQueue, Priority
 from grid import OccupancyGridMap
 import numpy as np
 from utils import heuristic, Vertex, Vertices
-from typing import Dict, List
+import typing
 
 OBSTACLE = 100
 UNOCCUPIED = 0
 
 
 class DStarLite:
-    def __init__(self, map: OccupancyGridMap, s_start: (int, int), s_goal: (int, int)):
+    def __init__(self, map: OccupancyGridMap, s_start: typing.Tuple[int, int], s_goal: typing.Tuple[int, int]):
         """
         :param map: the ground truth map of the environment provided by gui
         :param s_start: start location
@@ -33,7 +33,7 @@ class DStarLite:
         self.rhs[self.s_goal] = 0
         self.U.insert(self.s_goal, Priority(heuristic(self.s_start, self.s_goal), 0))
 
-    def calculate_key(self, s: (int, int)):
+    def calculate_key(self, s: typing.Tuple[int, int]):
         """
         :param s: the vertex we want to calculate key
         :return: Priority class of the two keys
@@ -42,7 +42,7 @@ class DStarLite:
         k2 = min(self.g[s], self.rhs[s])
         return Priority(k1, k2)
 
-    def c(self, u: (int, int), v: (int, int)) -> float:
+    def c(self, u: typing.Tuple[int, int], v: typing.Tuple[int, int]) -> float:
         """
         calcuclate the cost between nodes
         :param u: from vertex
@@ -54,10 +54,10 @@ class DStarLite:
         else:
             return heuristic(u, v)
 
-    def contain(self, u: (int, int)) -> (int, int):
+    def contain(self, u: typing.Tuple[int, int]) -> typing.Tuple[int, int]:
         return u in self.U.vertices_in_heap
 
-    def update_vertex(self, u: (int, int)):
+    def update_vertex(self, u: typing.Tuple[int, int]):
         if self.g[u] != self.rhs[u] and self.contain(u):
             self.U.update(u, self.calculate_key(u))
         elif self.g[u] != self.rhs[u] and not self.contain(u):
@@ -104,7 +104,7 @@ class DStarLite:
         self.new_edges_and_old_costs = None
         return new_edges_and_old_costs
 
-    def move_and_replan(self, robot_position: (int, int)):
+    def move_and_replan(self, robot_position: typing.Tuple[int, int]):
         path = [robot_position]
         self.s_start = robot_position
         self.s_last = self.s_start

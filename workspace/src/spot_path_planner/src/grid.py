@@ -1,5 +1,6 @@
 import numpy as np
 from utils import get_movements_4n, get_movements_8n, heuristic, Vertices, Vertex
+import typing
 from typing import Dict, List
 
 OBSTACLE = 100
@@ -44,7 +45,7 @@ class OccupancyGridMap:
         """
         self.occupancy_grid_map = new_ogrid
 
-    def update_map_part(self, new_ogrid, offset: (int, int), dim: (int, int)):
+    def update_map_part(self, new_ogrid, offset: typing.Tuple[int, int], dim: typing.Tuple[int, int]):
         """
         When you want to update a part of the map, this should be used instead of set_map.
         Offset should be where the robot is right now in terms of x, y / height, width
@@ -65,7 +66,7 @@ class OccupancyGridMap:
                 i += 1
             j += 1
 
-    def is_unoccupied(self, pos: (int, int)) -> bool:
+    def is_unoccupied(self, pos: typing.Tuple[int, int]) -> bool:
         """
         :param pos: cell position we wish to check
         :return: True if cell is occupied with obstacle, False else
@@ -80,7 +81,7 @@ class OccupancyGridMap:
 
         return self.occupancy_grid_map[row][col] == UNOCCUPIED
 
-    def in_bounds(self, cell: (int, int)) -> bool:
+    def in_bounds(self, cell: typing.Tuple[int, int]) -> bool:
         """
         Checks if the provided coordinates are within
         the bounds of the grid map
@@ -100,7 +101,7 @@ class OccupancyGridMap:
             return [node for node in neighbors if self.in_bounds(node) and self.is_unoccupied(node)]
         return [node for node in neighbors if self.in_bounds(node)]
 
-    def succ(self, vertex: (int, int), avoid_obstacles: bool = False) -> list:
+    def succ(self, vertex: typing.Tuple[int, int], avoid_obstacles: bool = False) -> list:
         """
         :param avoid_obstacles:
         :param vertex: vertex you want to find direct successors from
@@ -119,7 +120,7 @@ class OccupancyGridMap:
         filtered_movements = self.filter(neighbors=movements, avoid_obstacles=avoid_obstacles)
         return list(filtered_movements)
 
-    def set_obstacle(self, pos: (int, int)):
+    def set_obstacle(self, pos: typing.Tuple[int, int]):
         """
         :param pos: cell position we wish to set obstacle
         :return: None
@@ -128,7 +129,7 @@ class OccupancyGridMap:
         (row, col) = (x, y)
         self.occupancy_grid_map[row, col] = OBSTACLE
 
-    def remove_obstacle(self, pos: (int, int)):
+    def remove_obstacle(self, pos: typing.Tuple[int, int]):
         """
         :param pos: position of obstacle
         :return: None
@@ -137,7 +138,7 @@ class OccupancyGridMap:
         (row, col) = (x, y)
         self.occupancy_grid_map[row, col] = UNOCCUPIED
 
-    def local_observation(self, global_position: (int, int), curr_pos: (int, int), view_range: int = 2) -> Dict:
+    def local_observation(self, global_position: typing.Tuple[int, int], curr_pos: typing.Tuple[int, int], view_range: int = 2) -> Dict:
         """
         :param global_position: position of robot in the global map frame
         :param view_range: how far ahead we should look
@@ -160,7 +161,7 @@ class SLAM:
     def set_ground_truth_map(self, gt_map: OccupancyGridMap):
         self.ground_truth_map = gt_map
 
-    def c(self, u: (int, int), v: (int, int)) -> float:
+    def c(self, u: typing.Tuple[int, int], v: typing.Tuple[int, int]) -> float:
         """
         calcuclate the cost between nodes
         :param u: from vertex
@@ -186,7 +187,7 @@ class SLAM:
                 if adjacent_location in local_observation:
                     local_observation[adjacent_location] = OBSTACLE
 
-    def rescan(self, global_position: (int, int), curr_pos: (int, int)):
+    def rescan(self, global_position: typing.Tuple[int, int], curr_pos: typing.Tuple[int, int]):
 
         # rescan local area
         local_observation = self.ground_truth_map.local_observation(global_position=global_position,
