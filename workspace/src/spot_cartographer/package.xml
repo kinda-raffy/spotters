@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>spot_geography</name>
+  <name>spot_cartographer</name>
   <version>0.0.0</version>
   <description>Synchronisation module to manage map persistance.</description>
 

@@ -9,15 +9,9 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import (
     Sequence,
-    Optional,
 )
 from nav_msgs.msg import OccupancyGrid
 from scipy.spatial import Delaunay
-from geometry_msgs.msg import (
-    PoseArray,
-    Pose,
-    Point,
-)
 
 
 def generate_occupancy_grid(grid: OccupancyGrid) -> NDArray[np.int8]:
@@ -28,30 +22,6 @@ def generate_occupancy_grid(grid: OccupancyGrid) -> NDArray[np.int8]:
     alphas = generate_occlusion_polygons(coordinates)
     rospy.logdebug(f"[Occupancy Grid] Found occupied coordinates in {time.time() - start}.")
     return construct_occupancy_grid(grid, alphas)
-
-
-def generate_positions_data(width: int, height: int, pose: Pose) -> Optional[PoseArray]:
-    if pose is None:
-        return
-    cartesian = np.rot90(np.stack(np.indices((height, width)), axis=2))
-    cartesian[:,:,0] -= cartesian.shape[1] // 2
-    cartesian[:,:,1] -= cartesian.shape[0] // 2
-    poses: Sequence[Pose] = [pose]
-    try:
-        indices = np.stack(np.where((cartesian == [pose.position.x, pose.position.y]).all(axis=2)), axis=1)[0]
-        position = Point()
-        position.x = indices[0]
-        position.y = indices[1]
-        position.z = -1
-        index = Pose()
-        index.position = position
-        index.orientation = pose.orientation
-        poses.append(index)
-    except IndexError:
-        poses.append(None)
-    array: PoseArray = PoseArray()
-    array.poses = poses
-    return array
 
 
 def construct_occupancy_grid(
@@ -93,7 +63,7 @@ def construct_occupancy_grid(
 def generate_occlusion_polygons(
         coordinates: NDArray,
         alpha: float = 1,
-        wall_buffer: float = 3.0, # Should correspond to distance from camera to SPOT behind
+        wall_buffer: float = 4.0, # Should correspond to distance from camera to SPOT behind
         buffer_side_count: int = 6
     ) -> None:
 
