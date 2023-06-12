@@ -17,8 +17,8 @@ from nav_msgs.msg import (
 
 # SETTINGS
 # Map size
-w = 100
-h = 100
+w = 10
+h = 10
 
 # Global vars
 pos_x = 0
@@ -96,15 +96,13 @@ if __name__ == '__main__':
         #rate.sleep()
         s = input()
         if s == 'w':
-            pos_x += 1
-        elif s == 'd':
             pos_y += 1
+        elif s == 'd':
+            pos_x += 1
         elif s == 's':
-            pos_x -= 1
-        elif s == 'a':
             pos_y -= 1
-
-        goal_y += 1
+        elif s == 'a':
+            pos_x -= 1
 
 
         

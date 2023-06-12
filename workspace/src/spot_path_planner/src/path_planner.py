@@ -61,21 +61,10 @@ def map_callback(msg):
     #         val_counts[num] = 1
     # print(val_counts)
 
-    # # Colour the entire map black and grey so that it can be visualised in rviz
-    # map_pub = rospy.Publisher('map2', OccupancyGrid, queue_size = 100)
-    # map_data = []
-    # for idx, num in enumerate(msg.data):
-    #     if idx < len(msg.data) // 2:
-    #         map_data.append(50)
-    #     else:
-    #         map_data.append(100)
-    # msg.data = map_data
-    # map_pub.publish(msg)
-
 def curr_pos_callback(msg):
     global navtask
     if navtask.map_width is not None:
-        navtask.curr_pos = navtask.cartesian_to_dstar((round(msg.pose.position.y), round(msg.pose.position.x)))
+        navtask.curr_pos = navtask.cartesian_to_dstar((round(msg.pose.position.x), round(msg.pose.position.y)))
     
     # Store the distance between the goal and the current postiions
     if navtask.is_set_up:
@@ -86,7 +75,7 @@ def curr_pos_callback(msg):
 def goal_pos_callback(msg):
     global navtask
     if navtask.curr_pos is not None:
-        navtask.set_goal_pos(navtask.cartesian_to_dstar((round(msg.pose.position.y), round(msg.pose.position.x))))
+        navtask.set_goal_pos(navtask.cartesian_to_dstar((round(msg.pose.position.x), round(msg.pose.position.y))))
 
 def is_localisation_lost_callback(msg):
     global navtask
