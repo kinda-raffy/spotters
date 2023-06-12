@@ -192,7 +192,7 @@ class SLAM:
         local_observation = self.ground_truth_map.local_observation(global_position=global_position,
                                                                     view_range=self.view_range)
         
-        self.pad_local_observation(local_observation=local_observation)
+        #self.pad_local_observation(local_observation=local_observation)
 
         vertices = self.update_changed_edge_costs(local_grid=local_observation)
         return vertices, self.slam_map

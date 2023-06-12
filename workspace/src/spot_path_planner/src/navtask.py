@@ -1,3 +1,5 @@
+import math
+
 class NavTask:
     def __init__(self, curr_to_goal_distance = None):
         self.curr_pos = None
@@ -47,7 +49,22 @@ class NavTask:
     #         if self.goal_pos != goal_pos:
     #             self.is_goal_changed = True
     #             self.goal_pos = goal_pos
-    
+
+    def cartesian_to_dstar(self, pos):
+        (x, y) = pos
+        x = (self.map_height - 1) - (x + math.floor(self.map_height / 2))
+        y = y + math.floor(self.map_width / 2)
+
+        return (x, y)
+
+    def dstar_to_cartesian(self, pos):
+        (x, y) = pos
+        x = (self.map_height - 1) - (x + math.floor(self.map_height / 2))
+        y = y - math.floor(self.map_width / 2)
+
+        return (x, y)
+
+
     # Returns the boudned goal position 
     def bound_goal_pos(self, goal_pos):
         # Remember the ultimate goal position

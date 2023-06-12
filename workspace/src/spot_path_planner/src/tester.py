@@ -17,8 +17,8 @@ from nav_msgs.msg import (
 
 # SETTINGS
 # Map size
-w = 10
-h = 9
+w = 11
+h = 11
 
 # Global vars
 pos_x = 0
@@ -43,7 +43,7 @@ def map():
             map.data.append(100)
         else:
             map.data.append(0)
-        #map.data.append(0)
+        # map.data.append(0)
 
     return map
 
@@ -72,9 +72,10 @@ def goal_pos(x, y):
 def path_next(data):
     global pos_x, pos_y
     
-    nextpose = data.poses[1]
-    pos_x = round(nextpose.pose.position.x)
-    pos_y = round(nextpose.pose.position.y)
+    #nextpose = data.poses[1]
+    #pos_x = round(nextpose.pose.position.x)
+    #pos_y = round(nextpose.pose.position.y)
+
 
 if __name__ == '__main__':
     print("Starting tester node")
@@ -92,7 +93,16 @@ if __name__ == '__main__':
         pub_goal.publish(goal_pos(goal_x, goal_y))
         pub_map.publish(map())
 
-        rate.sleep()
+        #rate.sleep()
+        s = input()
+        if s == 'w':
+            pos_x += 1
+        elif s == 'd':
+            pos_y += 1
+        elif s == 's':
+            pos_x -= 1
+        elif s == 'a':
+            pos_y -= 1
 
 
         

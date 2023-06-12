@@ -43,6 +43,8 @@ path = None
 OBSTACLE = 100
 UNOCCUPIED = 0
 
+DEBUG = True
+
 def map_callback(msg):
     global navtask
     
@@ -74,7 +76,8 @@ def map_callback(msg):
 
 def curr_pos_callback(msg):
     global navtask
-    navtask.curr_pos = (round(msg.pose.position.y), round(msg.pose.position.x))
+    if navtask.map_width is not None:
+        navtask.curr_pos = navtask.cartesian_to_dstar((round(msg.pose.position.y), round(msg.pose.position.x)))
     
     # Store the distance between the goal and the current postiions
     if navtask.is_set_up:
@@ -84,7 +87,8 @@ def curr_pos_callback(msg):
 
 def goal_pos_callback(msg):
     global navtask
-    navtask.set_goal_pos((round(msg.pose.position.y), round(msg.pose.position.x)))
+    if navtask.curr_pos is not None:
+        navtask.set_goal_pos(navtask.cartesian_to_dstar((round(msg.pose.position.y), round(msg.pose.position.x))))
 
 def is_localisation_lost_callback(msg):
     global navtask
@@ -93,6 +97,12 @@ def is_localisation_lost_callback(msg):
     else:
         navtask.is_localisation_lost = False
 
+
+if DEBUG:
+    print("============================================")
+    print("DEBUG MODE ON!")
+    print("Source: path_planner from Spot Paath Planner")
+    print("============================================")
 
 rospy.init_node('path_planner_node', anonymous=True)
 pub_path = rospy.Publisher('path', Path, queue_size=10)
@@ -121,9 +131,20 @@ while not rospy.is_shutdown():
 
             dstar = DStarLite(map=new_map, s_start=navtask.curr_pos, s_goal=navtask.goal_pos)
 
-            slam = SLAM(map=new_map, view_range=2)
+            slam = SLAM(map=new_map, view_range=5)
         
             path, g, rhs = dstar.move_and_replan(robot_position=new_position)
+
+            if DEBUG:
+                print("============================================")
+                print("Navtask setup success")
+                print("This includes map, current pos, and goal.")
+                print("Map width: " + str(navtask.map_width))
+                print("Map height: " + str(navtask.map_height))
+                print("Map resolution: " + str(navtask.map_resolution))
+                print("Current Position: " + str(navtask.curr_pos))
+                print("Target Position: " + str(navtask.goal_pos))
+
         # If the map is already setup, then do replanning when moving around.
         elif navtask.is_set_up:
             new_position = navtask.curr_pos
@@ -141,8 +162,14 @@ while not rospy.is_shutdown():
 
                 # d star
                 path, g, rhs = dstar.move_and_replan(robot_position=new_position)
+                if DEBUG:
+                    print("============================================")
+                    print("Replanning!")
         else:
             # The map isn't set up yet. Wait until it is.
+            if DEBUG:
+                print("============================================")
+                print("Waiting for map!")
             rate.sleep()
             continue
 
@@ -160,7 +187,17 @@ while not rospy.is_shutdown():
                 path_msg.poses.append(pos_stamped)
 
             pub_path.publish(path_msg)
-
+            if DEBUG:
+                print("============================================")
+                print("Published path!")
+                print("Current Position: " + str(navtask.curr_pos))
+                print("Target Position: " + str(navtask.goal_pos))
+                pt = "Path: "
+                for pos in path:
+                    pt = pt + "[" + str(pos[1]) + " " + str(pos[0]) + "] "
+                print(pt)
+        
+        rate.sleep()
 
 
     rate.sleep()
