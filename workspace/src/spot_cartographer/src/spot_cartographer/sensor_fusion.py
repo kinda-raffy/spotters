@@ -120,13 +120,3 @@ def extract_and_fuse_points(clouds: Sequence[PointCloud2]) -> PointCloud2:
     fields = ("x", "y", "z")
     points = (pc2.read_points(cloud, fields, skip_nans=True) for cloud in clouds)
     return np.concatenate((np.fromiter(cloud) for cloud in points), axis=0)
-
-
-def main() -> NoReturn:
-    rospy.init_node("SensorCrucible")
-    crucible = CrucibleForSensorFusion()
-    crucible.initiate_fusion()
-
-
-if __name__ == "__main__":
-    main()
