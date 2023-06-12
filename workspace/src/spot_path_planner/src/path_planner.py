@@ -33,9 +33,7 @@ new_map = None
 old_map = None
 new_position = None
 last_position = None
-# TODO: Implement the translation from cartesian coordinates to d_star_lite indices
-# curr_location = None
-# goal_lcoation = None
+last_goal = None
 dstar = None
 slam = None
 path = None
@@ -128,6 +126,7 @@ while not rospy.is_shutdown():
             new_map.set_map(navtask.curr_map)
             new_position = navtask.curr_pos
             last_position = navtask.curr_pos
+            last_goal = navtask.goal_pos
 
             dstar = DStarLite(map=new_map, s_start=navtask.curr_pos, s_goal=navtask.goal_pos)
 
@@ -152,6 +151,13 @@ while not rospy.is_shutdown():
 
         # If the map is already setup, then do replanning when moving around.
         elif navtask.is_set_up:
+            if navtask.goal_pos != last_goal:
+                if DEBUG:
+                    print("============================================")
+                    print("Got new goal: " + str(navtask.goal_pos))
+                    print("Resetting navtask...")
+                navtask.is_set_up = False
+
             new_position = navtask.curr_pos
             new_map.set_map(navtask.curr_map)
             slam.set_ground_truth_map(gt_map=new_map)

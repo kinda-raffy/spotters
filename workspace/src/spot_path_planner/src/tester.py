@@ -25,7 +25,7 @@ pos_x = 0
 pos_y = 0
 
 goal_x = 30
-goal_y = 30
+goal_y = -30
 
 
 # Set the dummy map here
@@ -103,6 +103,8 @@ if __name__ == '__main__':
             pos_x -= 1
         elif s == 'a':
             pos_y -= 1
+
+        goal_y += 1
 
 
         
