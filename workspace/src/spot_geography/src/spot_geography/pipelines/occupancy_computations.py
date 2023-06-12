@@ -90,7 +90,12 @@ def construct_occupancy_grid(
     return array.flatten()
 
 
-def generate_occlusion_polygons(coordinates: NDArray, alpha: float = 1) -> None:
+def generate_occlusion_polygons(
+        coordinates: NDArray,
+        alpha: float = 1,
+        wall_buffer: float = 3.0, # Should correspond to distance from camera to SPOT behind
+        buffer_side_count: int = 6
+    ) -> None:
 
     def include_edge(vertex1: Sequence[int], vertex2: Sequence[int]) -> None:
         edge: Sequence[int] = (vertex1, vertex2)
@@ -119,7 +124,7 @@ def generate_occlusion_polygons(coordinates: NDArray, alpha: float = 1) -> None:
     rospy.logdebug(f"[Occupancy Grid] Polygonizing alpha shapes.")
     polygons = shapely.ops.polygonize(shapely.MultiLineString(points))
     rospy.logdebug(f"[Occupancy Grid] Taking polygonal union.")
-    return shapely.unary_union(polygons).buffer(2)
+    return shapely.unary_union(polygons).buffer(wall_buffer, quad_segs=buffer_side_count)
 
 
 def filter_triangle(
