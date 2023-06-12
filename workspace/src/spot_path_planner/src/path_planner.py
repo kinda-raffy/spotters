@@ -101,7 +101,7 @@ def is_localisation_lost_callback(msg):
 if DEBUG:
     print("============================================")
     print("DEBUG MODE ON!")
-    print("Source: path_planner from Spot Paath Planner")
+    print("Source: path_planner from Spot Path Planner")
     print("============================================")
 
 rospy.init_node('path_planner_node', anonymous=True)
@@ -170,9 +170,6 @@ while not rospy.is_shutdown():
                     print("============================================")
                     print("WARNING! Might be out of bounds!")
                 else:
-                    print(path)
-                    print(g)
-                    print(rhs)
                     path, g, rhs = dstar.move_and_replan(robot_position=new_position)
                     if DEBUG:
                         print("============================================")

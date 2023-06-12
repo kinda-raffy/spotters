@@ -1,9 +1,11 @@
-# Spot Path Planner
-This project should:
-* Be provided the available occupancy grid, which for now is expected to be in terms of (X, Y)
-* Be able to plan Spot's path to a given target point
-* Calculate target points to move towards within the path
-* Publish the next target position for Spot to move towards
-* Recalculate parts of the path if necessary
+# Path planner status
+## Run
+- Remove tester.py from the launch file.
+- Build and use the launch file as you would any ROS project.
+- Change subscribers in path_planner.py as you wish
 
-Moving Spot itself should probably not be hosted inside this project; another project would be the best solution.
+## Known Errors / Crashes
+- In a small map, move in the same direction multiple times. Very weird crash, can't figure it out. Issue doesn't exist in bigger maps so should be no problem. Source: Around Line 173 - Path Planner
+
+## Credits
+Original D* Pygame module: https://github.com/Sollimann/Dstar-lite-pathplanner
