@@ -17,6 +17,7 @@
 #include <tf/transform_broadcaster.h>
 #include <image_transport/image_transport.h>
 
+#include <std_msgs/Bool.h>
 #include <std_msgs/Header.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -60,3 +61,4 @@ bool save_traj_srv(orb_slam3_ros::SaveMap::Request&, orb_slam3_ros::SaveMap::Res
 cv::Mat SE3f_to_cvMat(Sophus::SE3f);
 tf::Transform SE3f_to_tfTransform(Sophus::SE3f);
 sensor_msgs::PointCloud2 mappoint_to_pointcloud(std::vector<ORB_SLAM3::MapPoint*>, ros::Time);
+Sophus::SE3f tfTransform_to_SE3f(tf::Transform T_tf);

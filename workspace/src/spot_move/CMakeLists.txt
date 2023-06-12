@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(movement)
+project(spot_move)
 
 find_package(catkin REQUIRED COMPONENTS
   rospy
@@ -14,6 +14,7 @@ include_directories(
 )
 
 catkin_install_python(PROGRAMS
-  scripts/move
+  scripts/enable_movement
+  scripts/test/main
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

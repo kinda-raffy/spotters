@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-from mapping.trial import main
+from spot_geography.geography_broadcast import main
 
 
 if __name__ == "__main__":
