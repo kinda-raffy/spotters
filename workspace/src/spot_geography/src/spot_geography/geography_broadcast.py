@@ -1,11 +1,16 @@
 import rospy
+import tf2_ros
 from numpy.typing import NDArray
 from std_msgs.msg import Header
 from nav_msgs.msg import OccupancyGrid
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Pose
 from spot_geography.pipelines.point_cloud_pipeline import PointCloudProcessingFacility
 from spot_geography.pipelines.occupancy_computations import generate_occupancy_grid
-from typing import Tuple, NoReturn
+from typing import (
+    Tuple,
+    Optional,
+    NoReturn,
+)
 
 
 class GeographyBroadcastStation:
@@ -21,6 +26,8 @@ class GeographyBroadcastStation:
             OccupancyGrid,
             queue_size=1,
         )
+        self.tf_buffer = tf2_ros.Buffer(rospy.Duration(1200.0))
+        self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
 
     def initiate_broadcast(self) -> NoReturn:
 
@@ -61,8 +68,29 @@ class GeographyBroadcastStation:
         header = Header()
         header.stamp = rospy.Time.now()
         header.frame_id = grid.header.frame_id
-        self.position_channel.publish(pose)
+        self.position_channel.publish(self.prepare_pose_broadcast(pose))
         broadcast_grid()
+
+    def prepare_pose_broadcast(self, pose: PoseStamped) -> Optional[PoseStamped]:
+        try:
+            trans = self.tf_buffer.lookup_transform(
+                "origin",
+                "camera",
+                rospy.Time(),
+            )
+        except (
+            tf2_ros.LookupException,
+            tf2_ros.ConnectivityException,
+            tf2_ros.ExtrapolationException,
+        ):
+            rospy.logwarn("Your princess is in another castle.")
+        return PoseStamped(
+            pose.header,
+            Pose(
+                trans.transform.translation,
+                trans.transform.rotation,
+            )
+        )
 
 
 def main() -> NoReturn:
