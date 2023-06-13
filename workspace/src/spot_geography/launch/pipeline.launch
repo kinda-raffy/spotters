@@ -1,0 +1,4 @@
+<launch>
+    <!-- Pipelines -->
+    <node name="spot_mapping_pipeline_cluster" pkg="spot_geography" type="pipeline" output="screen" />
+</launch>

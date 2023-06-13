@@ -1,0 +1,13 @@
+<launch>
+    <!-- SLAM -->
+    <node name="orb_slam3" pkg="orb_slam3_ros" type="ros_mono" output="screen">
+        <remap from="/camera/image_raw"    to="/usb_cam/image_raw"/>
+        <!-- SLAM parameters  -->
+        <param name="voc_file"      type="string" value="$(find orb_slam3_ros)/orb_slam3/Vocabulary/ORBvoc.txt.bin"/>
+        <param name="settings_file" type="string" value="$(find orb_slam3_ros)/config/Monocular/iPhone13_mini.yaml"/>
+        <!-- ROS parameters -->
+        <param name="world_frame_id"    type="string"   value="origin" />
+        <param name="cam_frame_id"      type="string"   value="camera" />
+        <param name="enable_pangolin"   type="bool"     value="false" />
+    </node>
+</launch>

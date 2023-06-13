@@ -17,6 +17,7 @@
 #include <tf/transform_broadcaster.h>
 #include <image_transport/image_transport.h>
 
+#include <std_msgs/Int8.h>
 #include <std_msgs/Header.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -38,10 +39,11 @@ extern ORB_SLAM3::System::eSensor sensor_type;
 
 extern std::string world_frame_id, cam_frame_id, imu_frame_id;
 
-extern ros::Publisher pose_pub, odom_pub, kf_markers_pub;
+extern ros::Publisher pose_pub, odom_pub, kf_markers_pub, tracking_state_pub;
 extern ros::Publisher tracked_mappoints_pub, all_mappoints_pub;
 extern image_transport::Publisher tracking_img_pub;
 
+void poll_status();
 void setup_services(ros::NodeHandle&, std::string);
 void setup_publishers(ros::NodeHandle&, image_transport::ImageTransport&, std::string);
 void publish_topics(ros::Time, Eigen::Vector3f = Eigen::Vector3f::Zero());
@@ -60,3 +62,4 @@ bool save_traj_srv(orb_slam3_ros::SaveMap::Request&, orb_slam3_ros::SaveMap::Res
 cv::Mat SE3f_to_cvMat(Sophus::SE3f);
 tf::Transform SE3f_to_tfTransform(Sophus::SE3f);
 sensor_msgs::PointCloud2 mappoint_to_pointcloud(std::vector<ORB_SLAM3::MapPoint*>, ros::Time);
+Sophus::SE3f tfTransform_to_SE3f(tf::Transform T_tf);

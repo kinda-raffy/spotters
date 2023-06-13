@@ -1,0 +1,29 @@
+<launch>
+    <!-- Camera -->
+    <!-- TODO: Move this to spot description -->
+    <!-- <include file="$(find orb_slam_3)/launch/camera.launch"/> -->
+    <!-- Spot Body -->
+    <include file="$(find spot_description)/launch/description.launch"/> -->
+    <!-- <include file="$(find spot_viz)/launch/view_robot.launch"/> --> -->
+    <!-- <include file="$(find spot_driver)/launch/driver.launch"/> --> -->
+    <!-- <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" /> -->
+    <!-- SLAM -->
+    <include file="$(find orb_slam3_ros)/launch/slam.launch"/>
+    <!-- RVIZ -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find orb_slam3_ros)/config/spotters_1080.rviz" output="screen" />
+    <!-- <include file="$(find spot_viz)/launch/view_robot.launch"/> --> -->
+    <!-- Geography (Circular dependency) -->
+    <include file="$(find spot_geography)/launch/octomap.launch"/>
+    <include file="$(find spot_geography)/launch/pipeline.launch"/>
+    <!--  Cartographer -->
+    <include file="$(find spot_cartographer)/launch/manage.launch"/>
+    <!-- Movement -->
+    <!-- <include file="$(find spot_movement)/launch/enable.launch"/> -->
+    <!-- Trajectory path
+    <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="trajectory_server_orb_slam3" output="screen" ns="orb_slam3_ros" >
+        <param name="/target_frame_name"        value="/origin" />
+        <param name="/source_frame_name"        value="/camera" />
+        <param name="/trajectory_update_rate"   value="20.0" />
+        <param name="/trajectory_publish_rate"  value="20.0" />
+    </node> -->
+</launch>

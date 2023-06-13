@@ -1,0 +1,3 @@
+<launch>
+     <node name="spot_cartographer" pkg="spot_cartographer" type="manage" output="screen" />
+</launch>

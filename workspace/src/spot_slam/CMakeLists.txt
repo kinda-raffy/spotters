@@ -7,8 +7,8 @@ ENDIF()
 
 MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall   -O3")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}   -O3")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
 
@@ -177,17 +177,17 @@ target_link_libraries(ros_mono
 )
 
 ## ROS node
-add_executable(ros_mono_inertial 
+add_executable(ros_mono_inertial
   src/ros_mono_inertial.cc
   src/common.cc
 )
-target_link_libraries(ros_mono_inertial 
+target_link_libraries(ros_mono_inertial
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
 ## ROS node
-add_executable(ros_stereo 
+add_executable(ros_stereo
   src/ros_stereo.cc
   src/common.cc
 )
@@ -201,7 +201,7 @@ add_executable(ros_stereo_inertial
   src/ros_stereo_inertial.cc
   src/common.cc
 )
-target_link_libraries(ros_stereo_inertial 
+target_link_libraries(ros_stereo_inertial
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
