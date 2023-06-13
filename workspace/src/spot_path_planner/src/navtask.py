@@ -7,6 +7,8 @@ class NavTask:
         self.map_width = None
         self.map_height = None
         self.map_resolution = None
+        self.map_offset_x = None
+        self.map_offset_y = None
         self.curr_map = None
         self.ultimate_goal_pos = None
         self.is_set_up = False

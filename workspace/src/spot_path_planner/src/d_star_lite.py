@@ -111,7 +111,10 @@ class DStarLite:
         self.compute_shortest_path()
 
         while self.s_start != self.s_goal:
-            assert (self.rhs[self.s_start] != float('inf')), "There is no known path!"
+            if self.rhs[self.s_start] == float('inf'):
+                print("============================================")
+                print("WARNING: Navigator does not find a possible path.")
+                return None, None, None
 
             succ = self.sensed_map.succ(self.s_start, avoid_obstacles=False)
             min_s = float('inf')
@@ -129,6 +132,12 @@ class DStarLite:
             changed_edges_with_old_cost = self.rescan()
             #print("len path: {}".format(len(path)))
             # if any edge costs changed
+            
+            if self.s_start is None or self.s_goal is None:
+                print("============================================")
+                print("WARNING: Navigator does not find a possible path.")
+                return None, None, None
+            
             if changed_edges_with_old_cost:
                 self.k_m += heuristic(self.s_last, self.s_start)
                 self.s_last = self.s_start

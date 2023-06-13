@@ -41,7 +41,7 @@ goal_y = -30
 # Set the dummy map here
 def map():
     map = OccupancyGrid()
-    map.header.frame_id = "map"
+    map.header.frame_id = "origin"
     map.header.stamp = rospy.Time.now()
 
     map.info.width = w
@@ -59,7 +59,7 @@ def map():
 
 def curr_pos(x, y):
     curr_pos = PoseStamped()
-    curr_pos.header.frame_id = "map"
+    curr_pos.header.frame_id = "origin"
     curr_pos.header.stamp = rospy.Time.now()
 
     curr_pos.pose.position.x = x
@@ -70,7 +70,7 @@ def curr_pos(x, y):
 
 def goal_pos(x, y):
     curr_pos = PoseStamped()
-    curr_pos.header.frame_id = "map"
+    curr_pos.header.frame_id = "origin"
     curr_pos.header.stamp = rospy.Time.now()
 
     curr_pos.pose.position.x = x

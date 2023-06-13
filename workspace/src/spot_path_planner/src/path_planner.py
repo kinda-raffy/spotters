@@ -25,8 +25,8 @@ import numpy as np
 # =========================================================================
 # =                             SETTINGS                                  =
 NODE_ID = "path_planner_node"
-MAP_SUBSCRIBER_TOPIC = "spotters/geography/map"
-POS_SUBSCRIBER_TOPIC = "spotters/geography/pos"
+MAP_SUBSCRIBER_TOPIC = "spotters/mapping/map"
+POS_SUBSCRIBER_TOPIC = "spotters/mapping/pos"
 GOAL_SUBSCRIBER_TOPIC = "spotters/conductor/goal"
 LOST_SUBSCRIBER_TOPIC = "spotters/cartographer/tracking_state"
 PATH_PUBLISHER_TOPIC = "spotters/navigator/path"
@@ -44,6 +44,8 @@ dstar = None
 slam = None
 path = None
 
+posesraw = []
+
 OBSTACLE = 100
 UNOCCUPIED = 0
 
@@ -56,32 +58,38 @@ def map_callback(msg):
     navtask.map_height = msg.info.height 
     navtask.map_resolution = msg.info.resolution
     
-    navtask.curr_map = np.reshape(msg.data, (navtask.map_height, navtask.map_width))
+    navtask.map_offset_x = msg.info.origin.position.x
+    navtask.map_offset_y = msg.info.origin.position.y
+    
+    #real_map_width = msg.info.width * msg.info.resolution
 
-    # # Check the contents of map_data        
-    # val_counts = {}
-    # for num in map_data:
-    #     if num in val_counts:
-    #         val_counts[num] += 1
-    #     else:
-    #         val_counts[num] = 1
-    # print(val_counts)
+    navtask.curr_map = np.reshape(msg.data, (navtask.map_height, navtask.map_width))
 
 def curr_pos_callback(msg):
     global navtask
     if navtask.map_width is not None:
-        navtask.curr_pos = navtask.cartesian_to_dstar((round(msg.pose.position.x), round(msg.pose.position.y)))
+        
+        # TEMP Debug
+        # print("Raw: " + str(msg.pose.position.y) + " / " + str(msg.pose.position.x))
+        # posesraw.append([msg.pose.position.x, msg.pose.position.y])
+        # t = ""
+        # for pos in posesraw:
+        #     t += "[" + str(pos[0]) + " " + str(pos[1]) +"] "
+        # print(posesraw)
+        #print("Orientation: " + str(-msg.pose.orientation.x) + " / " + str(-msg.pose.orientation.y) + " / " + str(-msg.pose.orientation.z))
+        #print("Cartesian: " + str(-msg.pose.position.x - navtask.map_offset_x) + " / " + str(-msg.pose.position.y) + " / " + str(-msg.pose.position.z))
+        
+        navtask.curr_pos = (round(msg.pose.position.y * 1 / navtask.map_resolution - navtask.map_offset_y), round(msg.pose.position.x * 1 / navtask.map_resolution - navtask.map_offset_x))
     
     # Store the distance between the goal and the current postiions
     if navtask.is_set_up:
         navtask.curr_to_goal_distance = (navtask.goal_pos[0] - navtask.curr_pos[0],
                                           navtask.goal_pos[1] - navtask.curr_pos[1])
         
-
 def goal_pos_callback(msg):
     global navtask
     if navtask.curr_pos is not None:
-        navtask.set_goal_pos(navtask.cartesian_to_dstar((round(msg.pose.position.x), round(msg.pose.position.y))))
+        navtask.set_goal_pos((round(msg.pose.position.y * 1 / navtask.map_resolution - navtask.map_offset_y), round(msg.pose.position.x * 1 / navtask.map_resolution - navtask.map_offset_x)))
 
 def is_localisation_lost_callback(msg):
     global navtask
@@ -99,14 +107,25 @@ if DEBUG:
 
 rospy.init_node(NODE_ID, anonymous=True)
 pub_path = rospy.Publisher(PATH_PUBLISHER_TOPIC, Path, queue_size=10)
+pub_goal = rospy.Publisher(GOAL_SUBSCRIBER_TOPIC, PoseStamped, queue_size=10)
+
 sub_map = rospy.Subscriber(MAP_SUBSCRIBER_TOPIC, OccupancyGrid, map_callback)
 sub_curr_pos = rospy.Subscriber(POS_SUBSCRIBER_TOPIC, PoseStamped, curr_pos_callback)
 sub_goal_pos = rospy.Subscriber(GOAL_SUBSCRIBER_TOPIC, PoseStamped, goal_pos_callback)
-sub_is_localisation_lost = rospy.Subscriber(LOST_SUBSCRIBER_TOPIC, Bool, is_localisation_lost_callback )
+sub_is_localisation_lost = rospy.Subscriber(LOST_SUBSCRIBER_TOPIC, Bool, is_localisation_lost_callback)
 
 rate = rospy.Rate(1)
 
 while not rospy.is_shutdown():
+    
+    # TEMP
+    # ===
+    gp = PoseStamped()
+    gp.pose.position.x = 0
+    gp.pose.position.y = 0
+    pub_goal.publish(gp)
+    # ===
+    
     # If the localisation is lost, create a navtask again
     if navtask.is_localisation_lost:
         navtask = NavTask(navtask.curr_to_goal_distance)
@@ -130,9 +149,13 @@ while not rospy.is_shutdown():
             if navtask.is_out_of_bounds(new_position):
                     print("============================================")
                     print("WARNING! Might be out of bounds!")
+                    print("Val: " + str(navtask.curr_pos))
                     navtask.is_set_up = False
             else:
                 path, g, rhs = dstar.move_and_replan(robot_position=new_position)
+                if path is None:
+                    navtask.is_set_up = False
+                    continue
 
                 if DEBUG:
                     print("============================================")
@@ -141,8 +164,20 @@ while not rospy.is_shutdown():
                     print("Map width: " + str(navtask.map_width))
                     print("Map height: " + str(navtask.map_height))
                     print("Map resolution: " + str(navtask.map_resolution))
-                    print("Current Position: " + str(navtask.curr_pos))
-                    print("Target Position: " + str(navtask.goal_pos))
+                    print("Map offset x: " + str(navtask.map_offset_x))
+                    print("Map offset y: " + str(navtask.map_offset_y))
+                    
+                    # x, y = navtask.curr_pos
+                    # x, y = (round(x * navtask.map_resolution, 2), round(y * navtask.map_resolution, 2))
+                    # print("Current Position in cartesian: " + "[" + str(x) + " " + str(y) + "] ")
+                    
+                    # print("Current Position in dstar: " + str(navtask.curr_pos))
+                    
+                    # x, y = navtask.goal_pos
+                    # x, y = (round(x * navtask.map_resolution, 2), round(y * navtask.map_resolution, 2))
+                    # print("Target Position in cartesian: " + "[" + str(x) + " " + str(y) + "] ")
+                    
+                    # print("Target Position in dstar: " + str(navtask.goal_pos))
 
         # If the map is already setup, then do replanning when moving around.
         elif navtask.is_set_up:
@@ -170,29 +205,38 @@ while not rospy.is_shutdown():
                 if navtask.is_out_of_bounds(new_position):
                     print("============================================")
                     print("WARNING! Might be out of bounds!")
+                    print("Val: " + str(new_position))
                 else:
                     path, g, rhs = dstar.move_and_replan(robot_position=new_position)
+                    if path is None:
+                        navtask.is_set_up = False
+                        continue
+                    
                     if DEBUG:
                         print("============================================")
                         print("Replanning!")
         else:
-            # The map isn't set up yet. Wait until it is.
+            # The data isn't set up yet. Wait until it is.
             if DEBUG:
                 print("============================================")
-                print("Waiting for map!")
+                print("Waiting for additional data! (Missing either goal, current pos, or map)")
             rate.sleep()
             continue
 
-        if len(path) > 1:
+        if path is None:
+            if navtask.is_out_of_bounds(new_position):
+                print("============================================")
+                print("WARNING: Failed to calculate path!")
+        elif len(path) > 1:
             path_msg = Path()
-            path_msg.header.frame_id = 'map'
+            path_msg.header.frame_id = 'origin'
             path_msg.header.stamp = rospy.Time.now()
 
             for pos in path:
                 pos_stamped = PoseStamped()
-                pos_stamped.pose.position.x = pos[0]
-                pos_stamped.pose.position.y = pos[1]
-                # TODO: we assume that z position is 0 (this needs to be updated)
+                x, y = (pos[0] * navtask.map_resolution + navtask.map_offset_x, pos[1] * navtask.map_resolution + navtask.map_offset_y)
+                pos_stamped.pose.position.x = x
+                pos_stamped.pose.position.y = y
                 pos_stamped.pose.position.z = 0
                 path_msg.poses.append(pos_stamped)
 
@@ -200,11 +244,26 @@ while not rospy.is_shutdown():
             if DEBUG:
                 print("============================================")
                 print("Published path!")
-                print("Current Position: " + str(navtask.curr_pos))
-                print("Target Position: " + str(navtask.goal_pos))
-                pt = "Path: "
+                
+                # TEMP Debug
+                # x, y = navtask.curr_pos
+                # x, y = (round(x * navtask.map_resolution, 2), round(y * navtask.map_resolution, 2))
+                # print("Current Position in cartesian: " + "[" + str(x) + " " + str(y) + "] ")
+                
+                #print("Current Position in dstar: " + str(navtask.curr_pos))
+                
+                # x, y = navtask.goal_pos
+                # x, y = (round(x * navtask.map_resolution, 2), round(y * navtask.map_resolution, 2))
+                # print("Target Position in cartesian: " + "[" + str(x) + " " + str(y) + "] ")
+                
+                # print("Target Position in dstar: " + str(navtask.goal_pos))
+                
+                pt = "Path in cartesian: "
                 for pos in path:
-                    pt = pt + "[" + str(pos[1]) + " " + str(pos[0]) + "] "
+                    x, y = (pos[0], pos[1])
+                    x, y = (round(x * navtask.map_resolution + navtask.map_offset_x, 2), round(y * navtask.map_resolution + navtask.map_offset_y, 2))
+                    pt = pt + "[" + str(x) + " " + str(y) + "] "
+                    
                 print(pt)
         elif len(path) == 1:
             if DEBUG:
