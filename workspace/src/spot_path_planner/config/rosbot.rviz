@@ -119,7 +119,7 @@ Visualization Manager:
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
       Shape: Arrow
-      Topic: /goal_pos
+      Topic: spotters/conductor/goal
       Unreliable: false
       Value: true
     - Alpha: 0.699999988079071

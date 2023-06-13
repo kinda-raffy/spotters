@@ -113,7 +113,7 @@ class DStarLite:
         while self.s_start != self.s_goal:
             if self.rhs[self.s_start] == float('inf'):
                 print("============================================")
-                print("WARNING: Navigator does not find a possible path.")
+                print("WARNING: Navigator did not find a possible path.")
                 return None, None, None
 
             succ = self.sensed_map.succ(self.s_start, avoid_obstacles=False)
@@ -135,7 +135,7 @@ class DStarLite:
             
             if self.s_start is None or self.s_goal is None:
                 print("============================================")
-                print("WARNING: Navigator does not find a possible path.")
+                print("WARNING: Navigator did not find a possible path.")
                 return None, None, None
             
             if changed_edges_with_old_cost:
