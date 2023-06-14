@@ -14,7 +14,7 @@ POS_TOPIC = "spotters/geography/pos"
 RECEIVE_GOAL_TOPIC = '/move_base_simple/goal'
 SEND_GOAL_TOPIC = "spotters/conductor/goal"
 
-def __main__():
+def main():
     rospy.init_node('Conductor', log_level=rospy.DEBUG)
     Conductor()
     rospy.spin()
@@ -33,7 +33,7 @@ class Conductor:
         self.latest_position: PoseStamped = None
         rospy.Subscriber(RECEIVE_GOAL_TOPIC, PoseStamped, self.goal_callback)
         self.active_goal = None
-        self.state = State.INIT
+        # TODO: Nav failure subscriber
 
     def map_callback(self, map_msg):
         self.latest_map = map_msg
@@ -81,3 +81,9 @@ class Conductor:
 
     def stuck_behaviour():
         pass
+
+    def goal_behaviour():
+        pass
+
+if __name__ == "__main__":
+    main()
