@@ -63,14 +63,13 @@ class Conductor:
         if None in [self.latest_map, self.latest_position]:
             self.state = State.INIT
             return
-        health = self.map_state()
-        if health == State.STUCK:
+        if self.is_stuck():
             self.state = State.STUCK
         if self.active_goal is None:
             self.state = State.IDLE
         self.state = State.GOAL
 
-    def discern_map_health() -> State:
+    def is_stuck():
         pass
 
     def startup_behaviour():
