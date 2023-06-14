@@ -24,6 +24,7 @@ class State(Enum):
     STUCK = 0
     IDLE = 1
     GOAL = 2
+    RECOVERY = 3
 
 class Conductor:
     def __init__(self):
@@ -33,6 +34,7 @@ class Conductor:
         self.latest_position: PoseStamped = None
         rospy.Subscriber(RECEIVE_GOAL_TOPIC, PoseStamped, self.goal_callback)
         self.active_goal = None
+        self.active_goal_failed = False
         # TODO: Nav failure subscriber
 
     def map_callback(self, map_msg):
@@ -46,28 +48,33 @@ class Conductor:
 
     def loop(self):
         rate = rospy.Rate(1.0)
-        # These behaviors should be blocking until success
+        # These behaviors should be blocking
         while not rospy.is_shutdown():
             state = self.check_state()
             if state == State.INIT:
-                    self.startup_behaviour()
+                self.startup_behaviour()
             elif state == State.STUCK:
-                    self.stuck_behaviour()
+                self.stuck_behaviour()
             elif state == State.IDLE:
-                    self.idle_behaviour()
+                self.idle_behaviour()
             elif state == State.GOAL:
-                    self.goal_behaviour()
+                self.goal_behaviour()
+            elif state == State.RECOVERY:
+                self.recovery_behaviour()
         rate.sleep()
 
     def check_state(self):
         if None in [self.latest_map, self.latest_position]:
             self.state = State.INIT
             return
-        if self.is_stuck():
-            self.state = State.STUCK
-        if self.active_goal is None:
+        elif self.is_stuck():
+            self.state = State.STUCKmap_is_unhealthy
+        elif self.active_goal is None:
             self.state = State.IDLE
-        self.state = State.GOAL
+        elif self.active_goal_failed:
+            self.state = State.RECOVERY
+        else:
+            self.state = State.GOAL
 
     def is_stuck():
         pass
@@ -82,6 +89,9 @@ class Conductor:
         pass
 
     def goal_behaviour():
+        pass
+
+    def recovery_behaviour():
         pass
 
 if __name__ == "__main__":
