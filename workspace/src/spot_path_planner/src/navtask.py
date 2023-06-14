@@ -15,6 +15,7 @@ class NavTask:
         self.is_goal_changed = False
         self.is_localisation_lost = False
         self.is_complete = False
+        self.d_star_offset = None
 
         # When the localisation is lost,
         if curr_to_goal_distance is not None:

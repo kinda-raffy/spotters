@@ -22,6 +22,7 @@ from grid import OccupancyGridMap, SLAM
 from navtask import NavTask
 import numpy as np
 from debug_tools.map_data import test_data
+import math
 
 
 # =========================================================================
@@ -64,23 +65,6 @@ def map_callback(msg):
     
     navtask.map_offset_x = msg.info.origin.position.x
     navtask.map_offset_y = msg.info.origin.position.y
-
-    print((-1 - navtask.map_offset_x) / navtask.map_resolution )
-    print((1 - navtask.map_offset_y) / navtask.map_resolution)
-    x,y = round((-1 - navtask.map_offset_x) / navtask.map_resolution), round((1 - navtask.map_offset_y)/ navtask.map_resolution)
-    print(x, y)
-
-    print(115 * y + x)
-
-    map_data = []
-    for idx, number in enumerate(msg.data):
-        if idx == len(msg.data) // 3 - 250 - 50 - 100 - 100 - 28:
-            map_data.append(50)
-        else:
-            map_data.append(100)
-    
-    msg.data = map_data
-    pub_map2.publish(msg)
         
     
     #real_map_width = msg.info.width * msg.info.resolution
@@ -101,8 +85,10 @@ def curr_pos_callback(msg):
         # print(posesraw)
         # print("Orientation: " + str(-msg.pose.orientation.x) + " / " + str(-msg.pose.orientation.y) + " / " + str(-msg.pose.orientation.z))
         # print("Cartesian: " + str((round(msg.pose.position.y * 1 / navtask.map_resolution - navtask.map_offset_y), round(msg.pose.position.x * 1 / navtask.map_resolution - navtask.map_offset_x))))
-        
-        navtask.curr_pos = (round((msg.pose.position.y - navtask.map_offset_y)/ navtask.map_resolution), round((msg.pose.position.x - navtask.map_offset_x) / navtask.map_resolution))
+        y, x = ((msg.pose.position.y - navtask.map_offset_y)/ navtask.map_resolution, (msg.pose.position.x - navtask.map_offset_x) / navtask.map_resolution)
+        row, col = (math.floor(y), math.floor(x))
+        navtask.d_star_offset = (y - row, x - col) 
+        navtask.curr_pos = (row, col)
     
     # Store the distance between the goal and the current postiions
     if navtask.is_set_up:
@@ -112,11 +98,11 @@ def curr_pos_callback(msg):
 def goal_pos_callback(msg):
     global navtask
     if navtask.curr_pos is not None:
+        y, x = ((msg.pose.position.y - navtask.map_offset_y)/ navtask.map_resolution, (msg.pose.position.x - navtask.map_offset_x) / navtask.map_resolution)
+        row, col = (math.floor(y), math.floor(x))
+
         navtask.set_goal_pos(
-            (
-            round((msg.pose.position.y - navtask.map_offset_y)/ navtask.map_resolution),
-            round((msg.pose.position.x - navtask.map_offset_x) / navtask.map_resolution)
-            )
+            (row, col)
         )
 
 def is_localisation_lost_callback(msg):
@@ -173,7 +159,7 @@ while not rospy.is_shutdown():
     map.info.origin.position.y = -0.6599999952316284
     map.data = test_data
 
-    pub_map.publish(map)
+    # pub_map.publish(map)
     # ===
     
     # If the localisation is lost, create a navtask again
@@ -195,7 +181,7 @@ while not rospy.is_shutdown():
 
             dstar = DStarLite(map=new_map, s_start=navtask.curr_pos, s_goal=navtask.goal_pos)
 
-            slam = SLAM(map=new_map, view_range=50)
+            slam = SLAM(map=new_map, view_range=5)
 
             if navtask.is_out_of_bounds(new_position):
                     print("============================================")
@@ -286,7 +272,7 @@ while not rospy.is_shutdown():
 
             for pos in path:
                 pos_stamped = PoseStamped()
-                x, y = (pos[1] * navtask.map_resolution + navtask.map_offset_x, pos[0] * navtask.map_resolution + navtask.map_offset_y)
+                x, y = ((pos[1] + navtask.d_star_offset[1]) * navtask.map_resolution + navtask.map_offset_x, (pos[0] + navtask.d_star_offset[0]) * navtask.map_resolution + navtask.map_offset_y)
                 pos_stamped.pose.position.x = x
                 pos_stamped.pose.position.y = y
                 pos_stamped.pose.position.z = 0
