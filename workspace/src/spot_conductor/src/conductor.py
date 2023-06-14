@@ -1,82 +1,80 @@
 import rospy
-from typing import Callable
-from random import randint
-from enum import Enum
-from geometry_msgs.msg import PoseStamped
+import functools
+from typing import Callable, Mapping
+from random import randint, randrange
+from math import radians
+from enum import Enum, StrEnum
 from geometry_msgs.msg import (
-    PoseStamped
+    PoseStamped, Pose, Header, Point, Quaternion
 )
-from nav_msgs.msg import (
-    OccupancyGrid,
-)
+from nav_msgs.msg import OccupancyGrid
+from std_msgs.msg import Bool
+from tf.transformations import quaternion_from_euler as from_euler
 
-MAP_TOPIC = "spotters/geography/map"
-POS_TOPIC = "spotters/geography/pos"
-RECEIVE_GOAL_TOPIC = "/move_base_simple/goal"
-SEND_GOAL_TOPIC = "spotters/conductor/goal"
 
-def main():
-    rospy.init_node('Conductor', log_level=rospy.DEBUG)
-    Conductor()
-    rospy.spin()
+class ConductorTopics(StrEnum):
+    RECEIVE_GRID = "spotters/geography/map"
+    RECEIVE_POSE = "spotters/geography/pos"
+    RECEIVE_GOAL = "/move_base_simple/goal"
+    SEND_GOAL = "spotters/conductor/goal"
+    SEND_POSE = "/spotters/navigator/pose"
+    CANCEL_GOAL = ""  # TODO: Figure out what this is.
 
 
 class Conductor:
 
     class SpotState(Enum):
-        INIT, STUCK, IDLE, GOAL, RECOVERY = range(5)
+        START, STUCK, IDLE, GOAL, RECOVERY = range(5)
 
     def __init__(self):
-        self.behaviours = {}
-        rospy.Subscriber(MAP_TOPIC, OccupancyGrid, self.map_callback)
-        rospy.Subscriber(POS_TOPIC, PoseStamped, self.curr_pos_callback)
-        rospy.Subscriber(RECEIVE_GOAL_TOPIC, PoseStamped, self.goal_callback)
-        self.goal_channel = rospy.Publisher( SEND_GOAL_TOPIC, PoseStamped, queue_size=1)
-        self.latest_map = None
-        self.latest_position: PoseStamped = None
-        self.active_goal = None
-        self.active_goal_failed = False
+
+        def update_state(field: str, value) -> None:
+            setattr(self, field, value)
+
+        self.behaviours: Mapping[self.SpotState, Callable[[], None]] = {}
+        self.rate: float = 1.0
         self.state = self.SpotState.INIT
-        self.idle_chance_denominator_seconds = 30
-        self.ros_rate = 1.0
-        # TODO: Nav failure subscriber
+        self.latest_pose = None
+        self.latest_grid = None
+        self.active_goal = None
+        self.goal_failed = False
+        self.init_rotate_angle = 15
+        rospy.Subscriber(
+            ConductorTopics.RECEIVE_GRID,
+            OccupancyGrid,
+            functools.partial(update_state, "latest_grid"),
+        )
+        rospy.Subscriber(
+            ConductorTopics.RECEIVE_POSE,
+            PoseStamped,
+            functools.partial(update_state, "latest_pose"),
+        )
+        rospy.Subscriber(
+            ConductorTopics.RECEIVE_GOAL,
+            PoseStamped,
+            functools.partial(update_state, "active_goal"),
+        )
+        rospy.Subscriber(
+            ConductorTopics.CANCEL_GOAL,
+            Bool,  # TODO: Not necessarily final type.
+            functools.partial(update_state, "goal_failed"),
+        )
+        self.goal_channel = rospy.Publisher(
+            ConductorTopics.SEND_GOAL,
+            PoseStamped,
+            queue_size=1,
+        )
+        self.pose_channel = rospy.Publisher(
+            ConductorTopics.SEND_POSE,
+            PoseStamped,
+            queue_size=1,
+        )
 
-    def conduct(self, state: SpotState):
-        action = self.behaviours[state]
-        return action()
-
-    def map_callback(self, map_msg):
-        self.latest_map = map_msg
-
-    def curr_pos_callback(self, pos_msg):
-        self.latest_position = pos_msg
-
-    def goal_callback(self, goal_msg):
-        self.active_goal = goal_msg.data
-
-    def loop(self):
-        rate = rospy.Rate(self.ros_rate)
-        # These behaviors should be blocking
+    def conduct(self):
         while not rospy.is_shutdown():
-            state = self.determine_state()
-            self.conduct(state)
-        rate.sleep()
+            self.behaviours[self.state]()
 
-
-    def determine_state(self):
-        last_state = self.state
-        if None in [self.latest_map, self.latest_position]:
-            self.state = self.SpotState.INIT
-        elif self.is_stuck():
-            self.state = self.SpotState.STUCK
-        elif self.active_goal is None:
-            self.state = self.SpotState.IDLE
-        elif self.active_goal_failed:
-            self.state = self.SpotState.RECOVERY
-        else:
-            self.state = self.SpotState.GOAL
-        if self.state != last_state:
-            rospy.loginfo("[Conductor] changing state to {self.state}")
+    # State Behaviours
 
     def register_behaviour(self, behaviour: SpotState):
         def register(function: Callable[[], None]):
@@ -84,27 +82,57 @@ class Conductor:
             return function
         return register
 
-    @register_behaviour(SpotState.INIT)
-    def startup():
-        pass
+    @register_behaviour(SpotState.START)
+    def initialise(self) -> None:
+        for _ in range(round(360/self.init_rotate_angle)):
+            self.turn_body(self.init_rotate_angle)
+            rospy.Rate(3).sleep()
 
     @register_behaviour(SpotState.IDLE)
-    def idle(self):
-        if randint(0, round(30/self.ros_rate)) == 0:
-            # do something cool
-            pass
+    def idle(self) -> None:
+        rospy.Rate(1).sleep()
+        if randint(0, round(30 / self.rate)) == 0:
+            angle = randrange(-45, 45, 15)
+            self.turn(angle)
 
     @register_behaviour(SpotState.STUCK)
-    def stuck():
-        pass
+    def extricate() -> None:
+        # TODO: Define a recovery procedure. Needs further subscribers.
+        rospy.Rate(1).sleep()
 
     @register_behaviour(SpotState.GOAL)
-    def goal(self):
+    def seek(self) -> None:
+        rate = rospy.Rate(2)
         self.goal_channel.publish(self.active_goal)
+        while self.active_goal is not None and not self.goal_failed:
+            rate.sleep()
+        self.state = self.SpotState.RECOVERY \
+            if self.goal_failed else self.SpotState.IDLE
 
     @register_behaviour(SpotState.RECOVERY)
-    def recovery():
-        pass
+    def recover() -> None:
+        # TODO: Requires navigation to publish failures.
+        rospy.Rate(1).sleep()
+
+    # Movement Functions
+
+    def turn_body(self, degrees_right: float):
+        header = Header()
+        header.stamp = rospy.Time.now()
+        header.frame_id = "body"
+        point = Point(0,0,0)
+        rotation = Quaternion(*from_euler(0, 0, radians(degrees_right)))
+        pose = Pose(point, rotation)
+        poseStamped = PoseStamped(header, pose)
+        self.pose_channel.publish(poseStamped)
+
+
+
+def main():
+    rospy.init_node("Conductor", log_level=rospy.DEBUG)
+    Conductor()
+    rospy.spin()
+
 
 if __name__ == "__main__":
     main()
