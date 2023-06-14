@@ -87,7 +87,7 @@ class SpotMovement:
             self.handler.send_trajectory_command(next_pose, self.default_timeout)
 
     def extrapolate_turning_angle(one: PoseStamped, two: PoseStamped) -> float:
-        return math.degrees(math.atan2(two.x - one.x, two.y - one.y))
+        return math.atan2(two.x - one.x, two.y - one.y)
 
     def send_last_sent_pose(self) -> NoReturn:
         assert self.last_sent_pose is not None, \
