@@ -72,6 +72,7 @@ class Conductor:
     def loop(self):
         rate = rospy.Rate(self.ros_rate)
         # These behaviors should be blocking
+        self.conduct(self.SpotState.START)
         while not rospy.is_shutdown():
             state = self.determine_state()
             self.conduct(state)
@@ -84,7 +85,7 @@ class Conductor:
     def determine_state(self):
         last_state = self.state
         if None in [self.latest_map, self.latest_position]:
-            self.state = self.SpotState.INIT
+            self.state = self.SpotState.START
         elif self.is_stuck():
             self.state = self.SpotState.STUCK
         elif self.active_goal is None:
@@ -176,7 +177,8 @@ class Conductor:
 
 def main():
     rospy.init_node("Conductor", log_level=rospy.DEBUG)
-    Conductor()
+    conductor = Conductor()
+    conductor.loop()
     rospy.spin()
 
 
