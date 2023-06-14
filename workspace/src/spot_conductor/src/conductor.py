@@ -1,8 +1,7 @@
 import rospy
+from typing import Callable
 from random import randint
 from enum import Enum
-
-
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import (
     PoseStamped
@@ -13,7 +12,7 @@ from nav_msgs.msg import (
 
 MAP_TOPIC = "spotters/geography/map"
 POS_TOPIC = "spotters/geography/pos"
-RECEIVE_GOAL_TOPIC = '/move_base_simple/goal'
+RECEIVE_GOAL_TOPIC = "/move_base_simple/goal"
 SEND_GOAL_TOPIC = "spotters/conductor/goal"
 
 def main():
@@ -21,26 +20,30 @@ def main():
     Conductor()
     rospy.spin()
 
-class State(Enum):
-    INIT = -1
-    STUCK = 0
-    IDLE = 1
-    GOAL = 2
-    RECOVERY = 3
 
 class Conductor:
+
+    class SpotState(Enum):
+        INIT, STUCK, IDLE, GOAL, RECOVERY = range(5)
+
     def __init__(self):
+        self.behaviours = {}
         rospy.Subscriber(MAP_TOPIC, OccupancyGrid, self.map_callback)
-        self.latest_map = None
         rospy.Subscriber(POS_TOPIC, PoseStamped, self.curr_pos_callback)
-        self.latest_position: PoseStamped = None
         rospy.Subscriber(RECEIVE_GOAL_TOPIC, PoseStamped, self.goal_callback)
+        self.goal_channel = rospy.Publisher( SEND_GOAL_TOPIC, PoseStamped, queue_size=1)
+        self.latest_map = None
+        self.latest_position: PoseStamped = None
         self.active_goal = None
         self.active_goal_failed = False
-        self.state = State.INIT
+        self.state = self.SpotState.INIT
         self.idle_chance_denominator_seconds = 30
         self.ros_rate = 1.0
         # TODO: Nav failure subscriber
+
+    def conduct(self, state: SpotState):
+        action = self.behaviours[state]
+        return action()
 
     def map_callback(self, map_msg):
         self.latest_map = map_msg
@@ -55,52 +58,52 @@ class Conductor:
         rate = rospy.Rate(self.ros_rate)
         # These behaviors should be blocking
         while not rospy.is_shutdown():
-            state = self.check_state()
-            if state == State.INIT:
-                self.startup_behaviour()
-            elif state == State.STUCK:
-                self.stuck_behaviour()
-            elif state == State.IDLE:
-                self.idle_behaviour()
-            elif state == State.GOAL:
-                self.goal_behaviour()
-            elif state == State.RECOVERY:
-                self.recovery_behaviour()
+            state = self.determine_state()
+            self.conduct(state)
         rate.sleep()
 
-    def check_state(self):
+
+    def determine_state(self):
         last_state = self.state
         if None in [self.latest_map, self.latest_position]:
-            self.state = State.INIT
+            self.state = self.SpotState.INIT
         elif self.is_stuck():
-            self.state = State.STUCKmap_is_unhealthy
+            self.state = self.SpotState.STUCK
         elif self.active_goal is None:
-            self.state = State.IDLE
+            self.state = self.SpotState.IDLE
         elif self.active_goal_failed:
-            self.state = State.RECOVERY
+            self.state = self.SpotState.RECOVERY
         else:
-            self.state = State.GOAL
+            self.state = self.SpotState.GOAL
         if self.state != last_state:
             rospy.loginfo("[Conductor] changing state to {self.state}")
 
-    def is_stuck():
+    def register_behaviour(self, behaviour: SpotState):
+        def register(function: Callable[[], None]):
+            self.behaviours[behaviour] = function
+            return function
+        return register
+
+    @register_behaviour(SpotState.INIT)
+    def startup():
         pass
 
-    def startup_behaviour():
-        pass
-
-    def idle_behaviour(self):
+    @register_behaviour(SpotState.IDLE)
+    def idle(self):
         if randint(0, round(30/self.ros_rate)) == 0:
             # do something cool
             pass
 
-    def stuck_behaviour():
+    @register_behaviour(SpotState.STUCK)
+    def stuck():
         pass
 
-    def goal_behaviour():
-        pass
+    @register_behaviour(SpotState.GOAL)
+    def goal(self):
+        self.goal_channel.publish(self.active_goal)
 
-    def recovery_behaviour():
+    @register_behaviour(SpotState.RECOVERY)
+    def recovery():
         pass
 
 if __name__ == "__main__":
