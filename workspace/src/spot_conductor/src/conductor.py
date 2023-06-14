@@ -69,9 +69,32 @@ class Conductor:
             queue_size=1,
         )
 
+    def loop(self):
+        rate = rospy.Rate(self.ros_rate)
+        # These behaviors should be blocking
+        while not rospy.is_shutdown():
+            state = self.determine_state()
+            self.conduct(state)
+        rate.sleep()
+
     def conduct(self):
         while not rospy.is_shutdown():
             self.behaviours[self.state]()
+
+    def determine_state(self):
+        last_state = self.state
+        if None in [self.latest_map, self.latest_position]:
+            self.state = self.SpotState.INIT
+        elif self.is_stuck():
+            self.state = self.SpotState.STUCK
+        elif self.active_goal is None:
+            self.state = self.SpotState.IDLE
+        elif self.active_goal_failed:
+            self.state = self.SpotState.RECOVERY
+        else:
+            self.state = self.SpotState.GOAL
+        if self.state != last_state:
+            rospy.loginfo("[Conductor] changing state to {self.state}")
 
     # State Behaviours
 
@@ -94,8 +117,8 @@ class Conductor:
         self.turn_body(-15)
         self.ros_sleep(2)
         self.turn_body(15)
+        self.ros_sleep(2)
         self.translate_body(-0.5,0)
-
 
     @register_behaviour(SpotState.IDLE)
     def idle(self) -> None:
