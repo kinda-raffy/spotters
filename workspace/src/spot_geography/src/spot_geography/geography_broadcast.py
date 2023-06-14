@@ -40,13 +40,7 @@ class GeographyBroadcastStation:
             array, position = self.generate_geography(grid)
             self.broadcast_geography(array, grid, position)
 
-        def convert_goal(goal: PoseStamped) -> None:
-            rospy.loginfo(f'received goal {goal}')
-            self.goal_channel.publish(goal)
-            rospy.rospy.loginfo(f'published goal {goal}')
-
         rospy.Subscriber('/projected_map', OccupancyGrid, broadcast)
-        rospy.Subscriber('/move_base_simple/goal', PoseStamped, convert_goal)
         rospy.spin()
 
     def generate_geography(self, grid: OccupancyGrid) -> Tuple[NDArray, PoseStamped]:

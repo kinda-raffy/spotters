@@ -23,7 +23,6 @@ from typing import (
 
 def main() -> NoReturn:
     rospy.init_node('SpotMove', log_level=rospy.DEBUG)
-    # TODO - Find optimal value.
     SpotMovement()
     rospy.spin()
 
