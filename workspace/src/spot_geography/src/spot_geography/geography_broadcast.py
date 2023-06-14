@@ -26,6 +26,11 @@ class GeographyBroadcastStation:
             OccupancyGrid,
             queue_size=1,
         )
+        self.goal_channel = rospy.Publisher(
+            "/spotters/conductor/goal",
+            PoseStamped,
+            queue_size=1,
+        )
         self.tf_buffer = tf2_ros.Buffer(rospy.Duration(1200.0))
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
 
@@ -35,7 +40,13 @@ class GeographyBroadcastStation:
             array, position = self.generate_geography(grid)
             self.broadcast_geography(array, grid, position)
 
+        def convert_goal(goal: PoseStamped) -> None:
+            rospy.loginfo(f'[SpotGeography] Received goal {goal}')
+            self.goal_channel.publish(goal)
+            rospy.rospy.loginfo(f'published goal {goal}')
+
         rospy.Subscriber('/projected_map', OccupancyGrid, broadcast)
+        rospy.Subscriber('/move_base_simple/goal', PoseStamped, convert_goal)
         rospy.spin()
 
     def generate_geography(self, grid: OccupancyGrid) -> Tuple[NDArray, PoseStamped]:
