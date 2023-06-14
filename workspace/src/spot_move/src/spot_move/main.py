@@ -90,7 +90,10 @@ class SpotMovement:
 
     def extrapolate_turning_angle(self, one: Pose, two: Pose) -> float:
         print(f">>>>> {type(one)=} {type(two)=}")
-        return math.atan2(two.position.x - one.position.x, two.position.y - one.position.y)
+        # angle where 0 degrees is East, 90 is North, 180 is West, -90 is South
+        polar_angle = math.atan2(two.position.x - one.position.x, two.position.y - one.position.y)
+        cartesian_angle = 90-polar_angle
+        return cartesian_angle
 
     def send_last_sent_pose(self) -> None:
         assert self.last_sent_pose is not None, \
