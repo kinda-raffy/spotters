@@ -14,11 +14,20 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var webServer: HttpServer?
     @Published var imageData: Data? = nil
     
+    private let imuDataQueue = DispatchQueue(label: "IMUDataQueue")
+    @Published var imuData: String? = nil
+    
     override init() {
         super.init()
         setupCamera()
         setupCompressionSession()
         startWebServer()
+    }
+    
+    func enqueueIMUData(_ data: String) {
+        imuDataQueue.async(flags: .barrier) {
+            self.imuData = data
+        }
     }
     
     private func setupCamera() {
@@ -55,7 +64,7 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
         }
         
         let videoOutput = AVCaptureVideoDataOutput()
-        videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sample buffer delegate", attributes: []))
+        videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "SensorRelay Video", attributes: []))
         
         if captureSession.canAddOutput(videoOutput) {
             captureSession.addOutput(videoOutput)
@@ -162,8 +171,21 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
             })
         }
         
+        server["/imu"] = { [weak self] request in
+            return .raw(200, "OK", ["Content-Type": "text/plain"], { writer in
+                while true {
+                    self?.imuDataQueue.sync {
+                        if let data = self?.imuData {
+                            let imuDataWithNewLine = "\(data)\n"
+                            try? writer.write(imuDataWithNewLine.data(using: .utf8)!)
+                        }
+                    }
+                }
+            })
+        }
+        
         do {
-            try server.start(6969)
+            try server.start(80)
         } catch {
             print("Server start error: \(error)")
         }
@@ -174,7 +196,7 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 
 
 struct ContentView: View {
-    private var cameraManager = CameraManager()
+    private let cameraManager = CameraManager()
     private let motionManager = CMMotionManager()
     
     @State private var roll: Double = 0
@@ -182,7 +204,6 @@ struct ContentView: View {
     @State private var yaw: Double = 0
     @State private var rotationRate: CMRotationRate = CMRotationRate(x: 0, y: 0, z: 0)
     @State private var userAcceleration: CMAcceleration = CMAcceleration(x: 0, y: 0, z: 0)
-
 
     var body: some View {
         VStack {
@@ -194,22 +215,24 @@ struct ContentView: View {
             Text("Broadcasting")
                 .foregroundColor(.gray)
                 .padding(1)
-           Text("\(getWiFiAddress() ?? "N/A"):6969/rgb")
+           Text("\(getWiFiAddress() ?? "N/A"):80/rgb")
                 .font(.system(.body, design: .monospaced))
                 .bold()
-                .padding(5)
-            Text("IMU")
-                .foregroundColor(.gray)
-                .padding(2)
-            Text("Roll: \(roll)")
-            Text("Pitch: \(pitch)")
-            Text("Yaw: \(yaw)")
-            Text("Rotation Rate (X: \(rotationRate.x), Y: \(rotationRate.y), Z: \(rotationRate.z))")
-            Text("User Acceleration (X: \(userAcceleration.x), Y: \(userAcceleration.y), Z: \(userAcceleration.z))")
+                .padding(.top, 5)
+            Text("\(getWiFiAddress() ?? "N/A"):80/imu")
+                 .font(.system(.body, design: .monospaced))
+                 .bold()
+                 .padding(.bottom, 15)
+            Text("Roll: \(roll)").font(.system(size: 10, design: .monospaced))
+            Text("Pitch: \(pitch)").font(.system(size: 10, design: .monospaced))
+            Text("Yaw: \(yaw)").font(.system(size: 10, design: .monospaced))
+            Text("Angular [\(rotationRate.x), \(rotationRate.y), \(rotationRate.z)]").font(.system(size: 10, design: .monospaced))
+            Text("Linear [\(userAcceleration.x), \(userAcceleration.y), \(userAcceleration.z)]").font(.system(size: 10, design: .monospaced))
         }
         .padding()
         .onAppear {
             startMotionUpdates()
+            
         }
         .onDisappear {
             motionManager.stopDeviceMotionUpdates()
@@ -217,19 +240,24 @@ struct ContentView: View {
     }
     
     func startMotionUpdates() {
-        motionManager.deviceMotionUpdateInterval = 1.0 / 10.0  // hz.
+        motionManager.deviceMotionUpdateInterval = 1.0 / 100.0  // hz.
         if motionManager.isDeviceMotionAvailable {
-                    motionManager.startDeviceMotionUpdates(to: .main) { (data, error) in
-                    guard let data = data else { return }
+            let operationQueue = OperationQueue() //Create an OperationQueue instance
+            motionManager.startDeviceMotionUpdates(to: operationQueue) { (data, error) in
+                guard let data = data else { return }
 
+                DispatchQueue.main.async { //ensure UI updates are on main thread
                     roll = data.attitude.roll
                     pitch = data.attitude.pitch
                     yaw = data.attitude.yaw
                     rotationRate = data.rotationRate
                     userAcceleration = data.userAcceleration
                 }
+                let imuCapture: String = "\(roll),\(pitch),\(yaw),\(rotationRate.x),\(rotationRate.y),\(rotationRate.z),\(userAcceleration.x),\(userAcceleration.y),\(userAcceleration.z)"
+                self.cameraManager.enqueueIMUData(imuCapture)
             }
         }
+    }
 
     func getWiFiAddress() -> String? {
         var address : String?
