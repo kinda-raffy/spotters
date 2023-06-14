@@ -108,6 +108,7 @@ class Conductor:
     @register_behaviour(SpotState.START)
     def initialise(self) -> None:
         # turn 360
+        self.ros_sleep(4)
         for _ in range(round(360 / 30)):
             self.turn_body(self.init_rotate_angle)
             import time
