@@ -1,5 +1,7 @@
 import rospy
+from random import randint
 from enum import Enum
+
 
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import (
@@ -35,6 +37,9 @@ class Conductor:
         rospy.Subscriber(RECEIVE_GOAL_TOPIC, PoseStamped, self.goal_callback)
         self.active_goal = None
         self.active_goal_failed = False
+        self.state = State.INIT
+        self.idle_chance_denominator_seconds = 30
+        self.ros_rate = 1.0
         # TODO: Nav failure subscriber
 
     def map_callback(self, map_msg):
@@ -47,7 +52,7 @@ class Conductor:
         self.active_goal = goal_msg.data
 
     def loop(self):
-        rate = rospy.Rate(1.0)
+        rate = rospy.Rate(self.ros_rate)
         # These behaviors should be blocking
         while not rospy.is_shutdown():
             state = self.check_state()
@@ -64,9 +69,9 @@ class Conductor:
         rate.sleep()
 
     def check_state(self):
+        last_state = self.state
         if None in [self.latest_map, self.latest_position]:
             self.state = State.INIT
-            return
         elif self.is_stuck():
             self.state = State.STUCKmap_is_unhealthy
         elif self.active_goal is None:
@@ -75,6 +80,8 @@ class Conductor:
             self.state = State.RECOVERY
         else:
             self.state = State.GOAL
+        if self.state != last_state:
+            rospy.loginfo("[Conductor] changing state to {self.state}")
 
     def is_stuck():
         pass
@@ -82,8 +89,10 @@ class Conductor:
     def startup_behaviour():
         pass
 
-    def idle_behaviour():
-        pass
+    def idle_behaviour(self):
+        if randint(0, round(30/self.ros_rate)) == 0:
+            # do something cool
+            pass
 
     def stuck_behaviour():
         pass

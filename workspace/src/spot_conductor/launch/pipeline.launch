@@ -1,0 +1,4 @@
+<launch>
+    <!-- Pipelines -->
+    <node name="spot_conductor" pkg="spot_conductor" type="conductor" output="screen" />
+</launch>
