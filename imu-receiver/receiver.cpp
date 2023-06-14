@@ -42,7 +42,7 @@ int main() {
     std::vector<std::string> values {};
     char input_buffer[BUFFER_SIZE];
     while (true) { // 
-        int read_size {read(socket_file_descriptor, input_buffer, BUFFER_SIZE)};
+        const ssize_t read_size {read(socket_file_descriptor, input_buffer, BUFFER_SIZE)};
         if (read_size <= 0) {
             std::cerr << "Error reading data.\n";
             sleep(10); // I don't know, do something here.
