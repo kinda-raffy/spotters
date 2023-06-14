@@ -46,18 +46,18 @@ class Conductor:
 
     def loop(self):
         rate = rospy.Rate(1.0)
+        # These behaviors should be blocking until success
         while not rospy.is_shutdown():
             state = self.check_state()
-            match state:
-                case State.INIT:
+            if state == State.INIT:
                     self.startup_behaviour()
-                case State.STUCK:
+            elif state == State.STUCK:
                     self.stuck_behaviour()
-                case State.IDLE:
+            elif state == State.IDLE:
                     self.idle_behaviour()
-                case State.GOAL:
+            elif state == State.GOAL:
                     self.goal_behaviour()
-            rate.sleep()
+        rate.sleep()
 
     def check_state(self):
         if None in [self.latest_map, self.latest_position]:
@@ -69,7 +69,6 @@ class Conductor:
         if self.active_goal is None:
             self.state = State.IDLE
         self.state = State.GOAL
-
 
     def discern_map_health() -> State:
         pass
