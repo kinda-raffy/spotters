@@ -18,7 +18,7 @@ class DummyTrajectoryActionServer:
     def execute(self, goal):
         rospy.logdebug("Received a goal")
         time.sleep(2)  # Simulated action.
-        
+
         if random.random() < 0.4:
             rospy.logdebug("Action failed")
             self.server.set_aborted(TrajectoryResult(success=False, message="Failure"))
@@ -32,13 +32,11 @@ class DummyPathPublisher:
 
     def publish_path(self):
         path = Path()
-        path.header.frame_id = 'map'
+        path.header.frame_id = 'origin'
         path.header.stamp = rospy.Time.now()
 
         PATH_SIZE = 1000
-        x = 0
-        y = 0
-
+        x = y = 0
         # Draws a path that curves up towards positive Y, then downwards Y while maintaining positive X.
         for i in range(PATH_SIZE):
             # Bigger var value leads to more spread out path
@@ -50,16 +48,16 @@ class DummyPathPublisher:
             pose.pose.position.x = x
             pose.pose.position.y = y
             path.poses.append(pose)
-        
+
         self.publisher.publish(path)
-        print("Published a path!")
-        
+        rospy.logdebug("Published a path!")
+
 if __name__ == '__main__':
     rospy.init_node('dummy_trajectory_action_server_and_publisher', log_level=rospy.DEBUG)
     rospy.loginfo("Starting dummy_trajectory_action_server_and_publisher...")
     if not rospy.has_param("/ros/console/config"):
         rospy.set_param("/ros/console/config", "{'log4j.logger.ros': 'DEBUG'}")
-    server = DummyTrajectoryActionServer()
+    # server = DummyTrajectoryActionServer()
     publisher = DummyPathPublisher()
 
     while not rospy.is_shutdown():

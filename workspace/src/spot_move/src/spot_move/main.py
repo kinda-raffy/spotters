@@ -22,33 +22,32 @@ from typing import (
 
 
 def main() -> NoReturn:
-    rospy.init_node('spot_movement', log_level=rospy.DEBUG)
+    rospy.init_node('SpotMove', log_level=rospy.DEBUG)
     # TODO - Find optimal value.
     SpotMovement(path_resolution=5)
     rospy.spin()
 
 
 class SpotMovement:
-    
+
     def __init__(
         self,
         path_resolution: int = 10,
-        *,
         timeout: int = 5,
-    ) -> NoReturn:
+    ) -> None:
         rospy.Subscriber("/spotters/navigator/path", Path, self.path_callback)
         rospy.logdebug("Listening to path messages.")
 
-        assert timeout > 0, "For safetly, the timeout must exceed 0."
+        assert timeout > 0, "For safety, the timeout must exceed 0."
         self.default_timeout: Duration = Duration()
         self.default_timeout.data = rospy.Duration(timeout)
-        
+
         self.path_resolution = path_resolution
         self.path: List[PoseStamped] = list()
         self.last_sent_pose: PoseStamped = None
         self.handler = SpotTrajectoryHandler(self.goal_reached_strategy)
-        rospy.logdebug("Movement intialised.")
-        
+        rospy.logdebug("Movement initialized.")
+
     def path_callback(self, path: Path) -> NoReturn:
         rospy.logdebug("Executing a new path.")
         self.path = path.poses
@@ -60,7 +59,7 @@ class SpotMovement:
         self.path = self.down_sample_path(self.path)
         rospy.logdebug(f"Downsampled to {len(self.path)}")
         self.send_next_trajectory()
-    
+
     def down_sample_path(self, path: List[PoseStamped]) -> List[PoseStamped]:
         rospy.logdebug(f"Downsampling {len(path)=} poses.")
         path_is_too_small: bool = len(path) < self.path_resolution
@@ -71,18 +70,18 @@ class SpotMovement:
     def send_next_trajectory(self):
         # NOTE - Trajectories are evaluated by the goal_reached_strategy callback.
         if not self._empty_path():
-            yawless_pose = self._pop_next_pose()
+            no_yaw_pose = self._pop_next_pose()
             quaternion = quaternion_from_euler(0,0,0)
             if self.last_sent_pose:
-                yaw = self.extrapolate_turning_angle(self.last_sent_pose.pose, yawless_pose.pose)
+                yaw = self.extrapolate_turning_angle(self.last_sent_pose.pose, no_yaw_pose.pose)
                 quaternion = quaternion_from_euler(0, 0, yaw)
             next_pose = PoseStamped(
-                yawless_pose.header,
+                no_yaw_pose.header,
                 Pose(
-                    yawless_pose.pose.point,
+                    no_yaw_pose.pose.point,
                     quaternion
                 )
-                )
+            )
             self.last_sent_pose = next_pose
             rospy.logdebug("Sending next trajectory.")
             self.handler.send_trajectory_command(next_pose, self.default_timeout)
@@ -95,8 +94,7 @@ class SpotMovement:
             "Client claims a pose has been sent but no history of that pose exists."
         rospy.logdebug("Sending last trajectory.")
         self.handler.send_trajectory_command(self.last_sent_pose, self.default_timeout)
-        
-    # FIXME - verify params being sent by actionlib.goal_cb
+
     def goal_reached_strategy(self, status, result) -> NoReturn:
         if status == GoalStatus.SUCCEEDED:
             rospy.logdebug("Pose reached successfully.")
@@ -108,23 +106,22 @@ class SpotMovement:
             )
             # FIXME - Should this only be ran once?
             self.send_last_sent_pose()
-            
+
     def _pop_next_pose(self) -> PoseStamped:
         rospy.logdebug("Getting next trajectory.")
         return self.path.pop(0)
-    
+
     def _empty_path(self) -> bool:
         return self.path == list()
 
 
 class SpotTrajectoryHandler:
-
     def __init__(
         self,
         arrival_callback: Callable [
             [], NoReturn
         ]
-    ) -> NoReturn:
+    ) -> None:
         self.goal_cb = arrival_callback
         self.client = actionlib.SimpleActionClient(
             '/spot/trajectory',
@@ -132,32 +129,31 @@ class SpotTrajectoryHandler:
         )
         self.client.wait_for_server(timeout=rospy.Duration(60))
         rospy.logdebug("Connection established.")
-        
+
 
     def send_trajectory_command(
         self,
         pose: PoseStamped,
         duration: Duration,
-        *,
         precise_positioning: bool = True
     ) -> bool:
         goal = TrajectoryGoal()
         goal.target_pose = pose
         goal.duration = duration
         goal.precise_positioning = precise_positioning
-        
+
         rospy.logdebug("Sending goal.")
         self.client.send_goal(goal, self.goal_cb)
-        
-    def get_result(self) -> NoReturn:
+
+    def get_result(self) -> None:
         rospy.logdebug("Getting goal result.")
         return self.client.get_result()
-    
-    def cancel_goal(self) -> NoReturn:
+
+    def cancel_goal(self) -> None:
         rospy.logdebug("Cancelling goal.")
         # TODO: Check if the robot stops moving.
         self.client.cancel_goal()
-        
+
     def get_state(self) -> GoalStatus:
         rospy.logdebug("Getting goal state.")
         return self.client.get_state()
