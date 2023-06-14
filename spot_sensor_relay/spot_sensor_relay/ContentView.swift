@@ -2,6 +2,7 @@ import AVFoundation
 import SwiftUI
 import Swifter
 import VideoToolbox
+import CoreMotion
 
 
 class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -174,6 +175,14 @@ class CameraManager: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
 
 struct ContentView: View {
     private var cameraManager = CameraManager()
+    private let motionManager = CMMotionManager()
+    
+    @State private var roll: Double = 0
+    @State private var pitch: Double = 0
+    @State private var yaw: Double = 0
+    @State private var rotationRate: CMRotationRate = CMRotationRate(x: 0, y: 0, z: 0)
+    @State private var userAcceleration: CMAcceleration = CMAcceleration(x: 0, y: 0, z: 0)
+
 
     var body: some View {
         VStack {
@@ -188,9 +197,39 @@ struct ContentView: View {
            Text("\(getWiFiAddress() ?? "N/A"):6969/rgb")
                 .font(.system(.body, design: .monospaced))
                 .bold()
-       }
-       .padding()
+                .padding(5)
+            Text("IMU")
+                .foregroundColor(.gray)
+                .padding(2)
+            Text("Roll: \(roll)")
+            Text("Pitch: \(pitch)")
+            Text("Yaw: \(yaw)")
+            Text("Rotation Rate (X: \(rotationRate.x), Y: \(rotationRate.y), Z: \(rotationRate.z))")
+            Text("User Acceleration (X: \(userAcceleration.x), Y: \(userAcceleration.y), Z: \(userAcceleration.z))")
+        }
+        .padding()
+        .onAppear {
+            startMotionUpdates()
+        }
+        .onDisappear {
+            motionManager.stopDeviceMotionUpdates()
+        }
     }
+    
+    func startMotionUpdates() {
+        motionManager.deviceMotionUpdateInterval = 1.0 / 10.0  // hz.
+        if motionManager.isDeviceMotionAvailable {
+                    motionManager.startDeviceMotionUpdates(to: .main) { (data, error) in
+                    guard let data = data else { return }
+
+                    roll = data.attitude.roll
+                    pitch = data.attitude.pitch
+                    yaw = data.attitude.yaw
+                    rotationRate = data.rotationRate
+                    userAcceleration = data.userAcceleration
+                }
+            }
+        }
 
     func getWiFiAddress() -> String? {
         var address : String?

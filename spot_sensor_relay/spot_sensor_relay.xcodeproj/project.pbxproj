@@ -16,6 +16,7 @@
 		B21E31B12A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21E31B02A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift */; };
 		B25C17EE2A1A71ED00FDF2AE /* JPEG in Frameworks */ = {isa = PBXBuildFile; productRef = B25C17ED2A1A71ED00FDF2AE /* JPEG */; };
 		B25C17F22A1A75E500FDF2AE /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = B25C17F12A1A75E500FDF2AE /* Swifter */; };
+		B29EC0DD2A392B9B000E6736 /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29EC0DC2A392B9B000E6736 /* Motion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,8 @@
 		B21E31AE2A19062300537932 /* spot_sensor_relayUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = spot_sensor_relayUITests.swift; sourceTree = "<group>"; };
 		B21E31B02A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = spot_sensor_relayUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		B21E31BD2A190F7C00537932 /* spot_sensor_relay.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = spot_sensor_relay.entitlements; sourceTree = "<group>"; };
+		B29EC0DC2A392B9B000E6736 /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
+		B29EC0DE2A3939AE000E6736 /* spot-sensor-relay-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "spot-sensor-relay-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,9 +102,11 @@
 		B21E31922A19062200537932 /* spot_sensor_relay */ = {
 			isa = PBXGroup;
 			children = (
+				B29EC0DE2A3939AE000E6736 /* spot-sensor-relay-Info.plist */,
 				B21E31BD2A190F7C00537932 /* spot_sensor_relay.entitlements */,
 				B21E31932A19062200537932 /* spot_sensor_relayApp.swift */,
 				B21E31952A19062200537932 /* ContentView.swift */,
+				B29EC0DC2A392B9B000E6736 /* Motion.swift */,
 				B21E31972A19062300537932 /* Assets.xcassets */,
 				B21E31992A19062300537932 /* Preview Content */,
 			);
@@ -272,6 +277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B21E31962A19062200537932 /* ContentView.swift in Sources */,
+				B29EC0DD2A392B9B000E6736 /* Motion.swift in Sources */,
 				B21E31942A19062200537932 /* spot_sensor_relayApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -435,10 +441,12 @@
 				DEVELOPMENT_TEAM = DHCA3F892L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "spot-sensor-relay-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Spot SensorRelay";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSCameraUsageDescription = "SensorRelay requires camera access to broadcast video.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SensorRelay requires microphone access to broadcast audio.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "SensorRelay requires motion data for the IMU.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -469,10 +477,12 @@
 				DEVELOPMENT_TEAM = DHCA3F892L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "spot-sensor-relay-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Spot SensorRelay";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSCameraUsageDescription = "SensorRelay requires camera access to broadcast video.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SensorRelay requires microphone access to broadcast audio.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "SensorRelay requires motion data for the IMU.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

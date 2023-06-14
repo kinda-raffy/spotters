@@ -1,8 +1,21 @@
+//import Foundation
+//import CoreMotion
 //
-//  Motion.swift
-//  spot_sensor_relay
 //
-//  Created by Rafat Mahiuddin on 14/6/2023.
+//let motionManager = CMMotionManager()
 //
-
-import Foundation
+//
+//if motionManager.isDeviceMotionAvailable {
+//    // Start device motion updates
+//    motionManager.startDeviceMotionUpdates(to: .main) { (data, error) in
+//        guard let data = data else { return }
+//
+//        // Get the attitude (roll, pitch, yaw)
+//        let attitude = data.attitude
+//
+//        // Print roll, pitch and yaw in radians
+//        print("Roll: \(attitude.roll)")
+//        print("Pitch: \(attitude.pitch)")
+//        print("Yaw: \(attitude.yaw)")
+//    }
+//}
