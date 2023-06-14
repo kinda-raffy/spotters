@@ -32,7 +32,7 @@ class DummyPathPublisher:
 
     def publish_path(self):
         path = Path()
-        path.header.frame_id = 'origin'
+        path.header.frame_id = 'body'
         path.header.stamp = rospy.Time.now()
 
         PATH_SIZE = 1000
@@ -45,8 +45,10 @@ class DummyPathPublisher:
             y = (1 - var / 100) * var
 
             pose = PoseStamped()
+            
             pose.pose.position.x = x
             pose.pose.position.y = y
+            pose.header.frame_id = 'body'
             path.poses.append(pose)
 
         self.publisher.publish(path)
