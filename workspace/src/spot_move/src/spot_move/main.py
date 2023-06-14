@@ -24,7 +24,7 @@ from typing import (
 def main() -> NoReturn:
     rospy.init_node('SpotMove', log_level=rospy.DEBUG)
     # TODO - Find optimal value.
-    SpotMovement(path_resolution=5)
+    SpotMovement()
     rospy.spin()
 
 
@@ -32,14 +32,14 @@ class SpotMovement:
 
     def __init__(
         self,
-        path_resolution: int = 4,
+        path_resolution: int = 1,
         *,
-        timeout: int = 5,
+        timeout: int = 10,
     ) -> None:
         rospy.Subscriber("/spotters/navigator/path", Path, self.path_callback)
         rospy.logdebug("[SpotMove] Listening to path messages.")
 
-        assert timeout > 0, "For safetly, the timeout must exceed 0."
+        assert timeout > 0, "For safety, the timeout must exceed 0."
         self.default_timeout: Duration = Duration()
         self.default_timeout.data = rospy.Duration(timeout)
 
@@ -62,7 +62,7 @@ class SpotMovement:
         self.send_next_trajectory()
 
     def down_sample_path(self, path: List[PoseStamped]) -> List[PoseStamped]:
-        rospy.logdebug(f"[SpotMove] Downsampling {len(path)=} poses.")
+        rospy.logdebug(f"[SpotMove] Path length {len(path)=} poses.")
         path_is_too_small: bool = len(path) < self.path_resolution
         if path_is_too_small:
             rospy.logerr(f"[SpotMove] Ignoring {len(path)} when {self.path_resolution}")
@@ -105,8 +105,7 @@ class SpotMovement:
             self.send_next_trajectory()
         else:
             rospy.logwarn(
-                f"Pose traversal unsuccessful due to "
-                + f"[ {result.message} ], sending the pose again."
+                f"Pose traversal unsuccessful due to {result}, sending the pose again."
             )
             # FIXME - Should this only be ran once?
             self.send_last_sent_pose()
@@ -123,9 +122,7 @@ class SpotTrajectoryHandler:
 
     def __init__(
         self,
-        arrival_callback: Callable [
-            [], NoReturn
-        ]
+        arrival_callback: Callable [[], NoReturn]
     ) -> None:
         self.goal_cb = arrival_callback
         self.client = actionlib.SimpleActionClient(
@@ -149,7 +146,7 @@ class SpotTrajectoryHandler:
         goal.precise_positioning = precise_positioning
 
         rospy.logdebug("[SpotMove] SpotTrajectoryHandler: Sending goal.")
-        self.client.send_goal(goal, self.goal_cb)
+        self.client.send_goal(goal, done_cb=self.goal_cb)
 
     def get_result(self) -> None:
         rospy.logdebug("[SpotMove] SpotTrajectoryHandler: Getting goal result.")
@@ -159,6 +156,7 @@ class SpotTrajectoryHandler:
         rospy.logdebug("[SpotMove] SpotTrajectoryHandler: Cancelling goal.")
         # TODO: Check if the robot stops moving.
         self.client.cancel_goal()
+        self.client.wait_for_server(rospy.Duration.from_sec(3.0))
 
     def get_state(self) -> GoalStatus:
         rospy.logdebug("[SpotMove] SpotTrajectoryHandler: Getting goal state.")
