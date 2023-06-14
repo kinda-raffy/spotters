@@ -28,7 +28,7 @@ class DummyTrajectoryActionServer:
 
 class DummyPathPublisher:
     def __init__(self):
-        self.publisher = rospy.Publisher("/spotters/navigator/path", Path, queue_size=10)
+        self.path_publisher = rospy.Publisher("/spotters/navigator/path", Path, queue_size=10)
         rospy.logdebug("Publishing path to /spotters/navigator/path")
 
     def publish_path(self):
@@ -68,7 +68,6 @@ if __name__ == '__main__':
     server = DummyTrajectoryActionServer()
     publisher = DummyPathPublisher()
 
-    # while not rospy.is_shutdown():
-    publisher.publish_path()
-    rospy.spin()
-        # rospy.sleep(1)
+    while not rospy.is_shutdown():
+        publisher.publish_path()
+        rospy.sleep(1)

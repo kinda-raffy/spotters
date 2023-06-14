@@ -7,7 +7,7 @@ from std_msgs.msg import Duration
 from nav_msgs.msg import Path
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import (
-    PoseStamped, Pose
+    PoseStamped, Pose, Quaternion
 )
 from spot_msgs.msg import (
     TrajectoryAction,
@@ -22,7 +22,7 @@ from typing import (
 
 
 def main() -> NoReturn:
-    rospy.init_node('spot_movement', log_level=rospy.DEBUG)
+    rospy.init_node('SpotMove', log_level=rospy.DEBUG)
     # TODO - Find optimal value.
     SpotMovement(path_resolution=5)
     rospy.spin()
@@ -80,16 +80,17 @@ class SpotMovement:
             next_pose = PoseStamped(
                 no_yaw_pose.header,
                 Pose(
-                    no_yaw_pose.pose.point,
-                    quaternion
+                    no_yaw_pose.pose.position,
+                    Quaternion(*quaternion)
                 )
             )
             self.last_sent_pose = next_pose
             rospy.logdebug("[SpotMove] Sending next trajectory.")
             self.handler.send_trajectory_command(next_pose, self.default_timeout)
 
-    def extrapolate_turning_angle(one: PoseStamped, two: PoseStamped) -> float:
-        return math.atan2(two.x - one.x, two.y - one.y)
+    def extrapolate_turning_angle(self, one: Pose, two: Pose) -> float:
+        print(f">>>>> {type(one)=} {type(two)=}")
+        return math.atan2(two.position.x - one.position.x, two.position.y - one.position.y)
 
     def send_last_sent_pose(self) -> None:
         assert self.last_sent_pose is not None, \
