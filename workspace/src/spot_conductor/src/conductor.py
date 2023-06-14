@@ -38,7 +38,6 @@ class Conductor:
         self.latest_grid = None
         self.active_goal = None
         self.goal_failed = False
-        self.init_rotate_angle = 15
         rospy.Subscriber(
             ConductorTopics.RECEIVE_GRID,
             OccupancyGrid,
@@ -84,19 +83,30 @@ class Conductor:
 
     @register_behaviour(SpotState.START)
     def initialise(self) -> None:
-        for _ in range(round(360/self.init_rotate_angle)):
+        # turn 360
+        for _ in range(round(360 / 30)):
             self.turn_body(self.init_rotate_angle)
-            rospy.Rate(3).sleep()
+            import time
+            self.ros_sleep(2)
+
+        self.translate_body(0.5,0)
+        self.ros_sleep(2)
+        self.turn_body(-15)
+        self.ros_sleep(2)
+        self.turn_body(15)
+        self.translate_body(-0.5,0)
+
 
     @register_behaviour(SpotState.IDLE)
     def idle(self) -> None:
-        rospy.Rate(1).sleep()
+        import time
+        time.sleep(1)
         if randint(0, round(30 / self.rate)) == 0:
             angle = randrange(-45, 45, 15)
             self.turn(angle)
 
     @register_behaviour(SpotState.STUCK)
-    def extricate() -> None:
+    def unstick() -> None:
         # TODO: Define a recovery procedure. Needs further subscribers.
         rospy.Rate(1).sleep()
 
@@ -117,14 +127,27 @@ class Conductor:
     # Movement Functions
 
     def turn_body(self, degrees_right: float):
+        rotation = Quaternion(*from_euler(0, 0, radians(degrees_right)))
+        self.post_body_pose(rotation=rotation)
+
+    def translate_body(self, x: float, y: float):
+        point = Point(x,y,0)
+        self.post_body_pose(point=point)
+
+    def post_body_pose(
+            self,
+            point: Point = Point(0,0,0),
+            rotation: Quaternion = Quaternion(*from_euler(0, 0, 0))
+        ) -> Header:
         header = Header()
         header.stamp = rospy.Time.now()
         header.frame_id = "body"
-        point = Point(0,0,0)
-        rotation = Quaternion(*from_euler(0, 0, radians(degrees_right)))
         pose = Pose(point, rotation)
         poseStamped = PoseStamped(header, pose)
         self.pose_channel.publish(poseStamped)
+
+    def ros_sleep(seconds: float):
+        rospy.Rate(seconds).sleep()
 
 
 
