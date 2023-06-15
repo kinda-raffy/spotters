@@ -12,3 +12,7 @@
 .pyc
 .o
 .DS_Store
+
+/report/*
+!/report/*.tex
+!/report/*.pdf
