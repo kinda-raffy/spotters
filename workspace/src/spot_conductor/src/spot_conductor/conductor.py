@@ -28,9 +28,6 @@ class Conductor:
 
     def __init__(self):
 
-        def update_state(field: str, value) -> None:
-            setattr(self, field, value)
-
         self.behaviours: Mapping[self.SpotState, Callable[[], None]] = {
             self.SpotState.START: self.initialise,
             self.SpotState.IDLE: self.idle,
@@ -39,31 +36,48 @@ class Conductor:
             self.SpotState.RECOVERY: self.recover,
         }
         self.rate: float = 1.0
-        self.state = self.SpotState.START
+        self.state = self.SpotState.IDLE
         self.latest_pose = None
         self.latest_grid = None
         self.active_goal = None
         self.goal_failed = False
+        def grid_callback(self, msg: OccupancyGrid):
+            self.latest_grid = msg
         rospy.Subscriber(
             RECEIVE_GRID,
             OccupancyGrid,
-            functools.partial(update_state, "latest_grid"),
+            functools.partial(grid_callback, "latest_grid"),
         )
+        
+            
+        def pose_callback(self, msg: PoseStamped):
+            self.latest_pose = msg
+        
         rospy.Subscriber(
             RECEIVE_POSE,
             PoseStamped,
-            functools.partial(update_state, "latest_pose"),
+            functools.partial(pose_callback, "latest_pose"),
         )
+        
+        def goal_callback(self, msg: PoseStamped):
+            self.active_goal = msg
+
         rospy.Subscriber(
             RECEIVE_GOAL,
             PoseStamped,
-            functools.partial(update_state, "active_goal"),
+            functools.partial(goal_callback, "active_goal"),
         )
+        
+        def cancel_callback(self, msg: Bool):
+            self.goal_failed = True
+        
         rospy.Subscriber(
             CANCEL_GOAL,
             Bool,  # TODO: Not necessarily final type.
-            functools.partial(update_state, "goal_failed"),
+            functools.partial(cancel_callback, "goal_failed"),
         )
+        
+            
         self.goal_channel = rospy.Publisher(
             SEND_GOAL,
             PoseStamped,
@@ -108,21 +122,22 @@ class Conductor:
         # turn 360
         rospy.logdebug("[Conductor] Starting init stage")
         rospy.sleep(10)
-        for _ in range(round(360 / 45)):
-            self.turn_body(45)
-            rospy.sleep(5)
-
-        self.translate_body(0,0.5)
-        rospy.sleep(2)
-        self.turn_body(-15)
-        rospy.sleep(2)
-        self.turn_body(15)
-        rospy.sleep(2)
-        self.translate_body(0,-0.5)
-        rospy.sleep(2)
-        self.turn_body(-15)
-        rospy.sleep(2)
-        self.turn_body(15)
+        
+        for _ in range(4):
+            for _ in range(round(90 / 30)):
+                self.turn_body(30)
+                rospy.sleep(4)
+            self.translate_body(0,0.5)
+            rospy.sleep(2)
+            self.turn_body(-15)
+            rospy.sleep(2)
+            self.turn_body(15)
+            rospy.sleep(2)
+            self.translate_body(0,-0.5)
+            rospy.sleep(2)
+            self.turn_body(15)
+            rospy.sleep(2)
+            self.turn_body(-15)
 
         self.loop()
 

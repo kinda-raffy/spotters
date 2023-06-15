@@ -61,7 +61,7 @@ def construct_occupancy_grid(
 def generate_occlusion_polygons(
         coordinates: NDArray,
         alpha: float = 1,
-        wall_buffer: float = 4.0, # Should correspond to distance from camera to SPOT behind
+        wall_buffer: float = 2.0, # Should correspond to distance from camera to SPOT behind
         buffer_side_count: int = 6
     ) -> None:
 

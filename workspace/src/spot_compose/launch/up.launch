@@ -20,6 +20,7 @@
     <!-- Movement -->
     <include file="$(find spot_move)/launch/enable.launch"/>
     <include file="$(find spot_conductor)/launch/orchestrate.launch"/>
+    <include file="$(find spot_path_planner)/launch/main.launch"/>
     <!-- Trajectory path
     <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="trajectory_server_orb_slam3" output="screen" ns="orb_slam3_ros" >
         <param name="/target_frame_name"        value="/origin" />
