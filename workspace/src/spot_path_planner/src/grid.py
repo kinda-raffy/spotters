@@ -78,7 +78,7 @@ class OccupancyGridMap:
         # This is only to prevent index out of bounds
         if not self.in_bounds((x, y)):
             return False
-        
+
         return self.occupancy_grid_map[row][col] == UNOCCUPIED
 
     def in_bounds(self, cell: typing.Tuple[int, int]) -> bool:
@@ -90,7 +90,7 @@ class OccupancyGridMap:
         """
         (x, y) = cell
         
-        return 0 <= x < self.x_dim and 0 <= y < self.y_dim
+        return 0 <= x < self.x_dim - 1 and 0 <= y < self.y_dim - 1
     
     def filter(self, neighbors: List, avoid_obstacles: bool):
         """
