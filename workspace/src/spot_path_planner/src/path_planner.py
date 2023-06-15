@@ -21,7 +21,7 @@ from d_star_lite import DStarLite
 from grid import OccupancyGridMap, SLAM
 from navtask import NavTask
 import numpy as np
-from debug_tools.map_data import test_data
+# from debug_tools.map_data import test_data
 import math
 
 
@@ -49,12 +49,12 @@ path = None
 
 posesraw = []
 
-map2_pub = rospy.Publisher('map2', OccupancyGrid, queue_size=10)
+# map2_pub = rospy.Publisher('map2', OccupancyGrid, queue_size=10)
 
 OBSTACLE = 100
 UNOCCUPIED = 0
 
-DEBUG = False
+DEBUG = True
 
 def map_callback(msg):
     global navtask
@@ -65,9 +65,6 @@ def map_callback(msg):
     
     navtask.map_offset_x = msg.info.origin.position.x
     navtask.map_offset_y = msg.info.origin.position.y
-        
-    
-    #real_map_width = msg.info.width * msg.info.resolution
 
     navtask.curr_map = np.reshape(msg.data, (navtask.map_height, navtask.map_width))
 
@@ -85,6 +82,7 @@ def curr_pos_callback(msg):
         # print(posesraw)
         # print("Orientation: " + str(-msg.pose.orientation.x) + " / " + str(-msg.pose.orientation.y) + " / " + str(-msg.pose.orientation.z))
         # print("Cartesian: " + str((round(msg.pose.position.y * 1 / navtask.map_resolution - navtask.map_offset_y), round(msg.pose.position.x * 1 / navtask.map_resolution - navtask.map_offset_x))))
+        
         y, x = ((msg.pose.position.y - navtask.map_offset_y)/ navtask.map_resolution, (msg.pose.position.x - navtask.map_offset_x) / navtask.map_resolution)
         row, col = (math.floor(y), math.floor(x))
         navtask.d_star_offset = (y - row, x - col) 
@@ -127,7 +125,7 @@ pub_path = rospy.Publisher(PATH_PUBLISHER_TOPIC, Path, queue_size=10)
 pub_goal = rospy.Publisher(GOAL_SUBSCRIBER_TOPIC, PoseStamped, queue_size=10)
 pub_curr_pos = rospy.Publisher(POS_SUBSCRIBER_TOPIC, PoseStamped, queue_size=10)
 pub_map = rospy.Publisher(MAP_SUBSCRIBER_TOPIC, OccupancyGrid, queue_size=10)
-pub_map2 = rospy.Publisher('map2', OccupancyGrid, queue_size=10)
+# pub_map2 = rospy.Publisher('map2', OccupancyGrid, queue_size=10)
 
 sub_map = rospy.Subscriber(MAP_SUBSCRIBER_TOPIC, OccupancyGrid, map_callback)
 sub_curr_pos = rospy.Subscriber(POS_SUBSCRIBER_TOPIC, PoseStamped, curr_pos_callback)
@@ -137,7 +135,6 @@ sub_is_localisation_lost = rospy.Subscriber(LOST_SUBSCRIBER_TOPIC, Bool, is_loca
 rate = rospy.Rate(1)
 
 while not rospy.is_shutdown():
-    
     # TEMP
     # ===
     gp = PoseStamped()
@@ -150,14 +147,14 @@ while not rospy.is_shutdown():
     gp.pose.position.y = 1
     pub_curr_pos.publish(gp)
 
-    map = OccupancyGrid()
-    map.header.frame_id = "origin"
-    map.info.resolution = 0.06
-    map.info.width = 115
-    map.info.height = 95
-    map.info.origin.position.x = -1.5000000286102295
-    map.info.origin.position.y = -0.6599999952316284
-    map.data = test_data
+    # map = OccupancyGrid()
+    # map.header.frame_id = "origin"
+    # map.info.resolution = 0.06
+    # map.info.width = 115
+    # map.info.height = 95
+    # map.info.origin.position.x = -1.5000000286102295
+    # map.info.origin.position.y = -0.6599999952316284
+    # map.data = test_data
 
     # pub_map.publish(map)
     # ===
@@ -169,7 +166,7 @@ while not rospy.is_shutdown():
             rate.sleep()
         navtask.recover_goal_pos()
     while not navtask.is_ultimate_goal_reached() and not navtask.is_localisation_lost:
-        pub_map.publish(map)
+        # pub_map.publish(map)
         # If the map isn't set up, then make the initial map.
         if navtask.is_set_up_needed():
             # y dim is the dimension in the direction of y; therefore it is equal to the width. 
@@ -289,18 +286,7 @@ while not rospy.is_shutdown():
             if DEBUG:
                 print("============================================")
                 print("Published path!")
-                
-                # TEMP Debug
-                # x, y = navtask.curr_pos
-                # x, y = (round(x * navtask.map_resolution, 2), round(y * navtask.map_resolution, 2))
-                # print("Current Position in cartesian: " + "[" + str(x) + " " + str(y) + "] ")
-                
                 print("Current Position in dstar: " + str(navtask.curr_pos))
-                
-                # x, y = navtask.goal_pos
-                # x, y = (round(x * navtask.map_resolution, 2), round(y * navtask.map_resolution, 2))
-                # print("Target Position in cartesian: " + "[" + str(x) + " " + str(y) + "] ")
-                
                 print("Target Position in dstar: " + str(navtask.goal_pos))
                 
                 pt = "Path in cartesian: "
@@ -308,7 +294,7 @@ while not rospy.is_shutdown():
                 for pos in path:
                     x, y = (pos[0], pos[1])
                     pd = pd + "[" + str(x) + " " + str(y) + "] "
-                    x, y = (round(x * navtask.map_resolution + navtask.map_offset_x, 3), round(y * navtask.map_resolution + navtask.map_offset_y, 3))
+                    x, y = (round(x * navtask.map_resolution, 3), round(y * navtask.map_resolution, 3))
                     pt = pt + "[" + str(x) + " " + str(y) + "] "
                 print(pd)
                 print(pt)
