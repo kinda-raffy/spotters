@@ -122,7 +122,7 @@ class Conductor:
         for _ in range(4):
             self.wiggle()
 
-        self.loop()
+        # self.loop()
 
     def idle(self) -> None:
         import time
