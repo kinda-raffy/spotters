@@ -107,10 +107,10 @@ class Conductor:
     def initialise(self) -> None:
         # turn 360
         rospy.logdebug("[Conductor] Starting init stage")
-
+        rospy.sleep(10)
         for _ in range(round(360 / 45)):
             self.turn_body(45)
-            rospy.sleep(3)
+            rospy.sleep(5)
 
         self.translate_body(0,0.5)
         rospy.sleep(2)
