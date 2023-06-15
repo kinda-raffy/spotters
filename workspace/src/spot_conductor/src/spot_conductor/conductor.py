@@ -58,7 +58,7 @@ class Conductor:
         )
 
         def goal_callback(self, msg: PoseStamped):
-            self.active_goal = msg
+            self.goal_channel.publish(msg)
 
         rospy.Subscriber(
             RECEIVE_GOAL,
