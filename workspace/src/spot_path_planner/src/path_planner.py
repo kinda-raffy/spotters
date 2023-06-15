@@ -2,7 +2,8 @@
 import rospy
 from std_msgs.msg import (
     Header,
-    Bool
+    Bool,
+    Int32
 )
 from geometry_msgs.msg import (
     Twist,
@@ -33,6 +34,7 @@ POS_SUBSCRIBER_TOPIC = "spotters/mapping/pos"
 GOAL_SUBSCRIBER_TOPIC = "spotters/conductor/goal"
 LOST_SUBSCRIBER_TOPIC = "spotters/cartographer/tracking_state"
 PATH_PUBLISHER_TOPIC = "spotters/navigator/path"
+STATUS_PUBLISHER_TOPIC = "spotters/navigator/status"
 # =                                                                       =
 # =========================================================================
 
@@ -46,13 +48,24 @@ last_goal = None
 dstar = None
 slam = None
 path = None
+lost_points = 0
+lost_threshold = 3
 
 posesraw = []
 
 # map2_pub = rospy.Publisher('map2', OccupancyGrid, queue_size=10)
 
+# Grid settings
 OBSTACLE = 100
 UNOCCUPIED = 0
+
+# Published statusses
+LOST = -1
+MOVING = 0
+CLOSE_TO_GOAL = 1
+
+# How many grids away to the goal to be considered "Arrived"
+CLOSE_TO_GOAL_DIST = 5
 
 DEBUG = True
 
@@ -120,6 +133,7 @@ if DEBUG:
 
 rospy.init_node(NODE_ID, anonymous=True)
 pub_path = rospy.Publisher(PATH_PUBLISHER_TOPIC, Path, queue_size=10)
+pub_stat = rospy.Publisher(STATUS_PUBLISHER_TOPIC, Int32, queue_size=10)
 
 # Temp
 pub_goal = rospy.Publisher(GOAL_SUBSCRIBER_TOPIC, PoseStamped, queue_size=10)
@@ -137,11 +151,11 @@ rate = rospy.Rate(1)
 while not rospy.is_shutdown():
     # TEMP
     # ===
-    gp = PoseStamped()
-    gp.header.frame_id = "origin"
-    gp.pose.position.x = 1.4
-    gp.pose.position.y = 3.4
-    pub_goal.publish(gp)
+    # gp = PoseStamped()
+    # gp.header.frame_id = "origin"
+    # gp.pose.position.x = 1
+    # gp.pose.position.y = 1
+    # pub_goal.publish(gp)
     
     # gp.pose.position.x = 0
     # gp.pose.position.y = 1
@@ -258,12 +272,18 @@ while not rospy.is_shutdown():
             rate.sleep()
             continue
 
+        close_to_goal = navtask.dist_to_goal() < CLOSE_TO_GOAL_DIST
+
         if path is None:
             if navtask.is_out_of_bounds(new_position):
                 print("============================================")
                 print("WARNING: Failed to calculate path!")
+                lost_points += 1
+                if lost_points > lost_threshold:
+                    pub_stat.publish(LOST)
+                
                 navtask.is_set_up = False
-        elif len(path) > 1:
+        elif not close_to_goal:
             path_msg = Path()
             path_msg.header.frame_id = 'origin'
             path_msg.header.stamp = rospy.Time.now()
@@ -282,8 +302,12 @@ while not rospy.is_shutdown():
             # gp.pose.position.y = path_msg.poses[1].pose.position.y
             # pub_curr_pos.publish(gp)
             # print(gp)
-
+        
             pub_path.publish(path_msg)
+            
+            pub_stat.publish(MOVING)
+            lost_points = 0
+            
             if DEBUG:
                 print("============================================")
                 print("Published path!")
@@ -299,15 +323,18 @@ while not rospy.is_shutdown():
                     pt = pt + "[" + str(x) + " " + str(y) + "] "
                 print(pd)
                 print(pt)
-        elif len(path) == 1:
+        elif close_to_goal:
             if DEBUG:
                 print("============================================")
                 print("You have arrived - or is close to your destination.")
                 print("Current Position: " + str(navtask.curr_pos))
                 print("Target Position: " + str(navtask.goal_pos))
+            
+            pub_stat.publish(CLOSE_TO_GOAL)
+            lost_points = 0
         
         rate.sleep()
 
-
+    navtask = NavTask()
     rate.sleep()
     

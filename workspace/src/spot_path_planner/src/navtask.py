@@ -119,6 +119,11 @@ class NavTask:
         
         return res 
     
+    def dist_to_goal(self):
+        x1, y1 = self.curr_pos
+        x2, y2 = self.goal_pos
+        return (abs(x1 - x2) + abs(y1 - y2))
+    
     def recover_goal_pos(self):
         goal_pos = (self.curr_pos[0] + self.curr_to_goal_distance[0], 
                     self.curr_pos[1] + self.curr_to_goal_distance[1])
