@@ -5,7 +5,6 @@ import math
 from actionlib_msgs.msg import GoalStatus
 from std_msgs.msg import Duration
 from nav_msgs.msg import Path
-from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import (
     PoseStamped, Pose, Quaternion
 )
@@ -23,7 +22,6 @@ from typing import (
 
 def main() -> NoReturn:
     rospy.init_node('SpotMove', log_level=rospy.DEBUG)
-    # TODO - Find optimal value.
     SpotMovement()
     rospy.spin()
 
@@ -37,6 +35,7 @@ class SpotMovement:
         timeout: int = 10,
     ) -> None:
         rospy.Subscriber("/spotters/navigator/path", Path, self.path_callback)
+        rospy.Subscriber("/spotters/navigator/pose", PoseStamped, self.pose_callback)
         rospy.logdebug("[SpotMove] Listening to path messages.")
 
         assert timeout > 0, "For safety, the timeout must exceed 0."
@@ -51,15 +50,17 @@ class SpotMovement:
 
     def path_callback(self, path: Path) -> None:
         rospy.logdebug("[SpotMove] Executing a new path.")
-        self.path = path.poses
-        if self.handler.get_state() in [
-            GoalStatus.PENDING,
-            GoalStatus.ACTIVE
-        ]:
+        self.path = self.down_sample_path(path.poses)
+        if self.handler.get_state() in [ GoalStatus.PENDING, GoalStatus.ACTIVE ]:
             self.handler.cancel_goal()
-        self.path = self.down_sample_path(self.path)
-        rospy.logdebug(f"[SpotMove] Downsampled to {len(self.path)}")
+        rospy.logdebug(f"[SpotMove] Downsampled from {len(path.poses)}to {len(self.path)}")
         self.send_next_trajectory()
+
+    def pose_callback(self, pose: PoseStamped) -> None:
+        rospy.logdebug("[SpotMove] Moving to new pose.")
+        if self.handler.get_state() in [ GoalStatus.PENDING, GoalStatus.ACTIVE ]:
+            self.handler.cancel_goal()
+        self.handler.send_trajectory_command(pose, self.default_timeout)
 
     def down_sample_path(self, path: List[PoseStamped]) -> List[PoseStamped]:
         rospy.logdebug(f"[SpotMove] Path length {len(path)=} poses.")

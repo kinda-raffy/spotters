@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>spot_conductor</name>
+  <version>0.0.0</version>
+  <description>Defines geography pipelines over a sparse map.</description>
+
+  <maintainer email="contact@kindaraffy.xyz">kindaraffy</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>rospy</exec_depend>
+</package>

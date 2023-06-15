@@ -1,30 +1,8 @@
 #!/usr/bin/env python
 
 import rospy
-import actionlib
-import time
-import random
-from std_msgs.msg import Duration
 from nav_msgs.msg import Path
 from geometry_msgs.msg import PoseStamped
-from spot_msgs.msg import TrajectoryAction, TrajectoryGoal, TrajectoryResult
-from typing import NoReturn, Callable, List
-
-class DummyTrajectoryActionServer:
-    def __init__(self):
-        self.server = actionlib.SimpleActionServer('/spot/trajectory', TrajectoryAction, self.execute, False)
-        self.server.start()
-
-    def execute(self, goal):
-        rospy.logdebug("Received a goal")
-        time.sleep(2)  # Simulated action.
-
-        if random.random() < 0.4:
-            rospy.logdebug("Action failed")
-            self.server.set_aborted(TrajectoryResult(success=False, message="Failure"))
-        else:
-            rospy.logdebug("Action completed")
-            self.server.set_succeeded(TrajectoryResult(success=True, message="Success"))
 
 class DummyPathPublisher:
     def __init__(self):
@@ -33,23 +11,22 @@ class DummyPathPublisher:
 
     def publish_path(self):
         path = Path()
-        path.header.frame_id = 'body'
-
-        # Create 20 poses in a line
+        path.header.frame_id = "body"
+        p = []
         for i in range(1, 5):
             pose = PoseStamped()
 
             neg = 1
             if i % 2 == 0:
                 neg = -1
-                
+
             # Set the header of the pose
-            pose.header.frame_id = 'body'
+            pose.header.frame_id = "body"
             pose.header.stamp = rospy.Time.now()
 
             # Set the position of the pose
             pose.pose.position.x = 1.0
-            pose.pose.position.y = 1.0
+            pose.pose.position.y = neg * 1.0
             pose.pose.position.z = 0.0
 
             # Set the orientation of the pose (here we keep it as no rotation)
@@ -59,9 +36,10 @@ class DummyPathPublisher:
             pose.pose.orientation.w = 1.0
 
             # Add the pose to the path
-            path.poses.append(pose)
+            p.append(pose)
 
         # Publish the path
+        path.poses = p
         self.path_publisher.publish(path)
         rospy.logdebug("Published path")
 
@@ -72,6 +50,9 @@ if __name__ == '__main__':
     # server = DummyTrajectoryActionServer()
     publisher = DummyPathPublisher()
     rate = rospy.Rate(0.1)
-    while not rospy.is_shutdown():
-        publisher.publish_path()
-        rate.sleep()
+    rospy.sleep(3)
+    publisher.publish_path()
+
+    # while not rospy.is_shutdown():
+    #     publisher.publish_path()
+    #     rate.sleep()
