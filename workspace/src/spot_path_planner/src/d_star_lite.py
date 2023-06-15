@@ -110,13 +110,18 @@ class DStarLite:
         self.s_last = self.s_start
         self.compute_shortest_path()
 
+        iter = 0
+        threshold = 1000
         while self.s_start != self.s_goal:
-            if self.rhs[self.s_start] == float('inf'):
+            iter += 1
+            if self.rhs[self.s_start] == float('inf') or iter > threshold:
                 print("============================================")
                 print("WARNING: Navigator did not find a possible path.")
                 return None, None, None
 
+            # TODO
             succ = self.sensed_map.succ(self.s_start, avoid_obstacles=False)
+
             min_s = float('inf')
             arg_min = None
             for s_ in succ:
@@ -124,7 +129,7 @@ class DStarLite:
                 if temp < min_s:
                     min_s = temp
                     arg_min = s_
-
+            
             ### algorithm sometimes gets stuck here for some reason !!! FIX
             self.s_start = arg_min
             path.append(self.s_start)

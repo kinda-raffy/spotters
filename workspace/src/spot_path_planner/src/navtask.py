@@ -113,6 +113,10 @@ class NavTask:
                 res = True
             else:
                 self.set_goal_pos(self.ultimate_goal_pos)
+        if res:
+            print("============================================")
+            print("Goal reached or doesn't exist!")        
+        
         return res 
     
     def recover_goal_pos(self):

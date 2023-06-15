@@ -143,9 +143,9 @@ while not rospy.is_shutdown():
     gp.pose.position.y = 3.4
     pub_goal.publish(gp)
     
-    gp.pose.position.x = 0
-    gp.pose.position.y = 1
-    pub_curr_pos.publish(gp)
+    # gp.pose.position.x = 0
+    # gp.pose.position.y = 1
+    # pub_curr_pos.publish(gp)
 
     # map = OccupancyGrid()
     # map.header.frame_id = "origin"
@@ -178,7 +178,7 @@ while not rospy.is_shutdown():
 
             dstar = DStarLite(map=new_map, s_start=navtask.curr_pos, s_goal=navtask.goal_pos)
 
-            slam = SLAM(map=new_map, view_range=5)
+            slam = SLAM(map=new_map, view_range=round(((1 / navtask.map_resolution)*2)/10)*10)
 
             if navtask.is_out_of_bounds(new_position):
                     print("============================================")
@@ -200,6 +200,7 @@ while not rospy.is_shutdown():
                     print("Map resolution: " + str(navtask.map_resolution))
                     print("Map offset x: " + str(navtask.map_offset_x))
                     print("Map offset y: " + str(navtask.map_offset_y))
+                    print("View range: " + str(round(((1 / navtask.map_resolution))/10)*10))
                     
                     # x, y = navtask.curr_pos
                     # x, y = (round(x * navtask.map_resolution, 2), round(y * navtask.map_resolution, 2))
@@ -294,7 +295,7 @@ while not rospy.is_shutdown():
                 for pos in path:
                     x, y = (pos[0], pos[1])
                     pd = pd + "[" + str(x) + " " + str(y) + "] "
-                    x, y = (round(x * navtask.map_resolution, 3), round(y * navtask.map_resolution, 3))
+                    x, y = (round(x * navtask.map_resolution + navtask.map_offset_x, 3), round(y * navtask.map_resolution + navtask.map_offset_y, 3))
                     pt = pt + "[" + str(x) + " " + str(y) + "] "
                 print(pd)
                 print(pt)
