@@ -1,3 +1,0 @@
-<launch>
-    <node name="spot_conductor" pkg="spot_conductor" type="main" output="screen" />
-</launch>
