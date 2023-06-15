@@ -1,5 +1,4 @@
 import rospy
-import functools
 from typing import Callable, Mapping
 from random import randint, randrange
 from math import radians
@@ -46,7 +45,7 @@ class Conductor:
         rospy.Subscriber(
             RECEIVE_GRID,
             OccupancyGrid,
-            functools.partial(grid_callback, "latest_grid"),
+            grid_callback,
         )
 
         def pose_callback(self, msg: PoseStamped):
@@ -55,7 +54,7 @@ class Conductor:
         rospy.Subscriber(
             RECEIVE_POSE,
             PoseStamped,
-            functools.partial(pose_callback, "latest_pose"),
+            pose_callback,
         )
 
         def goal_callback(self, msg: PoseStamped):
@@ -64,7 +63,7 @@ class Conductor:
         rospy.Subscriber(
             RECEIVE_GOAL,
             PoseStamped,
-            functools.partial(goal_callback, "active_goal"),
+            goal_callback,
         )
 
         def cancel_callback(self, msg: Bool):
@@ -73,7 +72,7 @@ class Conductor:
         rospy.Subscriber(
             CANCEL_GOAL,
             Bool,  # TODO: Not necessarily final type.
-            functools.partial(cancel_callback, "goal_failed"),
+            cancel_callback,
         )
 
         self.goal_channel = rospy.Publisher(
@@ -117,7 +116,6 @@ class Conductor:
     # State Behaviours
 
     def initialise(self) -> None:
-        # turn 360
         rospy.logdebug("[Conductor] Starting init stage")
         rospy.sleep(10)
 
