@@ -41,7 +41,7 @@ class GeographyBroadcastStation:
             self.broadcast_geography(array, grid, position)
 
         def convert_goal(goal: PoseStamped) -> None:
-            rospy.loginfo(f'received goal {goal}')
+            rospy.loginfo(f'[SpotGeography] Received goal {goal}')
             self.goal_channel.publish(goal)
             rospy.rospy.loginfo(f'published goal {goal}')
 
