@@ -120,20 +120,7 @@ class Conductor:
         rospy.sleep(10)
 
         for _ in range(4):
-            for _ in range(round(90 / 30)):
-                self.turn_body(30)
-                rospy.sleep(4)
-            self.translate_body(0,0.5)
-            rospy.sleep(2)
-            self.turn_body(-15)
-            rospy.sleep(2)
-            self.turn_body(15)
-            rospy.sleep(2)
-            self.translate_body(0,-0.5)
-            rospy.sleep(2)
-            self.turn_body(15)
-            rospy.sleep(2)
-            self.turn_body(-15)
+            self.wiggle()
 
         self.loop()
 
@@ -185,6 +172,22 @@ class Conductor:
         pose = Pose(point, rotation)
         poseStamped = PoseStamped(header, pose)
         self.pose_channel.publish(poseStamped)
+
+    def wiggle(self):
+        for _ in range(round(90 / 30)):
+            self.turn_body(30)
+            rospy.sleep(4)
+        self.translate_body(0,0.5)
+        rospy.sleep(2)
+        self.turn_body(-15)
+        rospy.sleep(2)
+        self.turn_body(15)
+        rospy.sleep(2)
+        self.translate_body(0,-0.5)
+        rospy.sleep(2)
+        self.turn_body(15)
+        rospy.sleep(2)
+        self.turn_body(-15)
 
 def main():
     rospy.init_node("Conductor", log_level=rospy.DEBUG)
