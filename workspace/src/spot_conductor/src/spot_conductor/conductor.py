@@ -48,17 +48,16 @@ class Conductor:
             OccupancyGrid,
             functools.partial(grid_callback, "latest_grid"),
         )
-        
-            
+
         def pose_callback(self, msg: PoseStamped):
             self.latest_pose = msg
-        
+
         rospy.Subscriber(
             RECEIVE_POSE,
             PoseStamped,
             functools.partial(pose_callback, "latest_pose"),
         )
-        
+
         def goal_callback(self, msg: PoseStamped):
             self.active_goal = msg
 
@@ -67,17 +66,16 @@ class Conductor:
             PoseStamped,
             functools.partial(goal_callback, "active_goal"),
         )
-        
+
         def cancel_callback(self, msg: Bool):
             self.goal_failed = True
-        
+
         rospy.Subscriber(
             CANCEL_GOAL,
             Bool,  # TODO: Not necessarily final type.
             functools.partial(cancel_callback, "goal_failed"),
         )
-        
-            
+
         self.goal_channel = rospy.Publisher(
             SEND_GOAL,
             PoseStamped,
@@ -122,7 +120,7 @@ class Conductor:
         # turn 360
         rospy.logdebug("[Conductor] Starting init stage")
         rospy.sleep(10)
-        
+
         for _ in range(4):
             for _ in range(round(90 / 30)):
                 self.turn_body(30)
