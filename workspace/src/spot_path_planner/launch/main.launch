@@ -2,7 +2,6 @@
   <!-- Start the map publisher node -->
 
   <node name="path_planner_node" pkg="spot_path_planner" type="path_planner.py" output="screen"/>
-  <node name="path_tester_node" pkg="spot_path_planner" type="tester.py" output="screen"/>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find spot_path_planner)/config/rosbot.rviz" />
 
 </launch>

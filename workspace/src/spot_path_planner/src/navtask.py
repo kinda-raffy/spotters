@@ -7,12 +7,15 @@ class NavTask:
         self.map_width = None
         self.map_height = None
         self.map_resolution = None
+        self.map_offset_x = None
+        self.map_offset_y = None
         self.curr_map = None
         self.ultimate_goal_pos = None
         self.is_set_up = False
         self.is_goal_changed = False
         self.is_localisation_lost = False
         self.is_complete = False
+        self.d_star_offset = None
 
         # When the localisation is lost,
         if curr_to_goal_distance is not None:
@@ -110,7 +113,16 @@ class NavTask:
                 res = True
             else:
                 self.set_goal_pos(self.ultimate_goal_pos)
+        if res:
+            print("============================================")
+            print("Goal reached or doesn't exist!")        
+        
         return res 
+    
+    def dist_to_goal(self):
+        x1, y1 = self.curr_pos
+        x2, y2 = self.goal_pos
+        return (abs(x1 - x2) + abs(y1 - y2))
     
     def recover_goal_pos(self):
         goal_pos = (self.curr_pos[0] + self.curr_to_goal_distance[0], 

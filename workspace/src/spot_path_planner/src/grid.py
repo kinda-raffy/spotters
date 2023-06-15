@@ -69,15 +69,15 @@ class OccupancyGridMap:
     def is_unoccupied(self, pos: typing.Tuple[int, int]) -> bool:
         """
         :param pos: cell position we wish to check
-        :return: True if cell is occupied with obstacle, False else
+        :return: False if cell is occupied with obstacle, True else
         """
         (x, y) = (round(pos[0]), round(pos[1]))  # make sure pos is int
         (row, col) = (x, y)
 
-        # TODO: Account for spot size
-
-        # if not self.in_bounds(cell=(x, y)):
-        #    raise IndexError("Map index out of bounds")
+        # If not in bounds, then consider it obstructed
+        # This is only to prevent index out of bounds
+        if not self.in_bounds((x, y)):
+            return False
 
         return self.occupancy_grid_map[row][col] == UNOCCUPIED
 
@@ -89,8 +89,9 @@ class OccupancyGridMap:
         :return: True if within bounds, False else
         """
         (x, y) = cell
-        return 0 <= x < self.x_dim and 0 <= y < self.y_dim
-
+        
+        return 0 <= x < self.x_dim - 1 and 0 <= y < self.y_dim - 1
+    
     def filter(self, neighbors: List, avoid_obstacles: bool):
         """
         :param neighbors: list of potential neighbors before filtering
@@ -145,9 +146,11 @@ class OccupancyGridMap:
         :return: dictionary of new observations
         """
         (px, py) = global_position
+        
         nodes = [(x, y) for x in range(px - view_range, px + view_range + 1)
                  for y in range(py - view_range, py + view_range + 1)
                  if self.in_bounds((x, y))]
+        
         return {node: UNOCCUPIED if self.is_unoccupied(pos=node) or node == curr_pos else OBSTACLE for node in nodes}
 
 

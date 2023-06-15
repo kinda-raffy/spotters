@@ -62,7 +62,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: false
       Name: Map
-      Topic: /spotters/geography/map
+      Topic: /spotters/mapping/map
       Unreliable: false
       Use Timestamp: false
       Value: false
@@ -79,7 +79,7 @@ Visualization Manager:
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
       Shape: Arrow
-      Topic: spotters/geography/pos
+      Topic: spotters/mapping/pos
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -119,7 +119,7 @@ Visualization Manager:
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
       Shape: Arrow
-      Topic: /goal_pos
+      Topic: spotters/conductor/goal
       Unreliable: false
       Value: true
     - Alpha: 0.699999988079071
@@ -136,7 +136,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: origin
     Frame Rate: 30
   Name: root
   Tools:

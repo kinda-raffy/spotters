@@ -18,8 +18,8 @@ from nav_msgs.msg import (
 # =========================================================================
 # =                             SETTINGS                                  =
 NODE_ID = "path_tester_node"
-MAP_PUBLISHER_TOPIC = "spotters/geography/map"
-POS_PUBLISHER_TOPIC = "spotters/geography/pos"
+MAP_PUBLISHER_TOPIC = "spotters/mapping/map"
+POS_PUBLISHER_TOPIC = "spotters/mapping/pos"
 GOAL_PUBLISHER_TOPIC = "spotters/conductor/goal"
 LOST_PUBLISHER_TOPIC = "spotters/cartographer/tracking_state"
 PATH_SUBSCRIBER_TOPIC = "spotters/navigator/path"
@@ -28,28 +28,31 @@ PATH_SUBSCRIBER_TOPIC = "spotters/navigator/path"
 
 # SETTINGS FOR TESTS
 # Map size
-w = 150
-h = 150
+w = 10
+h = 10
 
 pos_x = 0
 pos_y = 0
 
-goal_x = 30
-goal_y = -30
+goal_x = 1
+goal_y = -1
+
+resolution = 0.06
 # END
 
 # Set the dummy map here
 def map():
+    global resolution
     map = OccupancyGrid()
-    map.header.frame_id = "map"
+    map.header.frame_id = "origin"
     map.header.stamp = rospy.Time.now()
 
     map.info.width = w
     map.info.height = h
-    map.info.resolution = 1
+    map.info.resolution = resolution
 
     for i in range(w * h):
-        if (i > w * 86 - 1 and i < w * 89 - 1) or (i > w * 28 and i < w * 31):
+        if (i > w * 7 - 1 and i < w * 8 - 1) or (i > w * 3 and i < w * 4):
             map.data.append(100)
         else:
             map.data.append(0)
@@ -59,7 +62,7 @@ def map():
 
 def curr_pos(x, y):
     curr_pos = PoseStamped()
-    curr_pos.header.frame_id = "map"
+    curr_pos.header.frame_id = "origin"
     curr_pos.header.stamp = rospy.Time.now()
 
     curr_pos.pose.position.x = x
@@ -70,7 +73,7 @@ def curr_pos(x, y):
 
 def goal_pos(x, y):
     curr_pos = PoseStamped()
-    curr_pos.header.frame_id = "map"
+    curr_pos.header.frame_id = "origin"
     curr_pos.header.stamp = rospy.Time.now()
 
     curr_pos.pose.position.x = x
@@ -106,13 +109,13 @@ if __name__ == '__main__':
         #rate.sleep()
         s = input()
         if s == 'w':
-            pos_y += 1
+            pos_y += resolution
         elif s == 'd':
-            pos_x += 1
+            pos_x += resolution
         elif s == 's':
-            pos_y -= 1
+            pos_y -= resolution
         elif s == 'a':
-            pos_x -= 1
+            pos_x -= resolution
 
 
         
