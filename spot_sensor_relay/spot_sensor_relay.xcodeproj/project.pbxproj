@@ -16,6 +16,9 @@
 		B21E31B12A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B21E31B02A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift */; };
 		B25C17EE2A1A71ED00FDF2AE /* JPEG in Frameworks */ = {isa = PBXBuildFile; productRef = B25C17ED2A1A71ED00FDF2AE /* JPEG */; };
 		B25C17F22A1A75E500FDF2AE /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = B25C17F12A1A75E500FDF2AE /* Swifter */; };
+		B28329E82A39AC18000CBAEB /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = B28329E72A39AC18000CBAEB /* NIO */; };
+		B28329EA2A39FEA5000CBAEB /* dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28329E92A39FEA5000CBAEB /* dummy.swift */; };
+		B29EC0DD2A392B9B000E6736 /* Motion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29EC0DC2A392B9B000E6736 /* Motion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +50,9 @@
 		B21E31AE2A19062300537932 /* spot_sensor_relayUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = spot_sensor_relayUITests.swift; sourceTree = "<group>"; };
 		B21E31B02A19062300537932 /* spot_sensor_relayUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = spot_sensor_relayUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		B21E31BD2A190F7C00537932 /* spot_sensor_relay.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = spot_sensor_relay.entitlements; sourceTree = "<group>"; };
+		B28329E92A39FEA5000CBAEB /* dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dummy.swift; sourceTree = "<group>"; };
+		B29EC0DC2A392B9B000E6736 /* Motion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Motion.swift; sourceTree = "<group>"; };
+		B29EC0DE2A3939AE000E6736 /* spot-sensor-relay-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "spot-sensor-relay-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B28329E82A39AC18000CBAEB /* NIO in Frameworks */,
 				B25C17EE2A1A71ED00FDF2AE /* JPEG in Frameworks */,
 				B25C17F22A1A75E500FDF2AE /* Swifter in Frameworks */,
 			);
@@ -79,6 +86,7 @@
 		B21E31872A19062100537932 = {
 			isa = PBXGroup;
 			children = (
+				B28329E92A39FEA5000CBAEB /* dummy.swift */,
 				B21E31922A19062200537932 /* spot_sensor_relay */,
 				B21E31A32A19062300537932 /* spot_sensor_relayTests */,
 				B21E31AD2A19062300537932 /* spot_sensor_relayUITests */,
@@ -99,9 +107,11 @@
 		B21E31922A19062200537932 /* spot_sensor_relay */ = {
 			isa = PBXGroup;
 			children = (
+				B29EC0DE2A3939AE000E6736 /* spot-sensor-relay-Info.plist */,
 				B21E31BD2A190F7C00537932 /* spot_sensor_relay.entitlements */,
 				B21E31932A19062200537932 /* spot_sensor_relayApp.swift */,
 				B21E31952A19062200537932 /* ContentView.swift */,
+				B29EC0DC2A392B9B000E6736 /* Motion.swift */,
 				B21E31972A19062300537932 /* Assets.xcassets */,
 				B21E31992A19062300537932 /* Preview Content */,
 			);
@@ -152,6 +162,7 @@
 			packageProductDependencies = (
 				B25C17ED2A1A71ED00FDF2AE /* JPEG */,
 				B25C17F12A1A75E500FDF2AE /* Swifter */,
+				B28329E72A39AC18000CBAEB /* NIO */,
 			);
 			productName = spot_sensor_relay;
 			productReference = B21E31902A19062200537932 /* spot_sensor_relay.app */;
@@ -228,6 +239,7 @@
 			packageReferences = (
 				B25C17EC2A1A71ED00FDF2AE /* XCRemoteSwiftPackageReference "jpeg" */,
 				B25C17F02A1A75E500FDF2AE /* XCRemoteSwiftPackageReference "swifter" */,
+				B28329E62A39AC18000CBAEB /* XCRemoteSwiftPackageReference "swift-nio" */,
 			);
 			productRefGroup = B21E31912A19062200537932 /* Products */;
 			projectDirPath = "";
@@ -272,6 +284,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B21E31962A19062200537932 /* ContentView.swift in Sources */,
+				B29EC0DD2A392B9B000E6736 /* Motion.swift in Sources */,
+				B28329EA2A39FEA5000CBAEB /* dummy.swift in Sources */,
 				B21E31942A19062200537932 /* spot_sensor_relayApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -435,10 +449,12 @@
 				DEVELOPMENT_TEAM = DHCA3F892L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "spot-sensor-relay-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Spot SensorRelay";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSCameraUsageDescription = "SensorRelay requires camera access to broadcast video.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SensorRelay requires microphone access to broadcast audio.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "SensorRelay requires motion data for the IMU.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -469,10 +485,12 @@
 				DEVELOPMENT_TEAM = DHCA3F892L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "spot-sensor-relay-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Spot SensorRelay";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSCameraUsageDescription = "SensorRelay requires camera access to broadcast video.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SensorRelay requires microphone access to broadcast audio.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "SensorRelay requires motion data for the IMU.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -625,6 +643,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		B28329E62A39AC18000CBAEB /* XCRemoteSwiftPackageReference "swift-nio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -637,6 +663,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B25C17F02A1A75E500FDF2AE /* XCRemoteSwiftPackageReference "swifter" */;
 			productName = Swifter;
+		};
+		B28329E72A39AC18000CBAEB /* NIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B28329E62A39AC18000CBAEB /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIO;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

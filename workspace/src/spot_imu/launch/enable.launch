@@ -1,0 +1,5 @@
+<launch>
+     <param name="ip" value="192.168.20.87" />
+     <param name="port" value="80" />
+     <node name="spot_imu" pkg="spot_imu" type="enable_streaming" output="screen" />
+</launch>
