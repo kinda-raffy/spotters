@@ -30,7 +30,7 @@ class SpotMovement:
 
     def __init__(
         self,
-        path_resolution: int = 1,
+        path_resolution: int = 4,
         *,
         timeout: int = 10,
     ) -> None:
@@ -76,8 +76,8 @@ class SpotMovement:
             quaternion = quaternion_from_euler(0,0,0)
             if self.last_sent_pose:
                 rospy.logdebug("[SpotMove] Extrapolating yaw.")
-                yaw = self.extrapolate_turning_angle(self.last_sent_pose.pose, no_yaw_pose.pose)
-                quaternion = quaternion_from_euler(0, 0, yaw)
+                # yaw = self.extrapolate_turning_angle(self.last_sent_pose.pose, no_yaw_pose.pose)
+                quaternion = quaternion_from_euler(0, 0, 0)
             next_pose = PoseStamped(
                 no_yaw_pose.header,
                 Pose(
@@ -142,7 +142,7 @@ class SpotTrajectoryHandler:
         pose: PoseStamped,
         duration: Duration,
         *,
-        precise_positioning: bool = True
+        precise_positioning: bool = False
     ) -> bool:
         goal = TrajectoryGoal()
         goal.target_pose = pose

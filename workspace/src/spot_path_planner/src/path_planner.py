@@ -153,8 +153,8 @@ while not rospy.is_shutdown():
     # ===
     # gp = PoseStamped()
     # gp.header.frame_id = "origin"
-    # gp.pose.position.x = 1
-    # gp.pose.position.y = 1
+    # gp.pose.position.x = 2
+    # gp.pose.position.y = 7
     # pub_goal.publish(gp)
     
     # gp.pose.position.x = 0
@@ -290,6 +290,8 @@ while not rospy.is_shutdown():
 
             for pos in path:
                 pos_stamped = PoseStamped()
+                pos_stamped.header.frame_id = 'origin'
+                pos_stamped.header.stamp = rospy.Time.now()
                 x, y = ((pos[1] + navtask.d_star_offset[1]) * navtask.map_resolution + navtask.map_offset_x, (pos[0] + navtask.d_star_offset[0]) * navtask.map_resolution + navtask.map_offset_y)
                 pos_stamped.pose.position.x = x
                 pos_stamped.pose.position.y = y

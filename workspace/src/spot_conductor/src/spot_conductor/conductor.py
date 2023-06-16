@@ -12,8 +12,8 @@ from std_msgs.msg import Bool
 from tf.transformations import quaternion_from_euler as from_euler
 
 
-RECEIVE_GRID = "spotters/geography/map"
-RECEIVE_POSE = "spotters/geography/pos"
+RECEIVE_GRID = "spotters/mapping/map"
+RECEIVE_POSE = "spotters/mapping/pos"
 RECEIVE_GOAL = "/move_base_simple/goal"
 SEND_GOAL = "spotters/conductor/goal"
 SEND_POSE = "/spotters/navigator/pose"
@@ -40,15 +40,16 @@ class Conductor:
         self.latest_grid = None
         self.active_goal = None
         self.goal_failed = False
-        def grid_callback(self, msg: OccupancyGrid):
+        def grid_callback(msg: OccupancyGrid):
             self.latest_grid = msg
+            
         rospy.Subscriber(
             RECEIVE_GRID,
             OccupancyGrid,
             grid_callback,
         )
 
-        def pose_callback(self, msg: PoseStamped):
+        def pose_callback(msg: PoseStamped):
             self.latest_pose = msg
 
         rospy.Subscriber(
@@ -57,8 +58,8 @@ class Conductor:
             pose_callback,
         )
 
-        def goal_callback(self, msg: PoseStamped):
-            self.active_goal = msg
+        def goal_callback(msg: PoseStamped):
+            self.goal_channel.publish(msg)
 
         rospy.Subscriber(
             RECEIVE_GOAL,
@@ -66,7 +67,7 @@ class Conductor:
             goal_callback,
         )
 
-        def cancel_callback(self, msg: Bool):
+        def cancel_callback(msg: Bool):
             self.goal_failed = True
 
         rospy.Subscriber(
@@ -89,10 +90,10 @@ class Conductor:
     def loop(self):
         # These behaviors should be blocking
         self.conduct(self.SpotState.START)
-        if not rospy.is_shutdown():
-            rospy.sleep(1)
-            self.determine_state()
-            self.conduct(self.state)
+        # if not rospy.is_shutdown():
+        #    rospy.sleep(1)
+        #    self.determine_state()
+        #    self.conduct(self.state)
 
     def conduct(self, state: SpotState):
         self.behaviours[state]()
@@ -119,10 +120,10 @@ class Conductor:
         rospy.logdebug("[Conductor] Starting init stage")
         rospy.sleep(10)
 
-        for _ in range(4):
+        for _ in range(8):
             self.wiggle()
 
-        self.loop()
+        # self.loop()
 
     def idle(self) -> None:
         import time
@@ -176,7 +177,7 @@ class Conductor:
     def wiggle(self):
         for _ in range(round(90 / 30)):
             self.turn_body(30)
-            rospy.sleep(4)
+            rospy.sleep(3)
         self.translate_body(0,0.5)
         rospy.sleep(2)
         self.turn_body(-15)
@@ -188,6 +189,12 @@ class Conductor:
         self.turn_body(15)
         rospy.sleep(2)
         self.turn_body(-15)
+        self.translate_body(-0.5,0)
+        rospy.sleep(2)
+        self.translate_body(1.0,0)
+        rospy.sleep(3)
+        self.translate_body(-0.5,0)
+        rospy.sleep(2)
 
 def main():
     rospy.init_node("Conductor", log_level=rospy.DEBUG)

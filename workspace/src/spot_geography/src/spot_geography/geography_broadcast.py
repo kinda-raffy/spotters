@@ -17,12 +17,12 @@ class GeographyBroadcastStation:
     def __init__(self) -> None:
         self.cloud_facility = PointCloudProcessingFacility()
         self.position_channel = rospy.Publisher(
-            "/spotters/geography/pos",
+            "/spotters/mapping/pos",
             PoseStamped,
             queue_size=1,
         )
         self.occupancy_channel = rospy.Publisher(
-            "/spotters/geography/map",
+            "/spotters/mapping/map",
             OccupancyGrid,
             queue_size=1,
         )
