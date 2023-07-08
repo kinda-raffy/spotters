@@ -180,7 +180,7 @@ sklearn==0.0.post5
 smach==2.5.1
 smach-ros==2.5.1
 smclib==1.8.6
--e git+https://github.com/kinda-raffy/spot_wrapper.git@a13b334ce300046719c3c21826ee7a7125be5936#egg=spot_wrapper&subdirectory=../../../../../../workspace/src/spot_ros/spot_wrapper
+spot_wrapper==1.0.0
 stack-data==0.6.2
 tenacity==8.2.2
 tf==1.13.2
